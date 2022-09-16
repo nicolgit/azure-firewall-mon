@@ -1,7 +1,15 @@
-<section>
-    <div>
-        <p>login works!</p>
-        <p>click <a mat-stroked-button color="primary" href="live">here</a> enter in firewall-azure-mon!</p>
-    </div>
-</section>
+<div class="centered-container">
+    <mat-checkbox class="container-row" color="primary" [checked]="isDemoMode" (change)="setDemo($event.checked)">demo mode</mat-checkbox>
+    <mat-form-field appearance="fill">
+        <mat-label>Event Hub connection string</mat-label>
+        <input title="not used" matInput [disabled]="isDemoMode">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" >
+        <mat-label>Event Hub access key</mat-label>
+        <input title="not used" matInput [disabled]="isDemoMode">
+    </mat-form-field>
+
+    <a mat-stroked-button color="primary" href="live">Start firewall-mon!</a>
+</div>
 
