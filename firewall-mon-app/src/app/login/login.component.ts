@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
   selector: 'app-login',

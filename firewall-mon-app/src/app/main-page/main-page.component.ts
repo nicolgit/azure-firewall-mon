@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IngestDemoService } from '../ingest-demo.service';
 
 @Component({
   selector: 'app-main-page',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainPageComponent implements OnInit {
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(private ingestDemoService: IngestDemoService) {
   }
-
+    
+  
+  ngOnInit(): void {
+    this.ingestDemoService.Sample = true;
+  }
 }
