@@ -9,9 +9,15 @@ import { LoginComponent } from './login/login.component';
 import { MainPageComponent } from './main-page/main-page.component';
 
 import { MatButtonModule } from '@angular/material/button';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule} from '@angular/material/input';
+import { MatCheckboxModule} from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table'  
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
+
+
+import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -29,6 +35,9 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
+    MatTableModule,
+    ScrollingModule,
+    TableVirtualScrollModule
     
   ],
   providers: [],

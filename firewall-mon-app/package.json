@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "~14.2.3",
     "@angular/router": "~14.2.3",
     "@lottiefiles/lottie-player": "^1.5.7",
+    "ng-table-virtual-scroll": "^1.4.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
