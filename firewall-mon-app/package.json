@@ -10,16 +10,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~12.2.0",
-    "@angular/cdk": "^12.2.13",
-    "@angular/common": "~12.2.0",
-    "@angular/compiler": "~12.2.0",
-    "@angular/core": "~12.2.0",
-    "@angular/forms": "~12.2.0",
+    "@angular/animations": "~14.2.3",
+    "@angular/cdk": "^13.3.9",
+    "@angular/common": "~14.2.3",
+    "@angular/compiler": "~14.2.3",
+    "@angular/core": "~14.2.3",
+    "@angular/forms": "~14.2.3",
     "@angular/material": "^12.2.13",
-    "@angular/platform-browser": "~12.2.0",
-    "@angular/platform-browser-dynamic": "~12.2.0",
-    "@angular/router": "~12.2.0",
+    "@angular/platform-browser": "~14.2.3",
+    "@angular/platform-browser-dynamic": "~14.2.3",
+    "@angular/router": "~14.2.3",
     "@lottiefiles/lottie-player": "^1.5.7",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@angular-devkit/build-angular": "~12.2.5",
     "@angular/cli": "^14.2.3",
-    "@angular/compiler-cli": "~12.2.0",
+    "@angular/compiler-cli": "~14.2.3",
     "@types/jasmine": "~3.8.0",
     "@types/node": "^12.11.1",
     "jasmine-core": "~3.8.0",
@@ -37,6 +37,6 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "typescript": "~4.3.5"
+    "typescript": "~4.8.3"
   }
 }
