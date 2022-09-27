@@ -7,12 +7,17 @@
     table-layout: fixed;
   }
   
+  .mat-row:hover {
+    background-color: lightyellow;
+  }
+  
   .col-sm {
     width: 180px;
     border-right: 1px solid currentColor;
     padding-right: 6px;
     background-color: lightgray;
   }
+
 
   .col-sm-2 {
     padding-left: 6px;
