@@ -4,20 +4,46 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-    <ng-container matColumnDef="id">
+    <ng-container matColumnDef="time">
       <th mat-header-cell
           *matHeaderCellDef
-          class="col-sm">No.</th>
+          class="col-sm">Timestamp</th>
       <td mat-cell
           *matCellDef="let element"
-          class="col-sm">{{element.id}}</td>
+          class="col-sm">{{element.time}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let element">{{element.name}}</td>
+    <ng-container matColumnDef="protocol">
+      <th mat-header-cell *matHeaderCellDef class="col-sm-2">Protocol</th>
+      <td mat-cell *matCellDef="let element" class="col-sm-2">{{element.protocol}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="sourceip">
+      <th mat-header-cell *matHeaderCellDef>Source IP</th>
+      <td mat-cell *matCellDef="let element">{{element.sourceip}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="srcport">
+      <th mat-header-cell *matHeaderCellDef>Source Port</th>
+      <td mat-cell *matCellDef="let element">{{element.srcport}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="targetip">
+      <th mat-header-cell *matHeaderCellDef>Target IP</th>
+      <td mat-cell *matCellDef="let element">{{element.targetip}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="targetport">
+      <th mat-header-cell *matHeaderCellDef>Target Port</th>
+      <td mat-cell *matCellDef="let element">{{element.targetport}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>ACTION</th>
+      <td mat-cell *matCellDef="let element">{{element.action}}</td>
+    </ng-container>
+
+    displayedColumns = ['id', 'name', 'protocol','sourceip', 'srcport','targetip', 'targetport', 'action'];
   </table>
 
 </cdk-virtual-scroll-viewport>
