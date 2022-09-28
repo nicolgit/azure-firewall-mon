@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ModelService } from '../services/model.service';
+import { DemoSourceService } from '../services/demo-source.service';
+import { EventHubSourceService } from '../services/event-hub-source.service';
 
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
@@ -25,7 +27,11 @@ export class MainPageComponent implements OnInit {
   actionsArray: Array<string> = ["ACCEPT", "DROP"];
   portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
 
-  constructor(private model: ModelService) {
+  constructor(
+    private model: ModelService,
+    private demoSource: DemoSourceService,
+    private eventHubService: EventHubSourceService
+    ) {
       for (let i = 0; i < 100000; i++) {
 
         var row = {
