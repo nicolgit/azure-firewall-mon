@@ -20,6 +20,7 @@
     "@angular/platform-browser": "~14.2.3",
     "@angular/platform-browser-dynamic": "~14.2.3",
     "@angular/router": "~14.2.3",
+    "@azure/event-hubs": "^5.8.0",
     "@lottiefiles/lottie-player": "^1.5.7",
     "ng-table-virtual-scroll": "^1.4.1",
     "rxjs": "~6.6.0",

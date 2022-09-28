@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { IngestDemoService } from '../ingest-demo.service';
+
+import { ModelService } from '../services/model.service';
+
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
 export interface FirewallRow {
@@ -23,7 +25,7 @@ export class MainPageComponent implements OnInit {
   actionsArray: Array<string> = ["ACCEPT", "DROP"];
   portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
 
-  constructor(private ingestDemoService: IngestDemoService) {
+  constructor(private model: ModelService) {
       for (let i = 0; i < 100000; i++) {
 
         var row = {
@@ -46,7 +48,7 @@ export class MainPageComponent implements OnInit {
   dataSource = new TableVirtualScrollDataSource(this.DATA);
 
   ngOnInit(): void {
-    this.ingestDemoService.Sample = true;
+    
     setInterval(() => {
       
       var row = {

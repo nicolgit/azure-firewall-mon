@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
+import { ModelService } from '../services/model.service';
 
 @Component({
   selector: 'app-login',
@@ -8,14 +10,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private model: ModelService,
+    private router: Router
+    ) {
+    
+   }
 
   ngOnInit(): void {
   }
 
-  eventHubConnectionString: string = "";
-  eventHubAccessKey: string = "";
-  isDemoMode: boolean = false;
+  eventHubConnectionString: string = this.model.eventHubConnection;
+  eventHubAccessKey: string = this.model.eventHubKey;
+  isDemoMode: boolean = this.model.demoMode;
   isStartDisabled: boolean = true;
 
   setDemo(completed: boolean) {
@@ -37,5 +44,13 @@ export class LoginComponent implements OnInit {
       this.isStartDisabled = false;
     }
 
+    }
+  
+    navigateNext(): void {
+      this.model.eventHubConnection = this.eventHubConnectionString;
+      this.model.eventHubKey = this.eventHubAccessKey;
+      this.model.demoMode = this.isDemoMode;
+
+      this.router.navigateByUrl('/live')
     }
 }

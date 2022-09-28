@@ -40,7 +40,8 @@ import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
     TableVirtualScrollModule
     
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

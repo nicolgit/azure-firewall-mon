@@ -21,6 +21,6 @@
         <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="eventHubAccessKey" (input)="setStart()">
     </mat-form-field>
 
-    <a mat-stroked-button color="primary" href="live" [disabled]="isStartDisabled">Let's begin</a>
+    <a mat-stroked-button color="primary" [disabled]="isStartDisabled" (click)="navigateNext()">Let's begin</a>
 </div>
 
