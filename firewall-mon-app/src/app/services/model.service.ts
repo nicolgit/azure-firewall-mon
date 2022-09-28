@@ -8,10 +8,15 @@ export class ModelService {
   constructor() { 
     this.demoMode = false;
     this.eventHubConnection = "";
-    this.eventHubKey = "";
+    this.eventHubName = "";
   }
 
   demoMode: boolean;
   eventHubConnection: string;
-  eventHubKey: string;
+  eventHubName: string;
+}
+
+export interface IFirewallSource {
+  connect(): void;
+  disconnect(): void;
 }

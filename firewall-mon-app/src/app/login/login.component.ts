@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   }
 
   eventHubConnectionString: string = this.model.eventHubConnection;
-  eventHubAccessKey: string = this.model.eventHubKey;
+  eventHubName: string = this.model.eventHubName;
   isDemoMode: boolean = this.model.demoMode;
   isStartDisabled: boolean = true;
 
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
       this.isStartDisabled = false;
     }
 
-    if (this.eventHubConnectionString != null && this.eventHubConnectionString.length>0 && this.eventHubAccessKey != null && this.eventHubAccessKey.length>0)
+    if (this.eventHubConnectionString != null && this.eventHubConnectionString.length>0 && this.eventHubName != null && this.eventHubName.length>0)
     {
       this.isStartDisabled = false;
     }
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
   
     navigateNext(): void {
       this.model.eventHubConnection = this.eventHubConnectionString;
-      this.model.eventHubKey = this.eventHubAccessKey;
+      this.model.eventHubName = this.eventHubName;
       this.model.demoMode = this.isDemoMode;
 
       this.router.navigateByUrl('/live')
