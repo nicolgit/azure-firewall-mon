@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { IFirewallSource, ModelService } from '../services/model.service';
 
-//import { EventHubConsumerClient, earliestEventPosition } from "@azure/event-hubs";
+import { EventHubConsumerClient, earliestEventPosition } from "@azure/event-hubs";
+//const { EventHubConsumerClient } = require("@azure/event-hubs");
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,8 @@ export class EventHubSourceService implements IFirewallSource {
   //private subscription: any;
 
   public async connect() {
+    this.consumer = new EventHubConsumerClient("$Default", this.model.eventHubName);
+
     /*
     this.consumer = new EventHubConsumerClient(this.model.eventHubConnection, this.model.eventHubName);
 

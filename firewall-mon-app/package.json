@@ -23,22 +23,28 @@
     "@azure/event-hubs": "^5.8.0",
     "@lottiefiles/lottie-player": "^1.5.7",
     "ng-table-virtual-scroll": "^1.4.1",
+    "rhea-promise": "^2.1.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "^14.0.1",
     "@angular-devkit/build-angular": "~14.2.3",
     "@angular/cli": "^14.2.3",
     "@angular/compiler-cli": "~14.2.3",
     "@types/jasmine": "~3.8.0",
-    "@types/node": "^12.11.1",
+    "@types/node": "^12.20.55",
+    "buffer": "^6.0.3",
     "jasmine-core": "~3.8.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
     "typescript": "~4.8.3"
   }
 }

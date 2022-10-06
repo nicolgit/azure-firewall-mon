@@ -21,7 +21,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "outputPath": "dist/firewall-mon-app",
             "index": "src/index.html",
@@ -43,11 +43,15 @@
           },
           "configurations": {
             "production": {
+                "customWebpackConfig": {
+                  "path": "./extra-webpack.config.js",
+                  "replaceDuplicatePlugins": true
+              },
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -64,6 +68,10 @@
               "outputHashing": "all"
             },
             "development": {
+                "customWebpackConfig": {
+                  "path": "./extra-webpack.config.js",
+                  "replaceDuplicatePlugins": true
+              },
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -75,7 +83,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
               "browserTarget": "firewall-mon-app:build:production"
