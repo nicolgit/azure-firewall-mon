@@ -8,12 +8,12 @@ export class ModelService {
   constructor() { 
     this.demoMode = false;
     this.eventHubConnection = "";
-    this.eventHubName = "";
+    this.eventHubConsumerGroup = "$Default";
   }
 
   demoMode: boolean;
   eventHubConnection: string;
-  eventHubName: string;
+  eventHubConsumerGroup: string;
 }
 
 export interface IFirewallSource {

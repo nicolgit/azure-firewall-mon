@@ -18,7 +18,7 @@ export class EventHubSourceService implements IFirewallSource {
   //private subscription: any;
 
   public async connect() {
-    this.consumer = new EventHubConsumerClient("$Default", this.model.eventHubName);
+    this.consumer = new EventHubConsumerClient(this.model.eventHubConsumerGroup, this.model.eventHubConnection);
 
     /*
     this.consumer = new EventHubConsumerClient(this.model.eventHubConnection, this.model.eventHubName);
