@@ -1,3 +1,4 @@
+import { Time } from '@angular/common';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -18,5 +19,17 @@ export class ModelService {
 
 export interface IFirewallSource {
   connect(): void;
+  onDataArrived?: (data: Array<FirewallDataRow>) => void;
   disconnect(): void;
 }
+
+export interface FirewallDataRow {
+  time: string;
+  protocol: string;
+  sourceip: string;
+  srcport: string;
+  targetip: string;
+  targetport: string;
+  action: string;
+  dataRow: any;
+};

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { IFirewallSource, ModelService } from '../services/model.service';
+import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 
 import { EventHubConsumerClient, earliestEventPosition } from "@azure/event-hubs";
 //const { EventHubConsumerClient } = require("@azure/event-hubs");
@@ -53,8 +53,11 @@ export class EventHubSourceService implements IFirewallSource {
     */
 }
  
+onDataArrived?: (data: Array<FirewallDataRow>) => void;
+
 public async disconnect() {
   //await this.consumer.close();
 }
   
+private DATA: Array<FirewallDataRow> = [];
 }
