@@ -30,7 +30,7 @@ export class MainPageComponent implements OnInit {
     this.dataSource = new TableVirtualScrollDataSource(data); 
   }
 
-  public displayedColumns = ['time', 'protocol','sourceip', 'srcport','targetip', 'targetport', 'action'];
+  public displayedColumns = ['time', 'category', 'protocol','sourceip', 'srcport','targetip', 'targetport', 'action'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
 
   ngOnInit(): void {

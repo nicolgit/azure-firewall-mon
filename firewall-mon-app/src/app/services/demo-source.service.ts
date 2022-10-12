@@ -14,15 +14,18 @@ export class DemoSourceService implements IFirewallSource {
   private protocolsArray: Array<string> = ["TCP", "UDP"];
   private actionsArray: Array<string> = ["ACCEPT", "DROP"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
+  private categories: Array<string> = ["NetworkRule", "ApplicationRule", "UserRule"];
   
   private DATA: Array<FirewallDataRow> = [];
 
+  public skippedRows: number = 0;
   public onDataArrived?: (data: Array<FirewallDataRow>) => void;
 
   public async connect() {
     for (let i = 0; i < 10; i++) {
       var row = {
         time: new Date().toLocaleString(),
+        category: this.categories[Math.floor(Math.random() * this.categories.length)],
         protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
         sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
         srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
@@ -39,6 +42,7 @@ export class DemoSourceService implements IFirewallSource {
       
       var row = {
         time: new Date().toLocaleString(),
+        category: this.categories[Math.floor(Math.random() * this.categories.length)],
         protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
         sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
         srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],

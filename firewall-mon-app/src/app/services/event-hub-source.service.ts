@@ -1,25 +1,26 @@
 import { Injectable } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
+import * as Model from '../services/model.service';
 
-import { EventHubConsumerClient, earliestEventPosition } from "@azure/event-hubs";
+import { EventHubConsumerClient, earliestEventPosition, latestEventPosition } from "@azure/event-hubs";
 //const { EventHubConsumerClient } = require("@azure/event-hubs");
 
 @Injectable({
   providedIn: 'root'
 })
-export class EventHubSourceService implements IFirewallSource {
-  private DATA: Array<FirewallDataRow> = [];
+export class EventHubSourceService implements Model.IFirewallSource {
+  private DATA: Array<Model.FirewallDataRow> = [];
 
-  constructor(private model:ModelService,
+  constructor(private model:Model.ModelService,
     private datePipe: DatePipe)  {
   }
 
   private consumerClient: EventHubConsumerClient | undefined;
   private subscription: any;
 
-  onDataArrived?: (data: Array<FirewallDataRow>) => void;
+  public skippedRows: number = 0;
+  public onDataArrived?: (data: Array<Model.FirewallDataRow>) => void;
 
   public async connect() {
     this.outputLog(`connecting consumerClient to azure event hub`);
@@ -35,17 +36,41 @@ export class EventHubSourceService implements IFirewallSource {
           }
 
           for (const event of events) {
-            var row = {
-              time: new Date().toLocaleString(),
-              protocol: "-",
-              sourceip: "-",
-              srcport: "-",
-              targetip: "-",
-              targetport: "-",
-              action: "-",
-              dataRow: event.body
-            } as FirewallDataRow;
-            this.DATA.unshift(row);
+            const eventBody: Model.EventHubBody = event.body;
+
+            for (const record of eventBody.records) {
+              const resourceId:string = record.resourceId;
+
+              if (resourceId && resourceId.includes("/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/") == true) {
+                var row: Model.FirewallDataRow | undefined = undefined;
+
+                switch (record.category) {
+                  case "AzureFirewallNetworkRule": {
+                    row = this.parseAzureFirewallNetworkRule(record);
+                    break;
+                  }
+                  default: {
+                    row = {
+                      time: record.time.toString(),
+                      category: "UNMANAGED - " + record.category,
+                      protocol: "-",
+                      sourceip: "-",
+                      srcport: "-",
+                      targetip: "-",
+                      targetport: "-",
+                      action: "-",
+                      dataRow: record
+                    } as Model.FirewallDataRow;
+                    break;
+                  }
+                }
+                this.DATA.unshift(row);
+              }
+              else
+                {
+                  this.skippedRows++;
+                }
+            }
 
             console.log(`Received event: '${JSON.stringify(event.body)}' from partition: '${context.partitionId}' and consumer group: '${context.consumerGroup}'`);
             this.onDataArrived?.(this.DATA);
@@ -56,7 +81,7 @@ export class EventHubSourceService implements IFirewallSource {
           console.log(`Error : ${err}`);
         }
       },
-      { startPosition: earliestEventPosition }
+      { startPosition: earliestEventPosition  }
     );
 
     // After 30 seconds, stop processing.
@@ -66,7 +91,7 @@ export class EventHubSourceService implements IFirewallSource {
         await this.subscription.close();
         await this.consumerClient?.close();
         resolve();
-      }, 30000);
+      }, 300000);
     });
   }
 
@@ -77,5 +102,26 @@ export class EventHubSourceService implements IFirewallSource {
   private outputLog(text: string): void {
     var date = new Date();
     console.log(`${this.datePipe.transform(date,'hh:mm:ss')} - EventHubSourceService - ${text}\n`);
+  }
+
+  private parseAzureFirewallNetworkRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
+    // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
+    const split = record.properties.msg.split(" ");
+    const ipport1 = split[3].split(":");
+    const ipport2 = split[5].split(":");
+
+    const row = {
+      time: record.time.toString().split("T")[1],
+      category: "NetworkRule",
+      protocol: split[0],
+      sourceip: ipport1[0],
+      srcport: ipport1[1],
+      targetip: ipport2[0],
+      targetport: ipport2[1].replace(".", ""),
+      action: split[7].replace(".", ""),
+      dataRow: record
+    } as Model.FirewallDataRow;
+
+    return row;
   }
 }
