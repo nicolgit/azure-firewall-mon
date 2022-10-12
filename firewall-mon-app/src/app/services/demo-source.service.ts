@@ -6,10 +6,8 @@ import { IFirewallSource, FirewallDataRow, ModelService } from '../services/mode
   providedIn: 'root'
 })
 export class DemoSourceService implements IFirewallSource {
-  private model: ModelService;
   
-  constructor( private m:ModelService) { 
-    this.model = m;
+  constructor( private model:ModelService) { 
   }
 
   private intervalId: any;
@@ -41,18 +39,18 @@ export class DemoSourceService implements IFirewallSource {
       
       var row = {
         time: new Date().toLocaleString(),
-          protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
-          sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
-          srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
-          targetip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
-          targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
-          action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)]
+        protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
+        sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
+        srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
+        targetip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
+        targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
+        action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)]
       } as FirewallDataRow;
 
       this.DATA.unshift(row);
       this.onDataArrived?.(this.DATA);
 
-      console.log("heartbit!"); // just testing if it is working
+      console.log("DEMO Source heartbit");
 
     }, 1000);
   }
