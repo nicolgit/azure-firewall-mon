@@ -33,3 +33,5 @@ Objective of this project is have an alternative approach to firewall log analys
 * Open source
 * Implemented in [Angular](https://angular.io/), it can be hosted as static web application on VM or PAAS service, on public or private netwokt
 * Uses [Material UI Framework](https://material.angular.io/) a design guideline used by the wider design community across the globe
+  
+![azure-firewall-mon-app](images/firewall-mon-app.png)
