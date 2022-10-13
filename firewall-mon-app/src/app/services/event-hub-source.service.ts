@@ -21,6 +21,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
   public skippedRows: number = 0;
   public onDataArrived?: (data: Array<Model.FirewallDataRow>) => void;
+  public onRowSkipped?: (skipped: number) => void;
 
   public async connect() {
     this.outputLog(`connecting consumerClient to azure event hub`);
@@ -69,6 +70,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
               else
                 {
                   this.skippedRows++;
+                  this.onRowSkipped?.(this.skippedRows);
                 }
             }
 

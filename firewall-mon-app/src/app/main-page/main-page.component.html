@@ -1,5 +1,17 @@
-<cdk-virtual-scroll-viewport tvsItemSize class="wrapper mat-elevation-z2">
+<mat-toolbar color="primary" class="main-toolbar">
+  <mat-toolbar-row>
+    <span>Azure Firewall mon</span>
+    <span class="example-spacer"></span>
+    
+  </mat-toolbar-row>
 
+  <mat-toolbar-row>
+    <span>Second Line</span>
+    <span class="example-spacer"></span>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<cdk-virtual-scroll-viewport tvsItemSize class="wrapper mat-elevation-z2">
   <table mat-table [dataSource]="dataSource">
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -52,3 +64,6 @@
   </table>
 
 </cdk-virtual-scroll-viewport>
+<mat-toolbar class="main-bottom-bar">
+    <div>{{skippedRows}} skipped rows</div>
+</mat-toolbar>

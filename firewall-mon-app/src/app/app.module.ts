@@ -15,6 +15,7 @@ import { MatInputModule} from '@angular/material/input';
 import { MatCheckboxModule} from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table'  
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 
@@ -36,8 +37,8 @@ import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
     MatCheckboxModule,
     MatTableModule,
     ScrollingModule,
-    TableVirtualScrollModule
-    
+    TableVirtualScrollModule,
+    MatToolbarModule, 
   ],
   providers: [
     DatePipe

@@ -24,14 +24,19 @@ export class MainPageComponent implements OnInit {
       this.model = model_in;
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
       this.firewallSource.onDataArrived = (data) => this.onDataSourceChanged(data);
+      this.firewallSource.onRowSkipped = (skipped) => this.onRowSkipped(skipped);
   }
   
   private onDataSourceChanged(data: Array<FirewallDataRow>) {
     this.dataSource = new TableVirtualScrollDataSource(data); 
   }
 
+  private onRowSkipped(skipped: number) {
+    this.skippedRows = skipped;
+  }
   public displayedColumns = ['time', 'category', 'protocol','sourceip', 'srcport','targetip', 'targetport', 'action'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
+  public skippedRows: number = 0;
 
   ngOnInit(): void {
     this.firewallSource.connect();    

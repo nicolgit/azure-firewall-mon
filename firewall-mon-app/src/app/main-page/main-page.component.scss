@@ -1,25 +1,35 @@
+$main-toolbar-size: 120px;
+$main-bottom-bar-size: 50px;
+
 .wrapper {
-    height: 100%;
-  }
-  
-  table {
-    width: 100%;
-    table-layout: fixed;
-  }
-  
-  .mat-row:hover {
-    background-color: lightyellow;
-  }
-  
-  .col-sm {
-    width: 180px;
-    border-right: 1px solid currentColor;
-    padding-right: 6px;
-    background-color: lightgray;
-  }
+  height: calc(100% - $main-bottom-bar-size - $main-toolbar-size);
+}
+
+.main-toolbar{
+  height: $main-toolbar-size;
+}
+
+.main-bottom-bar{
+  height: $main-bottom-bar-size;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.mat-row:hover {
+  background-color: lightyellow;
+}
+
+.col-sm {
+  width: 180px;
+  border-right: 1px solid currentColor;
+  padding-right: 6px;
+  background-color: lightgray;
+}
 
 
-  .col-sm-2 {
-    padding-left: 6px;
-  }
-  
+.col-sm-2 {
+  padding-left: 6px;
+}
