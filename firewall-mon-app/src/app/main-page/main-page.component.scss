@@ -1,6 +1,19 @@
 $main-toolbar-size: 120px;
 $main-bottom-bar-size: 50px;
 
+.lottie-player {
+  width: 250px;
+  height: 250px;
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.lottie-text {
+  width: 100%;
+  text-align: center;
+}
+
 .wrapper {
   height: calc(100% - $main-bottom-bar-size - $main-toolbar-size);
 }

@@ -15,7 +15,7 @@ export class DemoSourceService implements IFirewallSource {
   private actionsArray: Array<string> = ["ACCEPT", "DROP"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
   private categories: Array<string> = ["NetworkRule", "ApplicationRule", "UserRule"];
-  
+
   private DATA: Array<FirewallDataRow> = [];
 
   public skippedRows: number = 0;
@@ -23,6 +23,8 @@ export class DemoSourceService implements IFirewallSource {
   public onRowSkipped?: (skipped: number) => void;
 
   public async connect() {
+    await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
+    
     for (let i = 0; i < 10000; i++) {
       var row = {
         time: new Date().toLocaleString(),

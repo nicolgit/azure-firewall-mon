@@ -11,7 +11,17 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-<cdk-virtual-scroll-viewport tvsItemSize class="wrapper mat-elevation-z2">
+<div class="wrapper" *ngIf="totalRows==0">
+  <lottie-player src="assets/lottie/lf20_giodppcr.json"  
+      background="transparent"  
+      speed="1" 
+      loop  
+      autoplay
+      class="lottie-player">
+  </lottie-player>
+  <div class="lottie-text">thinking...</div>
+</div>
+<cdk-virtual-scroll-viewport tvsItemSize class="wrapper mat-elevation-z2"  *ngIf="totalRows>0">
   <table mat-table [dataSource]="dataSource">
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
