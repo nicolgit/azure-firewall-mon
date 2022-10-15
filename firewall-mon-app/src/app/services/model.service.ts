@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { filter } from 'rhea-promise';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export interface IFirewallSource {
   skippedRows: number;
 }
 
-export interface FirewallDataRow {
+export interface FirewallDataRow {  
   time: string;
   category: string;
   protocol: string;

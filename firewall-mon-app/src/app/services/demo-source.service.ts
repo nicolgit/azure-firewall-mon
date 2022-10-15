@@ -23,7 +23,7 @@ export class DemoSourceService implements IFirewallSource {
   public onRowSkipped?: (skipped: number) => void;
 
   public async connect() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10000; i++) {
       var row = {
         time: new Date().toLocaleString(),
         category: this.categories[Math.floor(Math.random() * this.categories.length)],

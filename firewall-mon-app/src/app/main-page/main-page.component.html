@@ -2,12 +2,12 @@
   <mat-toolbar-row>
     <span>Azure Firewall mon</span>
     <span class="example-spacer"></span>
-    
   </mat-toolbar-row>
-
   <mat-toolbar-row>
-    <span>Second Line</span>
-    <span class="example-spacer"></span>
+    <mat-form-field appearance="fill">
+      <mat-label>Filter</mat-label>
+      <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
+    </mat-form-field>
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -65,5 +65,5 @@
 
 </cdk-virtual-scroll-viewport>
 <mat-toolbar class="main-bottom-bar">
-    <div>{{skippedRows}} skipped rows</div>
+    <div>rows {{skippedRows}} skipped, {{visibleRows}}/{{totalRows}} visible/available</div>
 </mat-toolbar>
