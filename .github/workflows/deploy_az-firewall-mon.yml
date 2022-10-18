@@ -51,6 +51,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'az-firewall-mon'
-          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F0DB4DFBE9CB4318AFF6173323499944 }}
-          package: .
+          package: ./firewall-mon-app/dist/firewall-mon-app
