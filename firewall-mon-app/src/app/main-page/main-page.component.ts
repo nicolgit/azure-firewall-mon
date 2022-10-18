@@ -25,6 +25,7 @@ export class MainPageComponent implements OnInit {
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
       this.firewallSource.onDataArrived = (data) => this.onDataSourceChanged(data);
       this.firewallSource.onRowSkipped = (skipped) => this.onRowSkipped(skipped);
+      this.firewallSource.onMessageArrived = (message) => this.onMessageArrived(message);
   }
   
   private onDataSourceChanged(data: Array<FirewallDataRow>) {
@@ -66,11 +67,16 @@ export class MainPageComponent implements OnInit {
     this.skippedRows = skipped;
   }
 
+  private onMessageArrived(message: string) {
+    this.message = message;
+  }
+
   filterTextChanged(): void {
     this.dataSource.filter = this.filterText;
     this.dataSource.filteredData.length;
     this.visibleRows = this.dataSource.filteredData.length;
   }
+
 
   public displayedColumns = ['time', 'category', 'protocol','sourceip', 'srcport','targetip', 'targetport', 'action'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
@@ -78,6 +84,7 @@ export class MainPageComponent implements OnInit {
   public filterText: string = "";
   public totalRows: number = 0;
   public visibleRows: number = 0;
+  public message: string = "";
 
   ngOnInit(): void {
     this.firewallSource.connect();    

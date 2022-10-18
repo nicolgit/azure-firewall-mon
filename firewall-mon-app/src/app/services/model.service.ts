@@ -21,6 +21,7 @@ export interface IFirewallSource {
   connect(): void;
   onDataArrived?: (data: Array<FirewallDataRow>) => void;
   onRowSkipped?: (skipped: number) => void;
+  onMessageArrived?: (message: string) => void;
   disconnect(): void;
   skippedRows: number;
 }
