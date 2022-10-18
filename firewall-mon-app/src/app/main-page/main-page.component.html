@@ -6,7 +6,8 @@
 </mat-toolbar>
 
 <div class="second-row-toolbar">
-  <mat-form-field appearance="fill" class="search-field">
+  <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
+    <span matPrefix class="material-symbols-outlined">search</span>
     <mat-label>filter</mat-label>
     <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
   </mat-form-field>
@@ -77,6 +78,6 @@
   </table>
 
 </cdk-virtual-scroll-viewport>
-<div class="bottom-bar">
+<div class="bottom-bar" *ngIf="totalRows>0">
     <div>rows {{skippedRows}} skipped, {{visibleRows}}/{{totalRows}} visible/available</div>
 </div>

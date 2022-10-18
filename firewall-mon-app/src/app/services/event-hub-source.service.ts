@@ -127,7 +127,6 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.outputLog(text);
   }
   private parseAzureFirewallNetworkRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
-    // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
     const split = record.properties.msg.split(" ");
     const ipport1 = split[3].split(":");
     const ipport2 = split[5].split(":");
@@ -136,6 +135,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
     switch (record.operationName) {
       case "AzureFirewallNetworkRuleLog": {
+        // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
         row = {
           time: record.time.toString().split("T")[1],
           category: "NetworkRule Log",
@@ -150,6 +150,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         break; 
       }
       case "AzureFirewallNatRuleLog": {
+        // TCP request from 194.79.199.174:61563 to 20.31.19.13:3389 was DNAT'ed to 10.13.2.4:3389
         row = {
           time: record.time.toString().split("T")[1],
           category: "NatRule Log",
@@ -157,7 +158,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           sourceip: ipport1[0],
           srcport: ipport1[1],
           targetip: ipport2[0],
-          targetport: ipport2[1].replace(".", ""),
+          targetport: ipport2[1],
           action: split[7],
           dataRow: record
         } as Model.FirewallDataRow;
