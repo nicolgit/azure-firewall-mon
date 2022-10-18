@@ -53,13 +53,13 @@ export class EventHubSourceService implements Model.IFirewallSource {
                   default: {
                     row = {
                       time: record.time.toString(),
-                      category: "UNMANAGED - " + record.category,
+                      category: "UNMANAGED Operation Name - " + record.category,
                       protocol: "-",
                       sourceip: "-",
                       srcport: "-",
                       targetip: "-",
                       targetport: "-",
-                      action: "-",
+                      action: ">> " + record.time + "<<",
                       dataRow: record
                     } as Model.FirewallDataRow;
                     break;
@@ -112,18 +112,58 @@ export class EventHubSourceService implements Model.IFirewallSource {
     const ipport1 = split[3].split(":");
     const ipport2 = split[5].split(":");
 
-    const row = {
-      time: record.time.toString().split("T")[1],
-      category: "NetworkRule",
-      protocol: split[0],
-      sourceip: ipport1[0],
-      srcport: ipport1[1],
-      targetip: ipport2[0],
-      targetport: ipport2[1].replace(".", ""),
-      action: split[7].replace(".", ""),
-      dataRow: record
-    } as Model.FirewallDataRow;
+    var row: Model.FirewallDataRow;
 
+    switch (record.operationName) {
+      case "AzureFirewallNetworkRuleLog": {
+        row = {
+          time: record.time.toString().split("T")[1],
+          category: "NetworkRule Log",
+          protocol: split[0],
+          sourceip: ipport1[0],
+          srcport: ipport1[1],
+          targetip: ipport2[0],
+          targetport: ipport2[1].replace(".", ""),
+          action: split[7].replace(".", ""),
+          dataRow: record
+        } as Model.FirewallDataRow;    
+        break; 
+      }
+      case "AzureFirewallNatRuleLog": {
+        row = {
+          time: record.time.toString().split("T")[1],
+          category: "NatRule Log",
+          protocol: split[0],
+          sourceip: ipport1[0],
+          srcport: ipport1[1],
+          targetip: ipport2[0],
+          targetport: ipport2[1].replace(".", ""),
+          action: split[7],
+          dataRow: record
+        } as Model.FirewallDataRow;
+        
+        for (let i = 8; i < split.length; i++) {
+          row.action += " " + split[i];
+        }
+        break; 
+      }
+      default: {
+        row = {
+          time: record.time.toString(),
+          category: "UNMANAGED SUB Operation Name - " + record.category,
+          protocol: "-",
+          sourceip: "-",
+          srcport: "-",
+          targetip: "-",
+          targetport: "-",
+          action: ">> " + record.time + "<<",
+          dataRow: record
+        } as Model.FirewallDataRow;
+        break; 
+      }
+    }
+
+    
     return row;
   }
 }

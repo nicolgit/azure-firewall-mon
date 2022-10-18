@@ -1,5 +1,6 @@
-$main-toolbar-size: 120px;
-$main-bottom-bar-size: 50px;
+$main-toolbar-size: 70px;
+$bottom-bar-size: 30px;
+$second-row-toolbar-size: 50px;
 
 .lottie-player {
   width: 250px;
@@ -9,21 +10,42 @@ $main-bottom-bar-size: 50px;
   margin-left: auto;
   margin-right: auto;
 }
+
 .lottie-text {
   width: 100%;
   text-align: center;
 }
 
 .wrapper {
-  height: calc(100% - $main-bottom-bar-size - $main-toolbar-size);
+  height: calc(100% - $bottom-bar-size - $second-row-toolbar-size - $main-toolbar-size);
 }
 
 .main-toolbar{
   height: $main-toolbar-size;
 }
 
-.main-bottom-bar{
-  height: $main-bottom-bar-size;
+.search-field {
+  position: absolute;
+  left: 50%;
+  width: 400px;
+  -webkit-transform: translate(-50%,0);
+  transform: translate(-50%, 0);
+}
+
+.second-row-toolbar {
+  height: $second-row-toolbar-size;
+}
+
+.bottom-bar {
+  background-color: lightgrey;
+  height: $bottom-bar-size;
+}
+
+.bottom-bar div {
+  margin-top:4px;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
 }
 
 table {
@@ -41,7 +63,6 @@ table {
   padding-right: 6px;
   background-color: lightgray;
 }
-
 
 .col-sm-2 {
   padding-left: 6px;

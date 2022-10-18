@@ -77,5 +77,20 @@ export interface EventHubBody {
           }
       }
   ]
+
+  {
+    "records": [{
+            "category": "AzureFirewallNetworkRule",
+            "time": "2022-10-18T10:19:05.9886250Z",
+            "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+            "operationName": "AzureFirewallNatRuleLog",
+            "properties": {
+                "msg": "TCP request from 194.79.199.174:61563 to 20.31.19.13:3389 was DNAT'ed to 10.13.2.4:3389"
+            }
+        }
+    ]
 }
+}
+
+
 */
