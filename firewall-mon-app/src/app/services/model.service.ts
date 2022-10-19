@@ -35,6 +35,7 @@ export interface FirewallDataRow {
   targetip: string;
   targetport: string;
   action: string;
+  policy: string;
   dataRow: any;
 };
 
@@ -91,6 +92,25 @@ export interface EventHubBody {
         }
     ]
 }
+}
+
+{
+    "category": "AzureFirewallApplicationRule",
+    "time": "2022-10-18T17:11:04.8852020Z",
+    "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+    "operationName": "AzureFirewallApplicationRuleLog",
+    "properties": {
+        "msg": "HTTPS request from 10.13.1.4:55611 to md-zz400hv4xnwl.z32.blob.storage.azure.net:443. Action: Deny. No rule matched. Proceeding with default action"
+    }
+}, 
+{
+    "category": "AzureFirewallApplicationRule",
+    "time": "2022-10-18T17:09:46.9543860Z",
+    "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+    "operationName": "AzureFirewallApplicationRuleLog",
+    "properties": {
+        "msg": "HTTPS request from 10.13.1.4:55583 to winatp-gw-cus3.microsoft.com:443. Action: Deny. Policy: my-policy. Rule Collection Group: DefaultApplicationRuleCollectionGroup. Rule Collection: block-sites. Rule: block-microsoft"
+    }
 }
 
 

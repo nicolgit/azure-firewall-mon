@@ -54,7 +54,8 @@ export class EventHubSourceService implements Model.IFirewallSource {
                   var row: Model.FirewallDataRow | undefined = undefined;
 
                   switch (record.category) {
-                    case "AzureFirewallNetworkRule": {
+                    case "AzureFirewallNetworkRule":
+                    case "AzureFirewallApplicationRule":  {
                       row = this.parseAzureFirewallNetworkRule(record);
                       break;
                     }
@@ -127,7 +128,6 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.outputLog(text);
   }
   private parseAzureFirewallNetworkRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
-    // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
     const split = record.properties.msg.split(" ");
     const ipport1 = split[3].split(":");
     const ipport2 = split[5].split(":");
@@ -136,9 +136,10 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
     switch (record.operationName) {
       case "AzureFirewallNetworkRuleLog": {
+        // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
         row = {
           time: record.time.toString().split("T")[1],
-          category: "NetworkRule Log",
+          category: "NetworkRule",
           protocol: split[0],
           sourceip: ipport1[0],
           srcport: ipport1[1],
@@ -150,14 +151,15 @@ export class EventHubSourceService implements Model.IFirewallSource {
         break; 
       }
       case "AzureFirewallNatRuleLog": {
+        // TCP request from 194.79.199.174:61563 to 20.31.19.13:3389 was DNAT'ed to 10.13.2.4:3389
         row = {
           time: record.time.toString().split("T")[1],
-          category: "NatRule Log",
+          category: "NatRule",
           protocol: split[0],
           sourceip: ipport1[0],
           srcport: ipport1[1],
           targetip: ipport2[0],
-          targetport: ipport2[1].replace(".", ""),
+          targetport: ipport2[1],
           action: split[7],
           dataRow: record
         } as Model.FirewallDataRow;
@@ -165,6 +167,31 @@ export class EventHubSourceService implements Model.IFirewallSource {
         for (let i = 8; i < split.length; i++) {
           row.action += " " + split[i];
         }
+        break; 
+      }
+      case "AzureFirewallApplicationRuleLog": {
+        //"HTTPS request from 10.13.1.4:55611 to md-zz400hv4xnwl.z32.blob.storage.azure.net:443. Action: Deny. No rule matched. Proceeding with default action"
+        //"HTTPS request from 10.13.1.4:55583 to winatp-gw-cus3.microsoft.com:443. Action: Deny. Policy: my-policy. Rule Collection Group: DefaultApplicationRuleCollectionGroup. Rule Collection: block-sites. Rule: block-microsoft"
+        row = {
+          time: record.time.toString().split("T")[1],
+          category: "ApplicationRule",
+          protocol: split[0],
+          sourceip: ipport1[0],
+          srcport: ipport1[1],
+          targetip: ipport2[0],
+          targetport: ipport2[1],
+          action: split[7].replace(".", ""),
+          dataRow: record
+        } as Model.FirewallDataRow;
+        
+        if (split[8] == "Policy:") {
+          row.policy = split[13].replace(".","")+ "> " + split[16].replace(".","") + "> " + split[18];
+        }
+        else {          
+            row.policy = "undefined - no rule matched - deny";
+        }
+
+        
         break; 
       }
       default: {
