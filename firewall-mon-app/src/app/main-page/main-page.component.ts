@@ -45,9 +45,9 @@ export class MainPageComponent implements OnInit {
             data.category.toLowerCase().includes(word) || 
             data.protocol.toLowerCase().includes(word) || 
             data.sourceip.toLowerCase().includes(word) || 
-            data.srcport.toLowerCase().includes(word) || 
+            data.srcport?.toLowerCase().includes(word) || 
             data.targetip.toLowerCase().includes(word) || 
-            data.targetport.toLowerCase().includes(word) || 
+            data.targetport?.toLowerCase().includes(word) || 
             data.action.toLowerCase().includes(word))
           {
             foundWords++;
@@ -78,7 +78,7 @@ export class MainPageComponent implements OnInit {
   }
 
 
-  public displayedColumns = ['time', 'category', 'protocol','sourceip', 'srcport','targetip', 'targetport', 'action'];
+  public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
   public skippedRows: number = 0;
   public filterText: string = "";

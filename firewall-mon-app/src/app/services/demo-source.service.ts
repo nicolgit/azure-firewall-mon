@@ -15,6 +15,7 @@ export class DemoSourceService implements IFirewallSource {
   private actionsArray: Array<string> = ["ACCEPT", "DROP"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
   private categories: Array<string> = ["NetworkRule", "ApplicationRule", "NatRule"];
+  private policies: Array<string> = ["Category01>Group01>Policy01", "Category02>Group02>Policy02", "Category01>Group01>Policy02" ];
   private DATA: Array<FirewallDataRow> = [];
 
   public skippedRows: number = 0;
@@ -36,7 +37,8 @@ export class DemoSourceService implements IFirewallSource {
         srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
         targetip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
         targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
-        action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)]
+        action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
+        policy: this.policies[Math.floor(Math.random() * this.policies.length)],
       } as FirewallDataRow;
       this.DATA.push(row);
     }
@@ -54,7 +56,8 @@ export class DemoSourceService implements IFirewallSource {
           srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
           targetip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
           targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
-          action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)]
+          action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
+          policy: this.policies[Math.floor(Math.random() * this.policies.length)],
         } as FirewallDataRow;
 
         this.DATA.unshift(row);
