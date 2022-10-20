@@ -33,40 +33,39 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
     <ng-container matColumnDef="time">
-      <th mat-header-cell
-          *matHeaderCellDef
-          class="col-sm">Timestamp</th>
+      <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
       <td mat-cell
           *matCellDef="let element"
           class="col-sm">{{element.time}}</td>
     </ng-container>
 
     <ng-container matColumnDef="category">
-      <th mat-header-cell *matHeaderCellDef class="col-sm-2">Category</th>
+      <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true">Category</th>
       <td mat-cell *matCellDef="let element" class="col-sm-2">{{element.category}}</td>
     </ng-container>
 
     <ng-container matColumnDef="protocol">
-      <th mat-header-cell *matHeaderCellDef class="col-small">Protocol</th>
+      <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true">Protocol</th>
       <td mat-cell *matCellDef="let element" class="col-small">{{element.protocol}}</td>
     </ng-container>
 
     <ng-container matColumnDef="source">
-      <th mat-header-cell *matHeaderCellDef>Source</th>
+      <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
       <td mat-cell *matCellDef="let element">{{element.sourceip}}:{{element.srcport}}</td>
     </ng-container>
 
     <ng-container matColumnDef="target">
-      <th mat-header-cell *matHeaderCellDef>Target</th>
+      <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
       <td mat-cell *matCellDef="let element">{{element.targetip}}:{{element.targetport}}</td>
     </ng-container>
 
     <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef>ACTION</th>
+      <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
       <td mat-cell *matCellDef="let element">{{element.action}}</td>
     </ng-container>    
+
     <ng-container matColumnDef="policy">
-      <th mat-header-cell *matHeaderCellDef>POLICY</th>
+      <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
       <td mat-cell *matCellDef="let element">{{element.policy}}</td>
     </ng-container>
   </table>

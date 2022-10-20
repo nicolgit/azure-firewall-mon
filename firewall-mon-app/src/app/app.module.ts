@@ -18,13 +18,15 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
+import { ResizeColumnDirective } from './directives/resize-column.directive';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   declarations: [
     AppComponent,
     LoginComponent,
-    MainPageComponent
+    MainPageComponent,
+    ResizeColumnDirective
   ],
   imports: [
     BrowserModule,
