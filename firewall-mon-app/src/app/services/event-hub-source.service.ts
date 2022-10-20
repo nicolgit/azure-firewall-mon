@@ -37,7 +37,8 @@ export class EventHubSourceService implements Model.IFirewallSource {
       
       this.outputMessage(`done! reading events from partitions: ${partitionIds.join(", ")}`);
       await new Promise(resolve => setTimeout(resolve, this.defaultSleepTime));
-      this.subscription = this.consumerClient.subscribe({
+      this.subscription = this.consumerClient.subscribe( 
+        {
           processEvents: async (events, context) => {
             if (events.length === 0) {
               console.log(`No events received within wait time. Waiting for next interval`);
@@ -93,7 +94,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
             console.log(`${err}`);
           }
         },
-        { startPosition: earliestEventPosition  }
+        { startPosition: earliestEventPosition, maxBatchSize: 200 }
       );
 
       // After 30 seconds, stop processing.
