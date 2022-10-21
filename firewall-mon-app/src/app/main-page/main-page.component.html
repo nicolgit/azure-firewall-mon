@@ -2,6 +2,12 @@
   <mat-toolbar-row>
     <span>Azure Firewall mon</span>
     <span class="example-spacer"></span>
+    
+    <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
+      <span matPrefix class="material-symbols-outlined">search</span>
+      <mat-label>filter</mat-label>
+      <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
+    </mat-form-field>
   </mat-toolbar-row>
 </mat-toolbar>
 
