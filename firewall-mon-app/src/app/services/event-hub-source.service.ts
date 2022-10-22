@@ -179,32 +179,56 @@ export class EventHubSourceService implements Model.IFirewallSource {
         //"HTTPS request from 10.13.1.4:55611 to md-zz400hv4xnwl.z32.blob.storage.azure.net:443. Action: Deny. No rule matched. Proceeding with default action"
         //"HTTPS request from 10.13.1.4:55583 to winatp-gw-cus3.microsoft.com:443. Action: Deny. Policy: my-policy. Rule Collection Group: DefaultApplicationRuleCollectionGroup. Rule Collection: block-sites. Rule: block-microsoft"
         //"HTTP  request from 10.13.1.4:55202 to au.download.windowsupdate.com:80. Url: au.download.windowsupdate.com/c/msdownload/update/software/updt/2021/01/windows10.0-kb4589208-v2-x64_c7af21cdf923f050a3dc8e7924c0245ee651da56.cab. Action: Deny. No rule matched. Proceeding with default action"
+  
+        row = {} as Model.FirewallDataRow;
         
-        const HTTP = record.properties.msg.substring(0, 4);
-        const split = record.properties.msg.substring(6).split(" ");
-        const ipport1 = split[2].split(":");
-        const ipport2 = split[4].split(":");
-        
-        row = {
-          time: record.time.toString().split("T")[1],
-          category: "ApplicationRule",
-          protocol: HTTP,
-          sourceip: ipport1[0],
-          srcport: ipport1[1],
-          targetip: ipport2[0],
-          targetport: ipport2[1],
-          action: split[6].replace(".", ""),
-          dataRow: record
-        } as Model.FirewallDataRow;
-        
-        if (split[7] == "Policy:") {
-          row.policy = split[12].replace(".","")+ "> " + split[15].replace(".","") + "> " + split[17];
-        }
-        else {          
-            row.policy = "no rule matched";
+        const splitStops = record.properties.msg.split(". ");
+        const splitSpaces = record.properties.msg.substring(6).split(" ");
+        const ipport1 = splitSpaces[2].split(":");
+        const ipport2 = splitSpaces[4].split(":");
+
+        row.time = record.time.toString();
+        row.category = "ApplicationRule";
+        row.protocol = splitStops[0].split(" ")[0];
+        row.policy ="";
+
+        row.sourceip = ipport1[0];
+        row.srcport = ipport1[1];
+        row.targetip = ipport2[0];
+        row.targetport = ipport2[1];
+        row.dataRow = record;
+
+        splitStops.forEach((sentence, index) => {
+          var words = sentence.split(": ");
+          switch (words[0]) {
+            case "Action":{
+              row.action = words[1];
+              break;
+            }
+            case "Policy": {
+              break;
+            }
+            case "Rule Collection Group":
+            case "Rule Collection": 
+            case "Rule": {
+              row.policy += ">" + words[1];
+              break;
+            }
+            case "Url": {
+              row.targetUrl = words[1];
+              break;
+            }
+            case "No rule matched. Proceeding with default action": {
+              row.policy = "N/A";
+              break;
+            }
+          }           
+        });
+
+        if (row.policy.startsWith(">")) {
+          row.policy = row.policy.substring(1);
         }
 
-        
         break; 
       }
       default: {
@@ -223,7 +247,6 @@ export class EventHubSourceService implements Model.IFirewallSource {
       }
     }
 
-    
     return row;
   }
 }
