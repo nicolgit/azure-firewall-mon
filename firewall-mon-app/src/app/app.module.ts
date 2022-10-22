@@ -40,7 +40,7 @@ import { ResizeColumnDirective } from './directives/resize-column.directive';
     MatTableModule,
     ScrollingModule,
     TableVirtualScrollModule,
-    MatToolbarModule, 
+    MatToolbarModule
   ],
   providers: [
     DatePipe

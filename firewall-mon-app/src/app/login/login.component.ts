@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
     private model: ModelService,
     private router: Router
     ) {
-    
+      this.setStart();
    }
 
   ngOnInit(): void {
@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   eventHubConnectionString: string = this.model.eventHubConnection;
   eventHubConsumerGroup: string = this.model.eventHubConsumerGroup;
   isDemoMode: boolean = this.model.demoMode;
-  isStartDisabled: boolean = true;
+  isStartDisabled: boolean = false;
 
   setDemo(completed: boolean) {
       this.isDemoMode = completed;
@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
         this.model.eventHubConnection = this.eventHubConnectionString;
         this.model.eventHubConsumerGroup = this.eventHubConsumerGroup;
         this.model.demoMode = this.isDemoMode;
+        this.model.save();
 
         this.router.navigateByUrl('/live')
       }

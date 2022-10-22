@@ -1,20 +1,47 @@
 import { Injectable } from '@angular/core';
 import { filter } from 'rhea-promise';
+import { EncryptionService } from './encryption.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ModelService {
 
-  constructor() { 
+  constructor(encryptionSvc: EncryptionService) { 
+    this.encryptionSvc = encryptionSvc;
     this.demoMode = false;
     this.eventHubConnection = "";
     this.eventHubConsumerGroup = "$Default";
+
+    this.load();
+  }
+  private encryptionSvc: EncryptionService; 
+  public demoMode: boolean;
+  public eventHubConnection: string;
+  public eventHubConsumerGroup: string;
+
+  public async load(): Promise<void> {
+    var _demoMode = localStorage.getItem("demoMode");
+    if (_demoMode != null) {
+      this.demoMode = JSON.parse(_demoMode);
+    }
+
+    var _eventHubConnection = localStorage.getItem("eventHubConnection");
+    if (_eventHubConnection != null) {
+      this.eventHubConnection = this.encryptionSvc.decrypt(_eventHubConnection);
+    }
+
+    var _eventHubConsumerGroup = localStorage.getItem("eventHubConsumerGroup");
+    if (_eventHubConsumerGroup != null) {
+      this.eventHubConsumerGroup = _eventHubConsumerGroup;
+    }
   }
 
-  demoMode: boolean;
-  eventHubConnection: string;
-  eventHubConsumerGroup: string;
+  public async save(): Promise<void> {
+    localStorage.setItem("demoMode", this.demoMode.toString());
+    localStorage.setItem("eventHubConnection", this.encryptionSvc.encrypt(this.eventHubConnection));
+    localStorage.setItem("eventHubConsumerGroup", this.eventHubConsumerGroup);
+  }  
 }
 
 export interface IFirewallSource {

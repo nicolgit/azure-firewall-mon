@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import * as Model from '../services/model.service';
 
 import { EventHubConsumerClient, earliestEventPosition, latestEventPosition } from "@azure/event-hubs";
-//const { EventHubConsumerClient } = require("@azure/event-hubs");
+import { receiveMessageOnPort } from 'worker_threads';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,8 @@ import { EventHubConsumerClient, earliestEventPosition, latestEventPosition } fr
 export class EventHubSourceService implements Model.IFirewallSource {
   private DATA: Array<Model.FirewallDataRow> = [];
 
-  constructor(private model:Model.ModelService,
+  constructor(
+    private model:Model.ModelService,
     private datePipe: DatePipe)  {
   }
   private defaultSleepTime: number = 1500;
@@ -129,15 +130,15 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.outputLog(text);
   }
   private parseAzureFirewallNetworkRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
-    const split = record.properties.msg.split(" ");
-    const ipport1 = split[3].split(":");
-    const ipport2 = split[5].split(":");
-
     var row: Model.FirewallDataRow;
 
     switch (record.operationName) {
       case "AzureFirewallNetworkRuleLog": {
         // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
+        const split = record.properties.msg.split(" ");
+        const ipport1 = split[3].split(":");
+        const ipport2 = split[5].split(":");
+
         row = {
           time: record.time.toString().split("T")[1],
           category: "NetworkRule",
@@ -153,6 +154,10 @@ export class EventHubSourceService implements Model.IFirewallSource {
       }
       case "AzureFirewallNatRuleLog": {
         // TCP request from 194.79.199.174:61563 to 20.31.19.13:3389 was DNAT'ed to 10.13.2.4:3389
+        const split = record.properties.msg.split(" ");
+        const ipport1 = split[3].split(":");
+        const ipport2 = split[5].split(":");
+
         row = {
           time: record.time.toString().split("T")[1],
           category: "NatRule",
@@ -173,23 +178,30 @@ export class EventHubSourceService implements Model.IFirewallSource {
       case "AzureFirewallApplicationRuleLog": {
         //"HTTPS request from 10.13.1.4:55611 to md-zz400hv4xnwl.z32.blob.storage.azure.net:443. Action: Deny. No rule matched. Proceeding with default action"
         //"HTTPS request from 10.13.1.4:55583 to winatp-gw-cus3.microsoft.com:443. Action: Deny. Policy: my-policy. Rule Collection Group: DefaultApplicationRuleCollectionGroup. Rule Collection: block-sites. Rule: block-microsoft"
+        //"HTTP  request from 10.13.1.4:55202 to au.download.windowsupdate.com:80. Url: au.download.windowsupdate.com/c/msdownload/update/software/updt/2021/01/windows10.0-kb4589208-v2-x64_c7af21cdf923f050a3dc8e7924c0245ee651da56.cab. Action: Deny. No rule matched. Proceeding with default action"
+        
+        const HTTP = record.properties.msg.substring(0, 4);
+        const split = record.properties.msg.substring(6).split(" ");
+        const ipport1 = split[2].split(":");
+        const ipport2 = split[4].split(":");
+        
         row = {
           time: record.time.toString().split("T")[1],
           category: "ApplicationRule",
-          protocol: split[0],
+          protocol: HTTP,
           sourceip: ipport1[0],
           srcport: ipport1[1],
           targetip: ipport2[0],
           targetport: ipport2[1],
-          action: split[7].replace(".", ""),
+          action: split[6].replace(".", ""),
           dataRow: record
         } as Model.FirewallDataRow;
         
-        if (split[8] == "Policy:") {
-          row.policy = split[13].replace(".","")+ "> " + split[16].replace(".","") + "> " + split[18];
+        if (split[7] == "Policy:") {
+          row.policy = split[12].replace(".","")+ "> " + split[15].replace(".","") + "> " + split[17];
         }
         else {          
-            row.policy = "undefined - no rule matched - deny";
+            row.policy = "no rule matched";
         }
 
         

@@ -46,7 +46,7 @@ export class DemoSourceService implements IFirewallSource {
     this.onDataArrived?.(this.DATA);
 
     this.intervalId = setInterval(() => {
-      for (let i = 0; i < Math.random() * 600; i++) {       
+      for (let i = 0; i < Math.random() * 2000; i++) {       
         if (Math.random() > 0.2) {
           var row = {
             time: new Date().toLocaleString(),
