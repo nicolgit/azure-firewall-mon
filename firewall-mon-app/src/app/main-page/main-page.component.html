@@ -74,6 +74,11 @@
       <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
       <td mat-cell *matCellDef="let element">{{element.policy}}</td>
     </ng-container>
+
+    <ng-container matColumnDef="url">
+      <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">URL</th>
+      <td mat-cell *matCellDef="let element">{{element.targetUrl}}</td>
+    </ng-container>
   </table>
 
 </cdk-virtual-scroll-viewport>
