@@ -78,7 +78,7 @@ export class MainPageComponent implements OnInit {
   }
 
 
-  public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy'];
+  public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy', 'targetUrl'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
   public skippedRows: number = 0;
   public filterText: string = "";
