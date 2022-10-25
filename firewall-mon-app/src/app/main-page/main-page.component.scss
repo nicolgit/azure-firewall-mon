@@ -1,6 +1,6 @@
 $main-toolbar-size: 70px;
-$bottom-bar-size: 30px;
-$second-row-toolbar-size: 60px;
+$bottom-bar-size: 60px;
+$second-row-toolbar-size: 50px;
 
 .lottie-player {
   width: 250px;
@@ -20,11 +20,8 @@ $second-row-toolbar-size: 60px;
   height: calc(100% - $bottom-bar-size - $second-row-toolbar-size - $main-toolbar-size);
 }
 
-.main-toolbar{
-  height: $main-toolbar-size;
-}
-
 .search-field {
+  font-size: 14px;
   position: absolute;
   left: 50%;
   width: 400px;
@@ -39,6 +36,7 @@ $second-row-toolbar-size: 60px;
 .bottom-bar {
   background-color: lightgrey;
   height: $bottom-bar-size;
+  padding: 6px;
 }
 
 .bottom-bar div {

@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule} from '@angular/material/form-field';
+import { MatExpansionModule} from '@angular/material/expansion';
 import { MatInputModule} from '@angular/material/input';
 import { MatCheckboxModule} from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table'  
@@ -35,6 +36,7 @@ import { ResizeColumnDirective } from './directives/resize-column.directive';
     BrowserAnimationsModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatExpansionModule,
     MatInputModule,
     MatCheckboxModule,
     MatTableModule,
