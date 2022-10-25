@@ -1,4 +1,7 @@
-<mat-toolbar color="primary" class="main-toolbar">
+<div class="parent">
+
+
+  <mat-toolbar color="primary" class="main-toolbar">
   <mat-toolbar-row>
     <span>Azure Firewall mon</span>
     <span class="example-spacer"></span>
@@ -9,90 +12,84 @@
       <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
     </mat-form-field>
   </mat-toolbar-row>
-</mat-toolbar>
+  </mat-toolbar>
 
-<div class="second-row-toolbar">
+  <div class="main" *ngIf="totalRows==0">
+    <lottie-player src="assets/lottie/lf20_giodppcr.json"  
+        background="transparent"  
+        speed="1" 
+        loop  
+        autoplay
+        class="lottie-player">
+    </lottie-player>
+    <div class="lottie-text">{{message}}</div>
+  </div>
+  
 
-</div>
+  <cdk-virtual-scroll-viewport tvsItemSize class="main mat-elevation-z2"  *ngIf="totalRows>0">
+    <table mat-table [dataSource]="dataSource">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
+        <td mat-cell
+            (click)="onRowClicked(element)"
+            *matCellDef="let element"
+            class="col-sm">{{element.time}}</td>
+      </ng-container>
 
-<div class="wrapper" *ngIf="totalRows==0">
-  <lottie-player src="assets/lottie/lf20_giodppcr.json"  
-      background="transparent"  
-      speed="1" 
-      loop  
-      autoplay
-      class="lottie-player">
-  </lottie-player>
-  <div class="lottie-text">{{message}}</div>
-</div>
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true">Category</th>
+        <td mat-cell *matCellDef="let element" class="col-sm-2">{{element.category}}</td>
+      </ng-container>
 
-<cdk-virtual-scroll-viewport tvsItemSize class="wrapper mat-elevation-z2"  *ngIf="totalRows>0">
-  <table mat-table [dataSource]="dataSource">
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <ng-container matColumnDef="protocol">
+        <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true">Protocol</th>
+        <td mat-cell *matCellDef="let element" class="col-small">{{element.protocol}}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="time">
-      <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
-      <td mat-cell
-          (click)="onRowClicked(element)"
-          *matCellDef="let element"
-          class="col-sm">{{element.time}}</td>
-    </ng-container>
+      <ng-container matColumnDef="source">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
+        <td mat-cell *matCellDef="let element">{{element.sourceip}}:{{element.srcport}}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="category">
-      <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true">Category</th>
-      <td mat-cell *matCellDef="let element" class="col-sm-2">{{element.category}}</td>
-    </ng-container>
+      <ng-container matColumnDef="target">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
+        <td mat-cell *matCellDef="let element">{{element.targetip}}:{{element.targetport}}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="protocol">
-      <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true">Protocol</th>
-      <td mat-cell *matCellDef="let element" class="col-small">{{element.protocol}}</td>
-    </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
+        <td mat-cell *matCellDef="let element">{{element.action}}</td>
+      </ng-container>    
 
-    <ng-container matColumnDef="source">
-      <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
-      <td mat-cell *matCellDef="let element">{{element.sourceip}}:{{element.srcport}}</td>
-    </ng-container>
+      <ng-container matColumnDef="policy">
+        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
+        <td mat-cell *matCellDef="let element">{{element.policy}}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="target">
-      <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
-      <td mat-cell *matCellDef="let element">{{element.targetip}}:{{element.targetport}}</td>
-    </ng-container>
+      <ng-container matColumnDef="targetUrl">
+        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">URL</th>
+        <td mat-cell *matCellDef="let element">{{element.targetUrl}}</td>
+      </ng-container>
+    </table>
+  </cdk-virtual-scroll-viewport>
 
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
-      <td mat-cell *matCellDef="let element">{{element.action}}</td>
-    </ng-container>    
-
-    <ng-container matColumnDef="policy">
-      <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
-      <td mat-cell *matCellDef="let element">{{element.policy}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="targetUrl">
-      <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">URL</th>
-      <td mat-cell *matCellDef="let element">{{element.targetUrl}}</td>
-    </ng-container>
-  </table>
-</cdk-virtual-scroll-viewport>
-
-<div class="bottom-bar" *ngIf="totalRows>0"> 
-  <!--
-  <mat-accordion>
-    <mat-expansion-panel (opened)="panelOpenState = true"
-                         (closed)="panelOpenState = false">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Detail panel
-        </mat-panel-title>
-        <mat-panel-description>
-          {{selectedRowJson != null ? 'row selected' : ''}}
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <pre>{{selectedRowJson}}</pre>
-    </mat-expansion-panel>
-  </mat-accordion>
--->?
-    <div>rows {{skippedRows}} skipped, {{visibleRows}}/{{totalRows}} visible/available</div>
+  <div class="main-accordionbar" *ngIf="totalRows>0">
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="panelOpenState == true" (opened)="panelOpenState = true"
+                          (closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Detail panel
+          </mat-panel-title>
+          <mat-panel-description>
+            rows {{skippedRows}} skipped, {{visibleRows}}/{{totalRows}} visible/available
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <pre>{{selectedRowJson}}</pre>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
 </div>

@@ -140,7 +140,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         const ipport2 = split[5].split(":");
 
         row = {
-          time: record.time.toString().split("T")[1],
+          time: record.time.toString(),
           category: "NetworkRule",
           protocol: split[0],
           sourceip: ipport1[0],
@@ -159,7 +159,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         const ipport2 = split[5].split(":");
 
         row = {
-          time: record.time.toString().split("T")[1],
+          time: record.time.toString(),
           category: "NatRule",
           protocol: split[0],
           sourceip: ipport1[0],

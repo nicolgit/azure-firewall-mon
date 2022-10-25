@@ -73,6 +73,14 @@ export class MainPageComponent implements OnInit {
 
   public onRowClicked(row: FirewallDataRow) {
     this.selectedRow = row.dataRow;
+
+    if (this.selectedRowJson === JSON.stringify(row.dataRow, null, 2)) {
+      this.panelOpenState = ! this.panelOpenState;
+    }
+    else {
+      this.panelOpenState = true;
+    }
+
     this.selectedRowJson = JSON.stringify(row.dataRow, null, 2);
   }
 
