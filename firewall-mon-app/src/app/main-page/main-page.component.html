@@ -77,7 +77,8 @@
   </table>
 </cdk-virtual-scroll-viewport>
 
-<div class="bottom-bar" *ngIf="totalRows>0" style="padding: 6px;"> 
+<div class="bottom-bar" *ngIf="totalRows>0"> 
+  <!--
   <mat-accordion>
     <mat-expansion-panel (opened)="panelOpenState = true"
                          (closed)="panelOpenState = false">
@@ -92,6 +93,6 @@
       <pre>{{selectedRowJson}}</pre>
     </mat-expansion-panel>
   </mat-accordion>
-  
+-->?
     <div>rows {{skippedRows}} skipped, {{visibleRows}}/{{totalRows}} visible/available</div>
 </div>
