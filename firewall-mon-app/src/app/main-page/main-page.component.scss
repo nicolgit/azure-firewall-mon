@@ -1,6 +1,4 @@
-$main-toolbar-size: 70px;
-$bottom-bar-size: 60px;
-$second-row-toolbar-size: 50px;
+$bottom-bar-size: 30px;
 
 .lottie-player {
   width: 250px;
@@ -16,9 +14,6 @@ $second-row-toolbar-size: 50px;
   text-align: center;
 }
 
-.wrapper {
-  height: calc(100% - $bottom-bar-size - $second-row-toolbar-size - $main-toolbar-size);
-}
 
 .search-field {
   font-size: 14px;
@@ -29,17 +24,30 @@ $second-row-toolbar-size: 50px;
   transform: translate(-50%, 0);
 }
 
-.second-row-toolbar {
-  height: $second-row-toolbar-size;
+.parent {
+  display: flex;
+  flex-flow: column;
+  align-content: stretch;
+  width: 100%;
+  height: 100%;
+  justify-content: space-around;
 }
 
-.bottom-bar {
-  background-color: lightgrey;
-  height: $bottom-bar-size;
+.main-toolbar {
+  flex-grow: 0;
+}
+
+.main{
+  flex-grow: 1;
+  margin: 6px;
+}
+
+.main-accordionbar {
+  flex-grow: 0;
   padding: 6px;
 }
 
-.bottom-bar div {
+.main-bottombar div {
   margin-top:4px;
   display: inline-block;
   width: 100%;
@@ -71,8 +79,9 @@ table {
   width: 60px;
 }
 
-
-
+.col {
+  background-color: white;
+}
 
 
 .mat-table {
