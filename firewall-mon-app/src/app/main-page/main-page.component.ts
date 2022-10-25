@@ -71,6 +71,11 @@ export class MainPageComponent implements OnInit {
     this.message = message;
   }
 
+  public onRowClicked(row: FirewallDataRow) {
+    this.selectedRow = row.dataRow;
+    this.selectedRowJson = JSON.stringify(row.dataRow, null, 2);
+  }
+
   filterTextChanged(): void {
     this.dataSource.filter = this.filterText;
     this.dataSource.filteredData.length;
@@ -85,6 +90,10 @@ export class MainPageComponent implements OnInit {
   public totalRows: number = 0;
   public visibleRows: number = 0;
   public message: string = "";
+  public selectedRow: FirewallDataRow|null = null;
+  public selectedRowJson: string|null = null;
+
+  public panelOpenState = false;
 
   ngOnInit(): void {
     this.firewallSource.connect();    

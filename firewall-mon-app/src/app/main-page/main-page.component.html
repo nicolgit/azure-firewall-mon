@@ -12,11 +12,7 @@
 </mat-toolbar>
 
 <div class="second-row-toolbar">
-  <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
-    <span matPrefix class="material-symbols-outlined">search</span>
-    <mat-label>filter</mat-label>
-    <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
-  </mat-form-field>
+
 </div>
 
 
@@ -31,8 +27,6 @@
   <div class="lottie-text">{{message}}</div>
 </div>
 
-
-
 <cdk-virtual-scroll-viewport tvsItemSize class="wrapper mat-elevation-z2"  *ngIf="totalRows>0">
   <table mat-table [dataSource]="dataSource">
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -41,6 +35,7 @@
     <ng-container matColumnDef="time">
       <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
       <td mat-cell
+          (click)="onRowClicked(element)"
           *matCellDef="let element"
           class="col-sm">{{element.time}}</td>
     </ng-container>
@@ -80,8 +75,23 @@
       <td mat-cell *matCellDef="let element">{{element.targetUrl}}</td>
     </ng-container>
   </table>
-
 </cdk-virtual-scroll-viewport>
-<div class="bottom-bar" *ngIf="totalRows>0">
+
+<div class="bottom-bar" *ngIf="totalRows>0" style="padding: 6px;"> 
+  <mat-accordion>
+    <mat-expansion-panel (opened)="panelOpenState = true"
+                         (closed)="panelOpenState = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Detail panel
+        </mat-panel-title>
+        <mat-panel-description>
+          {{selectedRowJson != null ? 'row selected' : ''}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <pre>{{selectedRowJson}}</pre>
+    </mat-expansion-panel>
+  </mat-accordion>
+  
     <div>rows {{skippedRows}} skipped, {{visibleRows}}/{{totalRows}} visible/available</div>
 </div>
