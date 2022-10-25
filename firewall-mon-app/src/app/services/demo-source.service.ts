@@ -40,6 +40,8 @@ export class DemoSourceService implements IFirewallSource {
         action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
         policy: this.policies[Math.floor(Math.random() * this.policies.length)],
       } as FirewallDataRow;
+
+
       this.DATA.push(row);
     }
 
@@ -59,6 +61,10 @@ export class DemoSourceService implements IFirewallSource {
             action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
             policy: this.policies[Math.floor(Math.random() * this.policies.length)],
           } as FirewallDataRow;
+
+          if (Math.random() > 0.8) {
+            row.targetUrl = "https://www." + this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)].replace(/ /g,"") + ".com";
+          }
 
           this.DATA.unshift(row);
           this.onDataArrived?.(this.DATA);
@@ -81,6 +87,7 @@ export class DemoSourceService implements IFirewallSource {
     this.onMessageArrived?.(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
     await new Promise(resolve => setTimeout(resolve, 1200));
   }
+
 
   private randomQuotes:Array<string> = [
     "Reticulating splines...",
