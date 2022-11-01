@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { getuid } from 'process';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 
@@ -27,6 +28,7 @@ export class DemoSourceService implements IFirewallSource {
     await this.randomQuote();
     await this.randomQuote();
     await this.randomQuote();
+    this.onMessageArrived?.(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
     
     for (let i = 0; i < 10000; i++) {
       var row = {
@@ -39,6 +41,7 @@ export class DemoSourceService implements IFirewallSource {
         targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
         action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
         policy: this.policies[Math.floor(Math.random() * this.policies.length)],
+        dataRow: this.buildDatarow()
       } as FirewallDataRow;
 
 
@@ -48,7 +51,8 @@ export class DemoSourceService implements IFirewallSource {
     this.onDataArrived?.(this.DATA);
 
     this.intervalId = setInterval(() => {
-      for (let i = 0; i < Math.random() * 2000; i++) {       
+      const moreRows: number = Math.floor(Math.random() * 2000);
+      for (let i = 0; i < moreRows; i++) {       
         if (Math.random() > 0.2) {
           var row = {
             time: new Date().toLocaleString(),
@@ -60,22 +64,31 @@ export class DemoSourceService implements IFirewallSource {
             targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
             action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
             policy: this.policies[Math.floor(Math.random() * this.policies.length)],
+            dataRow: this.buildDatarow()
           } as FirewallDataRow;
 
           if (Math.random() > 0.8) {
             row.targetUrl = "https://www." + this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)].replace(/ /g,"") + ".com";
           }
-
-          this.DATA.unshift(row);
-          this.onDataArrived?.(this.DATA);
         }
         else {
-          this.skippedRows ++;
-          this.onRowSkipped?.(this.skippedRows);
+          row = {
+            time: new Date().toLocaleString(),
+            category: "SKIPPED",
+            action: "unmanaged row type",
+            dataRow: this.buildDatarow()
+          } as FirewallDataRow;
+
+          this.skippedRows++;
+          this.onRowSkipped?.(this.skippedRows); 
         }
 
-      console.log("DEMO Source heartbit");
+      this.DATA.unshift(row);
+      this.onDataArrived?.(this.DATA);
       }
+      
+      this.onMessageArrived?.( moreRows + " more events received as of " + new Date().toLocaleString());
+      console.log("DEMO Source heartbit");
     }, 3000);
   }
 
@@ -83,9 +96,21 @@ export class DemoSourceService implements IFirewallSource {
     clearInterval(this.intervalId);
   }
 
+  private buildDatarow():any {
+    const datarow:string = `{
+      "category": "AzureFirewallNetworkRule",
+      "time": "2022-10-18T10:19:05.9886250Z",
+      "resourceId": "/SUBSCRIPTIONS/` + crypto.randomUUID() + `",
+      "operationName": "AzureFirewallNatRuleLog",
+      "properties": {
+          "msg": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      }}`
+    return JSON.parse(datarow);
+  }
+
   private async randomQuote() {
     this.onMessageArrived?.(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
 

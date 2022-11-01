@@ -64,7 +64,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                     default: {
                       row = {
                         time: record.time.toString(),
-                        category: "UNMANAGED Operation Name - " + record.category,
+                        category: "SKIPPED UNMANAGED Operation Name - " + record.category,
                         protocol: "-",
                         sourceip: "-",
                         srcport: "-",
@@ -73,16 +73,23 @@ export class EventHubSourceService implements Model.IFirewallSource {
                         action: ">> " + record.time + "<<",
                         dataRow: record
                       } as Model.FirewallDataRow;
+
+                      this.skippedRows++;
+                      this.onRowSkipped?.(this.skippedRows);
                       break;
                     }
                   }
-                  this.DATA.unshift(row);
                 }
-                else
-                  {
-                    this.skippedRows++;
-                    this.onRowSkipped?.(this.skippedRows);
-                  }
+                else {
+                  row = {
+                    time: record.time.toString(),
+                    category: "SKIPPED UNMANAGED Resource Type - " + resourceId,
+                  } as Model.FirewallDataRow;
+
+                  this.skippedRows++;
+                  this.onRowSkipped?.(this.skippedRows); 
+                }
+                this.DATA.unshift(row);
               }
 
               console.log(`Received event: '${JSON.stringify(event.body)}' from partition: '${context.partitionId}' and consumer group: '${context.consumerGroup}'`);
@@ -234,7 +241,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
       default: {
         row = {
           time: record.time.toString(),
-          category: "UNMANAGED SUB Operation Name - " + record.category,
+          category: "SKIPPED - UNMANAGED SUB Operation Name - " + record.category,
           protocol: "-",
           sourceip: "-",
           srcport: "-",
@@ -243,6 +250,9 @@ export class EventHubSourceService implements Model.IFirewallSource {
           action: ">> " + record.time + "<<",
           dataRow: record
         } as Model.FirewallDataRow;
+
+        this.skippedRows++;
+        this.onRowSkipped?.(this.skippedRows);
         break; 
       }
     }
