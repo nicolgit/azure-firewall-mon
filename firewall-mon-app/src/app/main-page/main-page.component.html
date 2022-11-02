@@ -68,7 +68,7 @@
 
       <ng-container matColumnDef="targetUrl">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">URL</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">{{element.targetUrl}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.targetUrl)"></span></td>
       </ng-container>
     </table>
   </cdk-virtual-scroll-viewport>

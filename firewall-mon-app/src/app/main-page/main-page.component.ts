@@ -114,6 +114,16 @@ export class MainPageComponent implements OnInit {
       return null;
   }
 
+  public highlightSelection(text:string): string {
+    const words = this.filterText.split(" ");
+    
+    words.forEach(word => {
+      text = text?.replace(word, '<b>' + word + '</b>');      
+    });
+
+    return text;
+  }
+
   ngOnInit(): void {
     this.firewallSource.connect();    
   }
