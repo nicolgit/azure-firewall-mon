@@ -58,7 +58,7 @@
 
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">{{element.action}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [ngStyle]="setActionBackground(element.action)">{{element.action}}</td>
       </ng-container>    
 
       <ng-container matColumnDef="policy">

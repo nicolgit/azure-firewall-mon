@@ -1,3 +1,4 @@
+import { DataSource } from '@angular/cdk/collections';
 import { Injectable } from '@angular/core';
 import { getuid } from 'process';
 
@@ -16,7 +17,7 @@ export class DemoSourceService implements IFirewallSource {
   private actionsArray: Array<string> = ["ACCEPT", "DROP"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
   private categories: Array<string> = ["NetworkRule", "ApplicationRule", "NatRule"];
-  private policies: Array<string> = ["Category01>Group01>Policy01", "Category02>Group02>Policy02", "Category01>Group01>Policy02" ];
+  private policies: Array<string> = ["Category01>Group01>Policy01", "Category02>Group02>Policy02", "Category03>Group03>Policy03", "Category04>Group04>Policy04" ];
   private DATA: Array<FirewallDataRow> = [];
 
   public skippedRows: number = 0;
@@ -28,9 +29,9 @@ export class DemoSourceService implements IFirewallSource {
     await this.randomQuote();
     await this.randomQuote();
     await this.randomQuote();
-    this.onMessageArrived?.(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
-    
-    for (let i = 0; i < 10000; i++) {
+    this.onMessageArrived?.("");
+
+    for (let i = 0; i < 50000; i++) {
       var row = {
         time: new Date().toLocaleString(),
         category: this.categories[Math.floor(Math.random() * this.categories.length)],
@@ -43,7 +44,6 @@ export class DemoSourceService implements IFirewallSource {
         policy: this.policies[Math.floor(Math.random() * this.policies.length)],
         dataRow: this.buildDatarow()
       } as FirewallDataRow;
-
 
       this.DATA.push(row);
     }
@@ -82,11 +82,10 @@ export class DemoSourceService implements IFirewallSource {
           this.skippedRows++;
           this.onRowSkipped?.(this.skippedRows); 
         }
-
       this.DATA.unshift(row);
-      this.onDataArrived?.(this.DATA);
       }
-      
+
+      this.onDataArrived?.(this.DATA);
       this.onMessageArrived?.( moreRows + " more events received as of " + new Date().toLocaleString());
       console.log("DEMO Source heartbit");
     }, 3000);

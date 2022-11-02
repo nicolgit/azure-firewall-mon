@@ -41,14 +41,16 @@ export class MainPageComponent implements OnInit {
         for (var i = 0; i < words.length; i++) {
           var word = words[i];
           if (word.length > 0 && 
-            data.time.toLowerCase().includes(word) || 
-            data.category.toLowerCase().includes(word) || 
-            data.protocol.toLowerCase().includes(word) || 
-            data.sourceip.toLowerCase().includes(word) || 
+            data.time?.toLowerCase().includes(word) || 
+            data.category?.toLowerCase().includes(word) || 
+            data.protocol?.toLowerCase().includes(word) || 
+            data.sourceip?.toLowerCase().includes(word) || 
             data.srcport?.toLowerCase().includes(word) || 
-            data.targetip.toLowerCase().includes(word) || 
+            data.targetip?.toLowerCase().includes(word) || 
             data.targetport?.toLowerCase().includes(word) || 
-            data.action.toLowerCase().includes(word))
+            data.policy?.toLowerCase().includes(word) ||
+            data.targetUrl?.toLowerCase().includes(word) ||
+            data.action?.toLowerCase().includes(word))
           {
             foundWords++;
           }
@@ -102,6 +104,15 @@ export class MainPageComponent implements OnInit {
   public selectedRowJson: string|null = null;
 
   public panelOpenState = false;
+
+  public setActionBackground(action: string): any {
+    if (action == "DROP")
+      return { 'background-color': '#ffe6f0' };
+    else if (action == "ACCEPT")
+      return { 'background-color': '#e6fff7' };
+    else
+      return null;
+  }
 
   ngOnInit(): void {
     this.firewallSource.connect();    
