@@ -115,12 +115,16 @@ export class MainPageComponent implements OnInit {
   }
 
   public highlightSelection(text:string): string {
-    const words = this.filterText.split(" ");
+    if (text != null && this.filterText != null && this.filterText.length > 0 && text.length > 0) {
+      const words = this.filterText.split(" ");
     
-    words.forEach(word => {
-      text = text?.replace(word, '<b>' + word + '</b>');      
-    });
-
+      words.forEach(word => {
+        const position = text.toLowerCase().indexOf(word.toLowerCase());
+        if (position >= 0) {
+          text = text.substring(0, position) + "<b>" + text.substring(position, position + word.length) + "</b>" + text.substring(position + word.length);
+        }      
+      });
+    }
     return text;
   }
 

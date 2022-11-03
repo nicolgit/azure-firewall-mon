@@ -33,37 +33,37 @@
 
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm">{{element.time}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm"><span [innerHtml]="highlightSelection(element.time)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true">Category</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm-2">{{element.category}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm-2"><span [innerHtml]="highlightSelection(element.category)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="protocol">
         <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true">Protocol</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-small">{{element.protocol}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-small"><span [innerHtml]="highlightSelection(element.protocol)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="source">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">{{element.sourceip}}:{{element.srcport}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.sourceip)"></span><span>:</span><span [innerHtml]="highlightSelection(element.srcport)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="target">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">{{element.targetip}}:{{element.targetport}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.targetip)"></span><span>:</span><span [innerHtml]="highlightSelection(element.targetport)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [ngStyle]="setActionBackground(element.action)">{{element.action}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [ngStyle]="setActionBackground(element.action)"><span [innerHtml]="highlightSelection(element.action)"></span></td>
       </ng-container>    
 
       <ng-container matColumnDef="policy">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">{{element.policy}}</td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.policy)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="targetUrl">
@@ -79,7 +79,7 @@
         <mat-expansion-panel-header>
           <mat-panel-title>{{message}}</mat-panel-title>
           <mat-panel-description>
-            rows {{skippedRows}} skipped, {{visibleRows}}/{{totalRows}} visible/available
+            rows: {{totalRows}} availables, {{visibleRows}} visibles, {{skippedRows}} skipped
           </mat-panel-description>
         </mat-expansion-panel-header>
         <pre>{{selectedRowJson}}</pre>

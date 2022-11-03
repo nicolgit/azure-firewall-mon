@@ -94,7 +94,8 @@ table {
     cursor: col-resize;
   }
   .mat-cell {
-    span {       
+    span {   
+      float: left;    
       display: block; 
       overflow: hidden;
       text-overflow: ellipsis;
