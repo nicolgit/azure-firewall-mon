@@ -1,4 +1,6 @@
+import { DataSource } from '@angular/cdk/collections';
 import { Injectable } from '@angular/core';
+import { getuid } from 'process';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 
@@ -12,10 +14,10 @@ export class DemoSourceService implements IFirewallSource {
 
   private intervalId: any;
   private protocolsArray: Array<string> = ["TCP", "UDP"];
-  private actionsArray: Array<string> = ["ACCEPT", "DROP"];
+  private actionsArray: Array<string> = ["Allow", "Deny"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
   private categories: Array<string> = ["NetworkRule", "ApplicationRule", "NatRule"];
-  private policies: Array<string> = ["Category01>Group01>Policy01", "Category02>Group02>Policy02", "Category01>Group01>Policy02" ];
+  private policies: Array<string> = ["Category01>Group01>Policy01", "Category02>Group02>Policy02", "Category03>Group03>Policy03", "Category04>Group04>Policy04" ];
   private DATA: Array<FirewallDataRow> = [];
 
   public skippedRows: number = 0;
@@ -27,8 +29,9 @@ export class DemoSourceService implements IFirewallSource {
     await this.randomQuote();
     await this.randomQuote();
     await this.randomQuote();
-    
-    for (let i = 0; i < 10000; i++) {
+    this.onMessageArrived?.("");
+
+    for (let i = 0; i < 50000; i++) {
       var row = {
         time: new Date().toLocaleString(),
         category: this.categories[Math.floor(Math.random() * this.categories.length)],
@@ -39,8 +42,8 @@ export class DemoSourceService implements IFirewallSource {
         targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
         action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
         policy: this.policies[Math.floor(Math.random() * this.policies.length)],
+        dataRow: this.buildDatarow()
       } as FirewallDataRow;
-
 
       this.DATA.push(row);
     }
@@ -48,7 +51,8 @@ export class DemoSourceService implements IFirewallSource {
     this.onDataArrived?.(this.DATA);
 
     this.intervalId = setInterval(() => {
-      for (let i = 0; i < Math.random() * 2000; i++) {       
+      const moreRows: number = Math.floor(Math.random() * 2000);
+      for (let i = 0; i < moreRows; i++) {       
         if (Math.random() > 0.2) {
           var row = {
             time: new Date().toLocaleString(),
@@ -60,22 +64,30 @@ export class DemoSourceService implements IFirewallSource {
             targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
             action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
             policy: this.policies[Math.floor(Math.random() * this.policies.length)],
+            dataRow: this.buildDatarow()
           } as FirewallDataRow;
 
           if (Math.random() > 0.8) {
             row.targetUrl = "https://www." + this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)].replace(/ /g,"") + ".com";
           }
-
-          this.DATA.unshift(row);
-          this.onDataArrived?.(this.DATA);
         }
         else {
-          this.skippedRows ++;
-          this.onRowSkipped?.(this.skippedRows);
-        }
+          row = {
+            time: new Date().toLocaleString(),
+            category: "SKIPPED",
+            action: "unmanaged row type",
+            dataRow: this.buildDatarow()
+          } as FirewallDataRow;
 
-      console.log("DEMO Source heartbit");
+          this.skippedRows++;
+          this.onRowSkipped?.(this.skippedRows); 
+        }
+      this.DATA.unshift(row);
       }
+
+      this.onDataArrived?.(this.DATA);
+      this.onMessageArrived?.( moreRows + " more events received as of " + new Date().toLocaleString());
+      console.log("DEMO Source heartbit");
     }, 3000);
   }
 
@@ -83,9 +95,21 @@ export class DemoSourceService implements IFirewallSource {
     clearInterval(this.intervalId);
   }
 
+  private buildDatarow():any {
+    const datarow:string = `{
+      "category": "AzureFirewallNetworkRule",
+      "time": "2022-10-18T10:19:05.9886250Z",
+      "resourceId": "/SUBSCRIPTIONS/` + crypto.randomUUID() + `",
+      "operationName": "AzureFirewallNatRuleLog",
+      "properties": {
+          "msg": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      }}`
+    return JSON.parse(datarow);
+  }
+
   private async randomQuote() {
     this.onMessageArrived?.(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
 

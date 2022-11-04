@@ -94,7 +94,8 @@ table {
     cursor: col-resize;
   }
   .mat-cell {
-    span {       
+    span {   
+      float: left;    
       display: block; 
       overflow: hidden;
       text-overflow: ellipsis;
@@ -121,4 +122,11 @@ table {
       padding: 0 10px;
     }
   }
+}
+
+pre {
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }

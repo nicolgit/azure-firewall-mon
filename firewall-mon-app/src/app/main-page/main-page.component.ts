@@ -41,14 +41,16 @@ export class MainPageComponent implements OnInit {
         for (var i = 0; i < words.length; i++) {
           var word = words[i];
           if (word.length > 0 && 
-            data.time.toLowerCase().includes(word) || 
-            data.category.toLowerCase().includes(word) || 
-            data.protocol.toLowerCase().includes(word) || 
-            data.sourceip.toLowerCase().includes(word) || 
+            data.time?.toLowerCase().includes(word) || 
+            data.category?.toLowerCase().includes(word) || 
+            data.protocol?.toLowerCase().includes(word) || 
+            data.sourceip?.toLowerCase().includes(word) || 
             data.srcport?.toLowerCase().includes(word) || 
-            data.targetip.toLowerCase().includes(word) || 
+            data.targetip?.toLowerCase().includes(word) || 
             data.targetport?.toLowerCase().includes(word) || 
-            data.action.toLowerCase().includes(word))
+            data.policy?.toLowerCase().includes(word) ||
+            data.targetUrl?.toLowerCase().includes(word) ||
+            data.action?.toLowerCase().includes(word))
           {
             foundWords++;
           }
@@ -102,6 +104,29 @@ export class MainPageComponent implements OnInit {
   public selectedRowJson: string|null = null;
 
   public panelOpenState = false;
+
+  public setActionBackground(action: string): any {
+    if (action == "Deny")
+      return { 'background-color': '#ffe6f0' };
+    else if (action == "Allow")
+      return { 'background-color': '#e6fff7' };
+    else
+      return null;
+  }
+
+  public highlightSelection(text:string): string {
+    if (text != null && this.filterText != null && this.filterText.length > 0 && text.length > 0) {
+      const words = this.filterText.split(" ");
+    
+      words.forEach(word => {
+        const position = text.toLowerCase().indexOf(word.toLowerCase());
+        if (position >= 0) {
+          text = text.substring(0, position) + "<b>" + text.substring(position, position + word.length) + "</b>" + text.substring(position + word.length);
+        }      
+      });
+    }
+    return text;
+  }
 
   ngOnInit(): void {
     this.firewallSource.connect();    
