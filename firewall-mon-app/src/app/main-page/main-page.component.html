@@ -53,7 +53,10 @@
 
       <ng-container matColumnDef="target">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.targetip)"></span><span>:</span><span [innerHtml]="highlightSelection(element.targetport)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
+          <span [innerHtml]="highlightSelection(element.targetip)"></span>
+          <span *ngIf="element.targetip != null">:</span>
+          <span [innerHtml]="highlightSelection(element.targetport)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="action">

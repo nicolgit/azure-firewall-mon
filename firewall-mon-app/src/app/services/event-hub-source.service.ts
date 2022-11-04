@@ -5,6 +5,7 @@ import * as Model from '../services/model.service';
 
 import { EventHubConsumerClient, earliestEventPosition, latestEventPosition } from "@azure/event-hubs";
 import { receiveMessageOnPort } from 'worker_threads';
+import { ROUTER_CONFIGURATION } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -38,9 +39,12 @@ export class EventHubSourceService implements Model.IFirewallSource {
       
       this.outputMessage(`done! reading events from partitions: ${partitionIds.join(", ")}`);
       await new Promise(resolve => setTimeout(resolve, this.defaultSleepTime));
+
       this.subscription = this.consumerClient.subscribe( 
         {
           processEvents: async (events, context) => {
+            var moreRows:number = 0;
+
             if (events.length === 0) {
               console.log(`No events received within wait time. Waiting for next interval`);
               return;
@@ -57,20 +61,21 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
                   switch (record.category) {
                     case "AzureFirewallNetworkRule":
-                    case "AzureFirewallApplicationRule":  {
-                      row = this.parseAzureFirewallNetworkRule(record);
+                    case "AzureFirewallApplicationRule":
+                    case "AzureFirewallDnsProxy":    {
+                      row = this.parseAzureFirewallRule(record);
                       break;
                     }
                     default: {
                       row = {
                         time: record.time.toString(),
-                        category: "SKIPPED UNMANAGED Operation Name - " + record.category,
+                        category: "SKIPPED Category - " + record.category,
                         protocol: "-",
                         sourceip: "-",
                         srcport: "-",
                         targetip: "-",
                         targetport: "-",
-                        action: ">> " + record.time + "<<",
+                        action: "-",
                         dataRow: record
                       } as Model.FirewallDataRow;
 
@@ -83,17 +88,19 @@ export class EventHubSourceService implements Model.IFirewallSource {
                 else {
                   row = {
                     time: record.time.toString(),
-                    category: "SKIPPED UNMANAGED Resource Type - " + resourceId,
+                    category: "SKIPPED Res Type - " + resourceId,
                   } as Model.FirewallDataRow;
 
                   this.skippedRows++;
                   this.onRowSkipped?.(this.skippedRows); 
                 }
+                moreRows++;
                 this.DATA.unshift(row);
               }
 
-              console.log(`Received event: '${JSON.stringify(event.body)}' from partition: '${context.partitionId}' and consumer group: '${context.consumerGroup}'`);
+              //console.log(`Received event: '${JSON.stringify(event.body)}' from partition: '${context.partitionId}' and consumer group: '${context.consumerGroup}'`);
               this.onDataArrived?.(this.DATA);
+              this.onMessageArrived?.( moreRows + " more events received as of " + new Date().toLocaleString());
             }
           },
 
@@ -136,7 +143,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.onMessageArrived?.(text);
     this.outputLog(text);
   }
-  private parseAzureFirewallNetworkRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
+  private parseAzureFirewallRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
     var row: Model.FirewallDataRow;
 
     switch (record.operationName) {
@@ -238,6 +245,25 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
         break; 
       }
+      case "AzureFirewallDnsProxyLog": {
+        //  "DNS Request: 10.12.3.5:7943 - 8951 AAAA IN tsfe.trafficshaping.dsp.mp.microsoft.com. udp 58 false 512 NOERROR qr,rd,ra 135 0.004987569s"
+        //     " Error: 2 time.windows.com.reddog.microsoft.com. A: read udp 10.0.1.5:49126->168.63.129.160:53: i/o timeout”
+
+        const split = record.properties.msg.split(" ");
+
+        row = {} as Model.FirewallDataRow;
+        row.time = record.time.toString();
+        row.category = "DnsProxy";
+        row.action = split[1].replace(":", "");
+        row.sourceip = split[2].split(":")[0];
+        row.srcport = split[2].split(":")[1];
+        row.protocol = split[8];        
+        row.targetUrl = split[5] + " " + split[6] + " " + split[7];
+        
+        row.dataRow = record;
+
+        break;
+      }
       default: {
         row = {
           time: record.time.toString(),
@@ -247,7 +273,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           srcport: "-",
           targetip: "-",
           targetport: "-",
-          action: ">> " + record.time + "<<",
+          action: "-",
           dataRow: record
         } as Model.FirewallDataRow;
 

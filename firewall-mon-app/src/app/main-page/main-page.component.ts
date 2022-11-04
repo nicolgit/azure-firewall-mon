@@ -106,9 +106,9 @@ export class MainPageComponent implements OnInit {
   public panelOpenState = false;
 
   public setActionBackground(action: string): any {
-    if (action == "DROP")
+    if (action == "Deny")
       return { 'background-color': '#ffe6f0' };
-    else if (action == "ACCEPT")
+    else if (action == "Allow")
       return { 'background-color': '#e6fff7' };
     else
       return null;

@@ -14,7 +14,7 @@ export class DemoSourceService implements IFirewallSource {
 
   private intervalId: any;
   private protocolsArray: Array<string> = ["TCP", "UDP"];
-  private actionsArray: Array<string> = ["ACCEPT", "DROP"];
+  private actionsArray: Array<string> = ["Allow", "Deny"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
   private categories: Array<string> = ["NetworkRule", "ApplicationRule", "NatRule"];
   private policies: Array<string> = ["Category01>Group01>Policy01", "Category02>Group02>Policy02", "Category03>Group03>Policy03", "Category04>Group04>Policy04" ];
