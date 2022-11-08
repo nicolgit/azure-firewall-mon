@@ -47,7 +47,7 @@ Latency refers to the time that data is created on the monitored system and the 
 The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) Query Language is a  tool to explore your data in a Log Analytics Workspace. The query uses schema entities that are organized in a hierarchy similar to SQL's: databases, tables, and columns.
 
 
-# UX that inspired Az-Firewallo-mon
+# UX that inspired Az-Firewall-mon
 
 ## [Check Point's SmartView](https://community.checkpoint.com/t5/Management/SmartView-Accessing-Check-Point-Logs-from-Web/td-p/3710) web log access
 
