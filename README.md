@@ -1,6 +1,6 @@
-Azure-Firewall-mon provides an _alternative_and_opinable_ 😊 way to access and inpsect Azure Firewall logs. The recommended approach for analyze Azure Firewall logs is to set up a Log Analytics Workspace where you collect all the data and use Kusto queries to check what's happening. 
+Azure-Firewall-mon provides an _alternative_and_opinable_ 😊 way to access and inspect Azure Firewall logs. The recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check what's happening. 
 
-In Azure-Firewall-mon the idea is to provide an approach much more like SysInternal's Process Monitor or Check Point's SmartView where no queries or dashboard need to be prepared, but all events are available as a log stream. A full-text search at the top of the page allows you to quickly filter the content displayed on the screen, helping you to understand what is happening right now (or almost). 
+In Azure-Firewall-mon, the idea is to provide an approach much more like Sysinternals Process Monitor or Check Point's SmartView, where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a log stream. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or close to present). 
 
 > Are you curious? See Azure-Firewall-mon in action in this video: <https://www.youtube.com/watch?v=NNmRxgljtKE> 
 
@@ -12,7 +12,7 @@ In Azure-Firewall-mon the idea is to provide an approach much more like SysInter
 
 Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application), written in [Angular](https://angular.io/). 
 
-> If you don't want to install it in your environment, you can already use latest build deployed and available at <https://az-firewall-mon.azurewebsites.net/>. 
+> If you don't want to install it in your environment, you can already use the latest build, which is deployed and available at <https://az-firewall-mon.azurewebsites.net/>. 
 
 To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
 
@@ -33,21 +33,21 @@ Now, open <https://az-firewall-mon.azurewebsites.net/> and copy in the `Event Hu
 
 [Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/overview) helps you maximize the availability and performance of your applications and services. It delivers a comprehensive solution for collecting, analyzing, and acting on telemetry from your cloud and on-premises environments. 
 
-AF is integrated with Azure Monitor. This means you can forward AF metrics and logs to:
+AF (Azure-Firewall-Mon) is integrated with Azure Monitor. This means you can forward AF metrics and logs to:
+
 * Log Analytics Workspace
 * Azure Storage
 * Event hub
 
 A [Log Analytics workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) is a unique environment for log data from Azure Monitor and other Azure services. Each workspace has its own data repository and configuration but might combine data from multiple services.
 
-Ingest data in a Log Analytics workspace has a Latency.
+Be mindful, that the ingest of logs into a Log Analytics workspace has some Latency, so you may see a delay with the logs displaying.
 
 Latency refers to the time that data is created on the monitored system and the time that it comes available for analysis in Azure Monitor. 
 
 The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) Query Language is a  tool to explore your data in a Log Analytics Workspace. The query uses schema entities that are organized in a hierarchy similar to SQL's: databases, tables, and columns.
 
-
-# UX that inspired Az-Firewall-mon
+# The UX that inspired Az-Firewall-mon
 
 ## [Check Point's SmartView](https://community.checkpoint.com/t5/Management/SmartView-Accessing-Check-Point-Logs-from-Web/td-p/3710) web log access
 
@@ -57,4 +57,4 @@ The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) 
 ![process monitor](images/sysinternals-process-monitor.png)
 
 # Feedback
-**This project is still at a very early stage**: Do you like the idea? Do you Love It? Do you hate it? Do you want to collaborare? Open an Issue and let me know!
+**This project is still at a very early stage**: Do you like the idea? Do you Love It? Do you hate it? Do you want to collaborate? Open an Issue and let me know!
