@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Testability } from '@angular/core';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
@@ -115,7 +115,11 @@ export class MainPageComponent implements OnInit {
   }
 
   public highlightSelection(text:string): string {
-    if (text != null && this.filterText != null && this.filterText.length > 0 && text.length > 0) {
+    if (text == null) {
+      return "";
+    }
+
+    if (this.filterText != null && this.filterText.length > 0 && text.length > 0) {
       const words = this.filterText.split(" ");
     
       words.forEach(word => {
@@ -125,6 +129,7 @@ export class MainPageComponent implements OnInit {
         }      
       });
     }
+
     return text;
   }
 
