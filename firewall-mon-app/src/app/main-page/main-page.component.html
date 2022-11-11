@@ -48,15 +48,12 @@
 
       <ng-container matColumnDef="source">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.sourceip)"></span><span>:</span><span [innerHtml]="highlightSelection(element.srcport)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.sourceip) + ':' + highlightSelection(element.srcport)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="target">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
-          <span [innerHtml]="highlightSelection(element.targetip)"></span>
-          <span *ngIf="element.targetip != null">:</span>
-          <span [innerHtml]="highlightSelection(element.targetport)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.targetip) + ':' + highlightSelection(element.targetport)"></span></td>
       </ng-container>
 
       <ng-container matColumnDef="action">
