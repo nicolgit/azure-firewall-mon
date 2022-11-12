@@ -17,6 +17,7 @@ import { MatCheckboxModule} from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table'  
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatBadgeModule} from '@angular/material/badge';
 
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { ResizeColumnDirective } from './directives/resize-column.directive';
@@ -35,6 +36,7 @@ import { ResizeColumnDirective } from './directives/resize-column.directive';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatBadgeModule,
     MatFormFieldModule,
     MatExpansionModule,
     MatInputModule,
