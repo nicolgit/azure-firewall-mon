@@ -4,7 +4,6 @@
   <mat-toolbar color="primary" class="main-toolbar">
   <mat-toolbar-row>
     <span>Azure Firewall mon</span>
-    <span class="example-spacer"></span>
     
     <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
       <span matPrefix class="material-symbols-outlined">search</span>
@@ -20,7 +19,7 @@
         speed="1" 
         loop  
         autoplay
-        class="lottie-player">
+        class="lottie-player"> 
     </lottie-player>
     <div class="lottie-text">{{message}}</div>
   </div>
@@ -33,42 +32,72 @@
 
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm"><span [innerHtml]="highlightSelection(element.time)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.time)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span [innerHtml]="highlightSelection(element.time)"></span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true">Category</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm-2"><span [innerHtml]="highlightSelection(element.category)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm-2">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.category)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span [innerHtml]="highlightSelection(element.category)"></span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="protocol">
         <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true">Protocol</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-small"><span [innerHtml]="highlightSelection(element.protocol)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-small">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.protocol)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span [innerHtml]="highlightSelection(element.protocol)"></span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="source">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.sourceip) + ':' + highlightSelection(element.srcport)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.sourceip) || hasHighlight(element.srcport)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)">lan</span>
+          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip)">public</span>
+          <span [innerHtml]="highlightSelection(element.sourceip) + ':' + highlightSelection(element.srcport)"></span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="target">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.targetip) + ':' + highlightSelection(element.targetport)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.targetip) || hasHighlight(element.targetport)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)">lan</span>
+          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip)">public</span>
+          <span [innerHtml]="highlightSelection(element.targetip) + ':' + highlightSelection(element.targetport)"></span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [ngStyle]="setActionBackground(element.action)"><span [innerHtml]="highlightSelection(element.action)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [ngStyle]="setActionBackground(element.action)">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.action)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'allow')">task_alt</span>
+          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'deny')">front_hand</span>
+          <span [innerHtml]="highlightSelection(element.action)"></span>
+        </td>
       </ng-container>    
 
       <ng-container matColumnDef="policy">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.policy)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.policy)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span [innerHtml]="highlightSelection(element.policy)"></span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="targetUrl">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">URL</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"><span [innerHtml]="highlightSelection(element.targetUrl)"></span></td>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
+          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.targetUrl)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+          <span [innerHtml]="highlightSelection(element.targetUrl)"></span>
+        </td>
       </ng-container>
     </table>
   </cdk-virtual-scroll-viewport>

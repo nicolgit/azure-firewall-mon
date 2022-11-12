@@ -115,7 +115,7 @@ export class MainPageComponent implements OnInit {
   }
 
   public highlightSelection(text:string): string {
-    if (text == null) {
+    if (text == null || text.length == 0) {
       return "";
     }
 
@@ -124,7 +124,7 @@ export class MainPageComponent implements OnInit {
     
       words.forEach(word => {
         const position = text.toLowerCase().indexOf(word.toLowerCase());
-        if (position >= 0) {
+        if (position >= 0 && word.length > 0) {
           text = text.substring(0, position) + "<b>" + text.substring(position, position + word.length) + "</b>" + text.substring(position + word.length);
         }      
       });
@@ -133,8 +133,56 @@ export class MainPageComponent implements OnInit {
     return text;
   }
 
+  public hasHighlight(text: string): boolean {
+    if (text == null || text.length == 0)
+      return false;
+
+    return text.length != this.highlightSelection(text).length;
+  }
+
+  // check if an IP is internal or external
+  public isInternalIP(ip: string): boolean {
+    if (ip == null || ip.length == 0)
+      return false;
+      
+    var octets = ip.split(".");
+    if (octets.length != 4)
+      return false;
+
+    var firstOctet = parseInt(octets[0]);
+    if (firstOctet == 10)
+      return true;
+    else if (firstOctet == 172 && parseInt(octets[1]) >= 16 && parseInt(octets[1]) <= 31)
+      return true;
+    else if (firstOctet == 192 && parseInt(octets[1]) == 168)
+      return true;
+    else
+      return false;
+  }
+
+  public isExternalIP(ip: string): boolean {
+    if (ip == null || ip.length == 0)
+      return false;
+      
+    var octets = ip.split(".");
+    if (octets.length != 4)
+      return false;
+    
+    return !this.isInternalIP(ip);
+  }
+
   ngOnInit(): void {
     this.firewallSource.connect();    
   }
 
+  public safeCheckString(text:string, content:string): boolean {
+    if (text == null || text.length == 0)
+      return false;
+    
+    if (content == null || content.length == 0)
+      return false;
+
+    return content.toLowerCase().includes(text.toLowerCase());
+  }
+  
 }
