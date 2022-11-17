@@ -6,13 +6,11 @@ In Azure-Firewall-mon, the idea is to provide an approach much more like Sysinte
 
 ![azure-firewall-mon-app](images/firewall-mon-app.png)
 
-# Setup 
+# Setup a connection with your Azure Firewall
 
 ![architecture](images/architecture.png)
 
 Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application), written in [Angular](https://angular.io/). 
-
-> If you don't want to install it in your environment, you can already use the latest build, which is deployed and available at <https://az-firewall-mon.duckiesfarm.com/>. 
 
 To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
 
@@ -25,7 +23,12 @@ To use this app with **YOUR data**, you must perform the following steps on your
     - Select the Event Hub Namespace and Hub created above
     - click `SAVE`
 
-Now, open <https://az-firewall-mon.azurewebsites.net/> and copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above, and click on `Let's begin`.
+Now, open <https://az-firewall-mon.duckiesfarm.com/> and copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above, and click on `Let's begin`.
+
+# Install Azure-firewall-mon in your environment
+
+@lukemurraynz has written a very detailed blog post on how deploy Azure-Firewall-mon in an Azure Static Web App. If you prefer this approach, have a look at his blog post <https://luke.geek.nz/azure/deploy-azure-firewall-mon-to-a-static-web-app/>
+
 
 # More Information
 
