@@ -12,7 +12,7 @@ In Azure-Firewall-mon, the idea is to provide an approach much more like Sysinte
 
 Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application), written in [Angular](https://angular.io/). 
 
-> If you don't want to install it in your environment, you can already use the latest build, which is deployed and available at <https://az-firewall-mon.azurewebsites.net/>. 
+> If you don't want to install it in your environment, you can already use the latest build, which is deployed and available at <https://az-firewall-mon.duckiesfarm.com/>. 
 
 To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
 
