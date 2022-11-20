@@ -24,6 +24,11 @@ $bottom-bar-size: 30px;
   transform: translate(-50%, 0);
 }
 
+.main-toolbar-buttons {
+  margin-left: auto;
+  margin-right: 0;
+}
+
 .parent {
   display: flex;
   flex-flow: column;
