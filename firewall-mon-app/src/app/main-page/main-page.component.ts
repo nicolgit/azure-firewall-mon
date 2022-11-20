@@ -6,6 +6,7 @@ import { EventHubSourceService } from '../services/event-hub-source.service';
 
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 import { empty } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-page',
@@ -13,15 +14,14 @@ import { empty } from 'rxjs';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-  private model: ModelService;
   private firewallSource: IFirewallSource;
 
   constructor(
-    private model_in: ModelService,
+    private model: ModelService,
     private demoSource: DemoSourceService,
-    private eventHubService: EventHubSourceService
+    private eventHubService: EventHubSourceService,
+    private router: Router
     ) {
-      this.model = model_in;
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
       this.firewallSource.onDataArrived = (data) => this.onDataSourceChanged(data);
       this.firewallSource.onRowSkipped = (skipped) => this.onRowSkipped(skipped);
@@ -183,6 +183,11 @@ export class MainPageComponent implements OnInit {
       return false;
 
     return content.toLowerCase().includes(text.toLowerCase());
+  }
+
+  public logout() {
+    this.firewallSource.disconnect();
+    this.router.navigate(['/']);
   }
   
 }
