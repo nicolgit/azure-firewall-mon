@@ -6,13 +6,11 @@ In Azure-Firewall-mon, the idea is to provide an approach much more like Sysinte
 
 ![azure-firewall-mon-app](images/firewall-mon-app.png)
 
-# Setup 
+# Setup a connection with your Azure Firewall
 
 ![architecture](images/architecture.png)
 
 Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application), written in [Angular](https://angular.io/). 
-
-> If you don't want to install it in your environment, you can already use the latest build, which is deployed and available at <https://az-firewall-mon.azurewebsites.net/>. 
 
 To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
 
@@ -25,7 +23,12 @@ To use this app with **YOUR data**, you must perform the following steps on your
     - Select the Event Hub Namespace and Hub created above
     - click `SAVE`
 
-Now, open <https://az-firewall-mon.azurewebsites.net/> and copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above, and click on `Let's begin`.
+Now, open <https://az-firewall-mon.duckiesfarm.com/> and copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above, and click on `Let's begin`.
+
+# Install Azure-firewall-mon in your environment
+
+@lukemurraynz has written a very detailed blog post on how deploy Azure-Firewall-mon in an Azure Static Web App. If you prefer this approach, have a look at his blog post <https://luke.geek.nz/azure/deploy-azure-firewall-mon-to-a-static-web-app/>
+
 
 # More Information
 
@@ -47,7 +50,7 @@ Latency refers to the time that data is created on the monitored system and the 
 
 The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) Query Language is a  tool to explore your data in a Log Analytics Workspace. The query uses schema entities that are organized in a hierarchy similar to SQL's: databases, tables, and columns.
 
-# The UX that inspired Az-Firewall-mon
+# The UIs and tools that inspired Az-Firewall-mon
 
 ## [Check Point's SmartView](https://community.checkpoint.com/t5/Management/SmartView-Accessing-Check-Point-Logs-from-Web/td-p/3710) web log access
 

@@ -132,6 +132,13 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
   public async disconnect() {
     await this.consumerClient?.close();
+    this.outputLog(`disconnected from azure event hub`);
+  }
+
+  public async clear() {
+    this.DATA = [];
+    this.onDataArrived?.(this.DATA);
+    this.outputMessage("Logs successfully deleted!");
   }
     
   private outputLog(text: string): void {
@@ -143,6 +150,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.onMessageArrived?.(text);
     this.outputLog(text);
   }
+
   private parseAzureFirewallRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
     var row: Model.FirewallDataRow;
 

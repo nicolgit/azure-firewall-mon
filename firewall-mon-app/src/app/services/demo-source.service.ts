@@ -1,15 +1,18 @@
 import { DataSource } from '@angular/cdk/collections';
 import { Injectable } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { getuid } from 'process';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
+import { threadId } from 'worker_threads';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DemoSourceService implements IFirewallSource {
   
-  constructor( private model:ModelService) { 
+  constructor( private model:ModelService,
+    private datePipe: DatePipe) { 
   }
 
   private intervalId: any;
@@ -29,8 +32,10 @@ export class DemoSourceService implements IFirewallSource {
     await this.randomQuote();
     await this.randomQuote();
     await this.randomQuote();
-    this.onMessageArrived?.("");
+    
+    this.outputMessage("");
 
+    this.DATA = [];
     for (let i = 0; i < 50000; i++) {
       var row = {
         time: new Date().toLocaleString(),
@@ -86,13 +91,30 @@ export class DemoSourceService implements IFirewallSource {
       }
 
       this.onDataArrived?.(this.DATA);
-      this.onMessageArrived?.( moreRows + " more events received as of " + new Date().toLocaleString());
-      console.log("DEMO Source heartbit");
+      this.outputMessage( moreRows + " more events received as of " + new Date().toLocaleString());
+      this.outputLog("DEMO Source heartbit");
     }, 3000);
   }
 
   public async disconnect() {
     clearInterval(this.intervalId);
+    this.outputLog("disconnected");
+  }
+
+  public async clear() {
+    this.DATA = [];
+    this.onDataArrived?.(this.DATA);
+    this.outputMessage("Logs successfully deleted!");
+  }
+
+  private outputLog(text: string): void {
+    var date = new Date();
+    console.log(`${this.datePipe.transform(date,'hh:mm:ss')} - DemoSourceService - ${text}\n`);
+  }
+
+  private outputMessage (text:string): void {
+    this.onMessageArrived?.(text);
+    this.outputLog(text);
   }
 
   private buildDatarow():any {
@@ -108,7 +130,7 @@ export class DemoSourceService implements IFirewallSource {
   }
 
   private async randomQuote() {
-    this.onMessageArrived?.(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
+    this.outputMessage(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
