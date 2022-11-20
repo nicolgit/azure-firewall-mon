@@ -3,10 +3,12 @@ import { Component, OnInit, Testability } from '@angular/core';
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
 import { EventHubSourceService } from '../services/event-hub-source.service';
+import { MatDialog} from '@angular/material/dialog';
 
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 import { empty } from 'rxjs';
 import { Router } from '@angular/router';
+import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
 
 @Component({
   selector: 'app-main-page',
@@ -20,7 +22,8 @@ export class MainPageComponent implements OnInit {
     private model: ModelService,
     private demoSource: DemoSourceService,
     private eventHubService: EventHubSourceService,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
     ) {
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
       this.firewallSource.onDataArrived = (data) => this.onDataSourceChanged(data);
@@ -188,6 +191,21 @@ export class MainPageComponent implements OnInit {
   public logout() {
     this.firewallSource.disconnect();
     this.router.navigate(['/']);
+  }
+
+  public clear() {
+    var dialogRef = this.dialog.open(YesnoDialogComponent, {
+      data: {
+        title: "Clear all",
+        description: "Are you sure you want to delete all firewall logs?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result==true) {
+        this.firewallSource.clear();
+      }
+    });
   }
   
 }

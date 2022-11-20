@@ -101,6 +101,12 @@ export class DemoSourceService implements IFirewallSource {
     this.outputLog("disconnected");
   }
 
+  public async clear() {
+    this.DATA = [];
+    this.onDataArrived?.(this.DATA);
+    this.outputMessage("Logs successfully deleted!");
+  }
+
   private outputLog(text: string): void {
     var date = new Date();
     console.log(`${this.datePipe.transform(date,'hh:mm:ss')} - DemoSourceService - ${text}\n`);

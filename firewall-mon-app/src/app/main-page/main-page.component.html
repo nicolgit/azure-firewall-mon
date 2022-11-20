@@ -3,7 +3,7 @@
 
   <mat-toolbar color="primary" class="main-toolbar">
   <mat-toolbar-row>
-    <span>Azure Firewall mon</span>
+    <span>Azure-firewall-mon</span>
     
     <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
       <span matPrefix class="material-symbols-outlined">search</span>
@@ -12,8 +12,9 @@
     </mat-form-field>
 
     <section class="main-toolbar-buttons">
+      <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined">delete</span>Clear</button>&nbsp;
       <!--
-        <button mat-raised-button color="primary"><span class="material-symbols-outlined">delete</span>Clear</button>&nbsp;
+        
         <button mat-raised-button color="accent"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>&nbsp;
         <button mat-raised-button color="accent"><span class="material-symbols-outlined">start</span>Resume</button>&nbsp;
       -->
