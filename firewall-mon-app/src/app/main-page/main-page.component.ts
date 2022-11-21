@@ -189,8 +189,19 @@ export class MainPageComponent implements OnInit {
   }
 
   public logout() {
-    this.firewallSource.disconnect();
-    this.router.navigate(['/']);
+    var dialogRef = this.dialog.open(YesnoDialogComponent, {
+      data: {
+        title: "Exit",
+        description: "Are you sure you want to exit?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result==true) {
+        this.firewallSource.disconnect();
+        this.router.navigate(['/']);
+      }
+    });
   }
 
   public clear() {
