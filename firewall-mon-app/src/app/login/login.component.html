@@ -8,8 +8,11 @@
         class="container-lottie-row">
     </lottie-player>
     
-    <h1>azure-firewall-mon</h1>
-    <h3>Welcome to Azure Firewall Monitor! Connecto to an Azure Firewall, to begin:</h3>
+    <h1>Azure-firewall-mon</h1>
+    <p>Welcome to Az-firewall-mon: a tool that allows to view, search, filter and inspect the log stream of your Azure Firewall.
+    Connect your Azure Firewall to this tool and start monitoring your network traffic 
+    (<a rel="noopener" target="_blank" href="https://github.com/nicolgit/azure-firewall-mon#setup-a-connection-with-your-azure-firewall">how to connect your Azure Firewall to this tool?</a>)
+    </p>
     <mat-checkbox color="primary" [checked]="isDemoMode" (change)="setDemo($event.checked)">demo mode</mat-checkbox>
     <mat-form-field appearance="fill">
         <mat-label>Event Hub connection string</mat-label>
@@ -22,5 +25,9 @@
     </mat-form-field>
 
     <a mat-stroked-button color="primary" [disabled]="isStartDisabled" (click)="navigateNext()">Let's begin</a>
+    <br/>
+    <br/>
+    <br/>
+    <p class="logon-footer">This is an open-source project available on <a rel="noopener" target="_blank" href="https://github.com/nicolgit/azure-firewall-mon">GitHub</a>, under <a rel="noopener" target="_blank" href="https://github.com/nicolgit/azure-firewall-mon/blob/main/LICENSE">MIT license</a>.</p>
 </div>
 
