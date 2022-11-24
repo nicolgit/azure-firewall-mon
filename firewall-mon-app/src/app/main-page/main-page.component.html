@@ -42,32 +42,28 @@
 
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.time)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm" [style.background]="hasHighlightColor(element.time)">
           <span [innerHtml]="highlightSelection(element.time)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true">Category</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm-2">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.category)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm-2" [style.background]="hasHighlightColor(element.category)">
           <span [innerHtml]="highlightSelection(element.category)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="protocol">
         <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true">Protocol</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-small">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.protocol)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-small" [style.background]="hasHighlightColor(element.protocol)">
           <span [innerHtml]="highlightSelection(element.protocol)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="source">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.sourceip) || hasHighlight(element.srcport)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.sourceip + ' ' + element.srcport)">
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)">lan</span>
           <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip)">public</span>
           <span [innerHtml]="highlightSelection(element.sourceip) + ':' + highlightSelection(element.srcport)"></span>
@@ -76,8 +72,7 @@
 
       <ng-container matColumnDef="target">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.targetip) || hasHighlight(element.targetport)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetip + ' ' + element.targetport)">
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)">lan</span>
           <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip)">public</span>
           <span [innerHtml]="highlightSelection(element.targetip) + ':' + highlightSelection(element.targetport)"></span>
@@ -86,8 +81,7 @@
 
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [ngStyle]="setActionBackground(element.action)">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.action)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="setActionBackground(element.action)">
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'allow')">task_alt</span>
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'deny')">front_hand</span>
           <span [innerHtml]="highlightSelection(element.action)"></span>
@@ -96,16 +90,14 @@
 
       <ng-container matColumnDef="policy">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.policy)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.policy)">
           <span [innerHtml]="highlightSelection(element.policy)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="targetUrl">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">URL</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
-          <span class="material-symbols-outlined" *ngIf="hasHighlight(element.targetUrl)" class="material-symbols-outlined highlight-flag">play_arrow</span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetUrl)">
           <span [innerHtml]="highlightSelection(element.targetUrl)"></span>
         </td>
       </ng-container>
