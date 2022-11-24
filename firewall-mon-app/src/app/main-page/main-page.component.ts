@@ -108,13 +108,16 @@ export class MainPageComponent implements OnInit {
 
   public panelOpenState = false;
 
-  public setActionBackground(action: string): any {
+  public setActionBackground(action: string): string {
+    if (this.hasHighlightColor(action) != '')
+      return this.hasHighlightColor(action);
+
     if (action == "Deny")
-      return { 'background-color': '#ffe6f0' };
+      return '#ffe6f0';
     else if (action == "Allow")
-      return { 'background-color': '#e6fff7' };
+      return '#e6fff7';
     else
-      return null;
+      return '';
   }
 
   public highlightSelection(text:string): string {
@@ -136,11 +139,12 @@ export class MainPageComponent implements OnInit {
     return text;
   }
 
-  public hasHighlight(text: string): boolean {
+  public hasHighlightColor(text: string): string {
     if (text == null || text.length == 0)
-      return false;
+      return "";
 
-    return text.length != this.highlightSelection(text).length;
+    var result = text.length != this.highlightSelection(text).length;
+    return result ? "SeaShell" : "";
   }
 
   // check if an IP is internal or external
