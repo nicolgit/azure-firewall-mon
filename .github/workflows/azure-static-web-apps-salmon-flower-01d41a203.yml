@@ -25,8 +25,8 @@ jobs:
         run: |
           echo "build timestamp: ${{ env.build_timestamp }}"
           echo "run number: ${{ github.run_number }}"
-          sed -i 's/__BUILDDATE__/${{ env.build_timestamp }} (build ${{ github.run_number }})/g' firewall-mon-app\src\app\login\login.component.html 
-          cat firewall-mon-app\src\app\login\login.component.html
+          sed -i 's/__BUILDDATE__/${{ env.build_timestamp }} (build ${{ github.run_number }})/g' firewall-mon-app/src/app/login/login.component.html 
+          cat firewall-mon-app/src/app/login/login.component.html
 
       - name: Build And Deploy
         id: builddeploy
