@@ -179,7 +179,7 @@ export class MainPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.firewallSource.connect();    
+    this.firewallSource.start();    
   }
 
   public safeCheckString(text:string, content:string): boolean {
@@ -202,7 +202,7 @@ export class MainPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result==true) {
-        this.firewallSource.disconnect();
+        this.firewallSource.stop();
         this.router.navigate(['/']);
       }
     });
