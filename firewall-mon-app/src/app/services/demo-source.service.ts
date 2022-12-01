@@ -28,7 +28,7 @@ export class DemoSourceService implements IFirewallSource {
   public onRowSkipped?: (skipped: number) => void;
   public onMessageArrived?: ((message: string) => void);
 
-  public async connect() {
+  public async start() {
     await this.randomQuote();
     await this.randomQuote();
     await this.randomQuote();
@@ -96,9 +96,14 @@ export class DemoSourceService implements IFirewallSource {
     }, 3000);
   }
 
-  public async disconnect() {
+  public async pause() {
     clearInterval(this.intervalId);
-    this.outputLog("disconnected");
+    this.outputLog("demo source paused");
+  }
+
+  public async stop() {
+    clearInterval(this.intervalId);
+    this.outputLog("demo source stopped");
   }
 
   public async clear() {

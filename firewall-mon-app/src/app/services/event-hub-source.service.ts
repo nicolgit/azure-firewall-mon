@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 
 import * as Model from '../services/model.service';
 
-import { EventHubConsumerClient, earliestEventPosition, latestEventPosition } from "@azure/event-hubs";
+import { EventHubConsumerClient, earliestEventPosition, latestEventPosition, ReceivedEventData, SubscribeOptions } from "@azure/event-hubs";
 import { receiveMessageOnPort } from 'worker_threads';
 import { ROUTER_CONFIGURATION } from '@angular/router';
 
@@ -20,13 +20,14 @@ export class EventHubSourceService implements Model.IFirewallSource {
   private defaultSleepTime: number = 1500;
   private consumerClient: EventHubConsumerClient | undefined;
   private subscription: any;
+  private lastEvent: ReceivedEventData | undefined;
 
   public skippedRows: number = 0;
   public onDataArrived?: (data: Array<Model.FirewallDataRow>) => void;
   public onRowSkipped?: (skipped: number) => void;
   public onMessageArrived?: ((message: string) => void);
 
-  public async connect() {
+  public async start() {
 
     try {
       this.outputMessage(`connecting consumerClient to azure event hub`);
@@ -40,6 +41,11 @@ export class EventHubSourceService implements Model.IFirewallSource {
       this.outputMessage(`done! reading events from partitions: ${partitionIds.join(", ")}`);
       await new Promise(resolve => setTimeout(resolve, this.defaultSleepTime));
 
+      var subscribeOptions: SubscribeOptions = { startPosition: earliestEventPosition, maxBatchSize: 200 };
+      if (this.lastEvent !== undefined && this.lastEvent !== null) {
+        subscribeOptions.startPosition = { sequenceNumber: this.lastEvent.sequenceNumber };
+      }
+
       this.subscription = this.consumerClient.subscribe( 
         {
           processEvents: async (events, context) => {
@@ -49,7 +55,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
               console.log(`No events received within wait time. Waiting for next interval`);
               return;
             }
-
+            
             for (const event of events) {
               const eventBody: Model.EventHubBody = event.body;
 
@@ -102,15 +108,20 @@ export class EventHubSourceService implements Model.IFirewallSource {
               this.onDataArrived?.(this.DATA);
               this.onMessageArrived?.( moreRows + " more events received as of " + new Date().toLocaleString());
             }
-          },
 
+            // save last event for later resume
+            this.lastEvent = events.pop();
+            if (this.lastEvent !== undefined && this.lastEvent !== null) {
+              context.updateCheckpoint(this.lastEvent);
+            }
+
+          },
           processError: async (err, context) => {
             this.outputMessage(`${err.message}`);
             console.log(`${err}`);
           }
         },
-        { startPosition: earliestEventPosition, maxBatchSize: 200 }
-      );
+        subscribeOptions );
 
       // After 30 seconds, stop processing.
       await new Promise<void>((resolve) => {
@@ -130,9 +141,16 @@ export class EventHubSourceService implements Model.IFirewallSource {
     
   }
 
-  public async disconnect() {
+  public async pause() {
     await this.consumerClient?.close();
-    this.outputLog(`disconnected from azure event hub`);
+    this.outputLog(`paused connection with event hub`);
+  }
+
+  public async stop() {
+    this.lastEvent = undefined;
+    
+    await this.consumerClient?.close();
+    this.outputLog(`stopped connection with event hub`);
   }
 
   public async clear() {

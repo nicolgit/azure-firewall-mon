@@ -45,12 +45,13 @@ export class ModelService {
 }
 
 export interface IFirewallSource {
-  connect(): void;
+  start(): void;
+  pause(): void;
+  stop(): void;
   onDataArrived?: (data: Array<FirewallDataRow>) => void;
   onRowSkipped?: (skipped: number) => void;
   onMessageArrived?: (message: string) => void;
   clear(): void;
-  disconnect(): void;
   skippedRows: number;
 }
 
