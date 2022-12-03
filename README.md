@@ -59,5 +59,10 @@ The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) 
 ## SysInternals [process monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon)
 ![process monitor](images/sysinternals-process-monitor.png)
 
+# Credits
+
+* [90342-security.json](https://lottiefiles.com/90342-security) lottie animation by Kawsar Mahmud
+* [lf20_giodppcr.json](https://lottiefiles.com/95739-no-connection-to-internet) lottie animation by hdev coder
+
 # Feedback
 **This project is still at a very early stage**: Do you like the idea? Do you Love It? Do you hate it? Do you want to collaborate? Open an Issue and let me know!
