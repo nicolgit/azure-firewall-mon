@@ -105,6 +105,7 @@ export class MainPageComponent implements OnInit {
   public message: string = "";
   public selectedRow: FirewallDataRow|null = null;
   public selectedRowJson: string|null = null;
+  public isPaused: boolean = false;
 
   public panelOpenState = false;
 
@@ -223,4 +224,13 @@ export class MainPageComponent implements OnInit {
     });
   }
   
-}
+  public pause() {
+    this.isPaused = true;
+    this.firewallSource.pause();
+  }
+
+  public resume() {
+    this.isPaused = false;
+    this.firewallSource.start();
+  }
+} 

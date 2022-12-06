@@ -13,9 +13,27 @@ export class DemoSourceService implements IFirewallSource {
   
   constructor( private model:ModelService,
     private datePipe: DatePipe) { 
+    
+    this.DATA = [];
+    for (let i = 0; i < 50000; i++) {
+      var row = {
+        time: new Date().toLocaleString(),
+        category: this.categories[Math.floor(Math.random() * this.categories.length)],
+        protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
+        sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
+        srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
+        targetip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
+        targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
+        action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
+        policy: this.policies[Math.floor(Math.random() * this.policies.length)],
+        dataRow: this.buildDatarow()
+      } as FirewallDataRow;
+
+      this.DATA.push(row);
+    }
   }
 
-  private intervalId: any;
+  private intervalId: any=null;
   private protocolsArray: Array<string> = ["TCP", "UDP"];
   private actionsArray: Array<string> = ["Allow", "Deny"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
@@ -34,24 +52,6 @@ export class DemoSourceService implements IFirewallSource {
     await this.randomQuote();
     
     this.outputMessage("");
-
-    this.DATA = [];
-    for (let i = 0; i < 50000; i++) {
-      var row = {
-        time: new Date().toLocaleString(),
-        category: this.categories[Math.floor(Math.random() * this.categories.length)],
-        protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
-        sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
-        srcport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
-        targetip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
-        targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
-        action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
-        policy: this.policies[Math.floor(Math.random() * this.policies.length)],
-        dataRow: this.buildDatarow()
-      } as FirewallDataRow;
-
-      this.DATA.push(row);
-    }
 
     this.onDataArrived?.(this.DATA);
 
@@ -73,7 +73,7 @@ export class DemoSourceService implements IFirewallSource {
           } as FirewallDataRow;
 
           if (Math.random() > 0.8) {
-            row.targetUrl = "https://www." + this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)].replace(/ /g,"") + ".com";
+            row.targetUrl = "https://www." + this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)].replace(/ /g,".") + ".com";
           }
         }
         else {
@@ -98,18 +98,18 @@ export class DemoSourceService implements IFirewallSource {
 
   public async pause() {
     clearInterval(this.intervalId);
-    this.outputLog("demo source paused");
+    this.outputMessage("demo source paused");
   }
 
   public async stop() {
     clearInterval(this.intervalId);
-    this.outputLog("demo source stopped");
+    this.outputMessage("demo source stopped");
   }
 
   public async clear() {
     this.DATA = [];
     this.onDataArrived?.(this.DATA);
-    this.outputMessage("Logs successfully deleted!");
+    this.outputMessage("logs successfully deleted!");
   }
 
   private outputLog(text: string): void {
