@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
@@ -23,6 +23,8 @@ import { MatBadgeModule} from '@angular/material/badge';
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { ResizeColumnDirective } from './directives/resize-column.directive';
 import { YesnoDialogComponent } from './yesno-dialog/yesno-dialog.component';
+
+import { ApplicationinsightsAngularpluginErrorService } from '@microsoft/applicationinsights-angularplugin-js';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -51,7 +53,11 @@ import { YesnoDialogComponent } from './yesno-dialog/yesno-dialog.component';
     MatToolbarModule
   ],
   providers: [
-    DatePipe
+    DatePipe,
+    {
+      provide: ErrorHandler,
+      useClass: ApplicationinsightsAngularpluginErrorService
+    }
   ],
   bootstrap: [AppComponent]
 })
