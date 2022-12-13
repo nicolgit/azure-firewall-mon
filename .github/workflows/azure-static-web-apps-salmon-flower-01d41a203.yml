@@ -22,11 +22,13 @@ jobs:
         
       - name: Use the build date from GITHUB_ENV
         id: step_replace
+        # encode connection string with https://dwaves.de/tools/escape/ !!
         run: |
           echo "build timestamp: ${{ env.build_timestamp }}"
           echo "run number: ${{ github.run_number }}"
-          sed -i 's/__BUILDDATE__/${{ env.build_timestamp }} (build ${{ github.run_number }})/g' firewall-mon-app/src/app/login/login.component.html 
-          cat firewall-mon-app/src/app/login/login.component.html
+          sed -i 's/__BUILDDATE__/${{ env.build_timestamp }} (build ${{ github.run_number }})/g' firewall-mon-app/src/environments/environment.prod.ts 
+          sed -i 's/__APPLICATION_INSIGHTS_CONNECTION_STRING__/${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}/g' firewall-mon-app/src/environments/environment.prod.ts 
+          cat firewall-mon-app/src/environments/environment.prod.ts
 
       - name: Build And Deploy
         id: builddeploy
