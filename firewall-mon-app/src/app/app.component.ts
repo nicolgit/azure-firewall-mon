@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { AngularPlugin } from '@microsoft/applicationinsights-angularplugin-js';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ export class AppComponent {
   constructor(private router: Router) {
     var angularPlugin = new AngularPlugin();
         const appInsights = new ApplicationInsights({ config: {
-        connectionString: 'APPLICATION_INSIGHT_CONNECTION_STRING_GOES_HERE',
+        connectionString: environment.ApplicationInsightsConnectionString,
         enableCorsCorrelation: true,
         enableRequestHeaderTracking: true,
         enableResponseHeaderTracking: true,

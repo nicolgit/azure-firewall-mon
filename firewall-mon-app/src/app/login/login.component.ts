@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 import { ModelService } from '../services/model.service';
 
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  buildDate: string = environment.BuildDate;
   eventHubConnectionString: string = this.model.eventHubConnection;
   eventHubConsumerGroup: string = this.model.eventHubConsumerGroup;
   isDemoMode: boolean = this.model.demoMode;

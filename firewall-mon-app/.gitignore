@@ -47,4 +47,4 @@ Thumbs.db
 /.angular
 
 # local env files
-.env.local
+environment.ts
