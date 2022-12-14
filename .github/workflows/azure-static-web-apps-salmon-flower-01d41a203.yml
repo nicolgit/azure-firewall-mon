@@ -28,7 +28,6 @@ jobs:
           echo "run number: ${{ github.run_number }}"
           sed -i 's/__BUILDDATE__/${{ env.build_timestamp }} (build ${{ github.run_number }})/g' firewall-mon-app/src/environments/environment.prod.ts 
           sed -i 's/__APPLICATION_INSIGHTS_CONNECTION_STRING__/${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}/g' firewall-mon-app/src/environments/environment.prod.ts 
-          ls > firewall-mon-app/src/environments/environment.ts 
           cat firewall-mon-app/src/environments/environment.prod.ts
 
       - name: Build And Deploy
