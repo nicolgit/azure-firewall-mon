@@ -29,6 +29,7 @@ Now, open <https://az-firewall-mon.duckiesfarm.com/> and copy in the `Event Hub 
 
 @lukemurraynz has written a very detailed blog post on how deploy Azure-Firewall-mon in an Azure Static Web App. If you prefer this approach, have a look at his blog post <https://luke.geek.nz/azure/deploy-azure-firewall-mon-to-a-static-web-app/>
 
+> NOTE: `environment.prod.ts` must be updated with your environment information. az-firewall-mon requires an [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) instance to tork propely.
 
 # More Information
 
