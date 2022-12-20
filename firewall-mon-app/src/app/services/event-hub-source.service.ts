@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { DatePipe } from '@angular/common';
 
 import * as Model from '../services/model.service';
+import { LoggingService } from './logging.service';
 
 import { EventHubConsumerClient, earliestEventPosition, latestEventPosition, ReceivedEventData, SubscribeOptions } from "@azure/event-hubs";
-import { receiveMessageOnPort } from 'worker_threads';
-import { ROUTER_CONFIGURATION } from '@angular/router';
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +13,9 @@ export class EventHubSourceService implements Model.IFirewallSource {
   private DATA: Array<Model.FirewallDataRow> = [];
 
   constructor(
-    private model:Model.ModelService,
-    private datePipe: DatePipe)  {
+    private logginService: LoggingService,
+    private model:Model.ModelService
+    )  {
   }
   private defaultSleepTime: number = 1500;
   private consumerClient: EventHubConsumerClient | undefined;
@@ -43,7 +43,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
       var subscribeOptions: SubscribeOptions = { startPosition: earliestEventPosition, maxBatchSize: 200 };
       if (this.lastEvent !== undefined && this.lastEvent !== null) {
-        subscribeOptions.startPosition = { sequenceNumber: this.lastEvent.sequenceNumber };
+        subscribeOptions.startPosition = { sequenceNumber: this.lastEvent.sequenceNumber };        
       }
 
       this.subscription = this.consumerClient.subscribe( 
@@ -104,10 +104,10 @@ export class EventHubSourceService implements Model.IFirewallSource {
                 this.DATA.unshift(row);
               }
 
-              //console.log(`Received event: '${JSON.stringify(event.body)}' from partition: '${context.partitionId}' and consumer group: '${context.consumerGroup}'`);
-              this.onDataArrived?.(this.DATA);
-              this.onMessageArrived?.( moreRows + " more events received as of " + new Date().toLocaleString());
+              this.onDataArrived?.(this.DATA); 
             }
+            const messageArrived = moreRows + " more events received as of " + new Date().toLocaleString();
+            this.outputMessage(messageArrived);
 
             // save last event for later resume
             this.lastEvent = events.pop();
@@ -117,7 +117,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
           },
           processError: async (err, context) => {
-            this.outputMessage(`${err.message}`);
+            this.logginService.logException(err);
             console.log(`${err}`);
           }
         },
@@ -134,6 +134,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
       });
     }
     catch (err: any) {
+      this.logginService.logException(err.toString());
       this.outputMessage(err.toString());
       throw err;
     }
@@ -143,14 +144,14 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
   public async pause() {
     await this.consumerClient?.close();
-    this.outputLog(`paused connection with event hub`);
+    this.logginService.logEvent(`paused connection with event hub`);
   }
 
   public async stop() {
     this.lastEvent = undefined;
     
     await this.consumerClient?.close();
-    this.outputLog(`stopped connection with event hub`);
+    this.logginService.logEvent(`stopped connection with event hub`);
   }
 
   public async clear() {
@@ -158,15 +159,10 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.onDataArrived?.(this.DATA);
     this.outputMessage("Logs successfully deleted!");
   }
-    
-  private outputLog(text: string): void {
-    var date = new Date();
-    console.log(`${this.datePipe.transform(date,'hh:mm:ss')} - EventHubSourceService - ${text}\n`);
-  }
 
   private outputMessage (text:string): void {
     this.onMessageArrived?.(text);
-    this.outputLog(text);
+    this.logginService.logTrace(text);
   }
 
   private parseAzureFirewallRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
