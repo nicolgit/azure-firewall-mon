@@ -1,10 +1,8 @@
-import { DataSource } from '@angular/cdk/collections';
 import { Injectable } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { getuid } from 'process';
+
+import { LoggingService } from './logging.service';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
-import { threadId } from 'worker_threads';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +10,8 @@ import { threadId } from 'worker_threads';
 export class DemoSourceService implements IFirewallSource {
   
   constructor( private model:ModelService,
-    private datePipe: DatePipe) { 
+    private logginService: LoggingService,
+    ) { 
     
     this.DATA = [];
     for (let i = 0; i < 50000; i++) {
@@ -92,18 +91,19 @@ export class DemoSourceService implements IFirewallSource {
 
       this.onDataArrived?.(this.DATA);
       this.outputMessage( moreRows + " more events received as of " + new Date().toLocaleString());
-      this.outputLog("DEMO Source heartbit");
+      
+      this.logginService.logEvent ("DEMO Source heartbit");
     }, 3000);
   }
 
   public async pause() {
     clearInterval(this.intervalId);
-    this.outputMessage("demo source paused");
+    this.logginService.logEvent("demo source paused");
   }
 
   public async stop() {
     clearInterval(this.intervalId);
-    this.outputMessage("demo source stopped");
+    this.logginService.logEvent("demo source stopped");
   }
 
   public async clear() {
@@ -112,14 +112,9 @@ export class DemoSourceService implements IFirewallSource {
     this.outputMessage("logs successfully deleted!");
   }
 
-  private outputLog(text: string): void {
-    var date = new Date();
-    console.log(`${this.datePipe.transform(date,'hh:mm:ss')} - DemoSourceService - ${text}\n`);
-  }
-
   private outputMessage (text:string): void {
     this.onMessageArrived?.(text);
-    this.outputLog(text);
+    this.logginService.logTrace(text);
   }
 
   private buildDatarow():any {
