@@ -15,7 +15,7 @@ Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikip
 To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
 
 1. Create an Azure Event Hub Namespace
-2. Create an Azure Event Hub inside the namespace, with a `1-day retention`
+2. Create an Azure Event Hub inside the namespace, with a `1-day retention` and `1 partition`
 3. Create a Shared Access Policy, with  _Listen_ claim
 4. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
 
