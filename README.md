@@ -25,6 +25,11 @@ To use this app with **YOUR data**, you must perform the following steps on your
 
 Now, open <https://az-firewall-mon.duckiesfarm.com/> and copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above, and click on `Let's begin`.
 
+Lazy engineers can performs steps 1, 2 and 3 by clicking the following button:
+
+ [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fany-to-any.json)
+
+
 # Install Azure-firewall-mon in your environment
 
 @lukemurraynz has written a very detailed blog post on how deploy Azure-Firewall-mon in an Azure Static Web App. If you prefer this approach, have a look at his blog post <https://luke.geek.nz/azure/deploy-azure-firewall-mon-to-a-static-web-app/>
