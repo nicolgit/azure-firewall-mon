@@ -1,6 +1,6 @@
 param namespace string = 'firewall-mon-namespace'
 param hubname string = 'firewall-mon-hub'
-param sharedkey string = 'firewall-mon-sharedkey'
+param sharedkey string = 'firewall-mon-key'
 param location string = resourceGroup().location
 
 resource eventHubNamespace 'Microsoft.EventHub/namespaces@2017-04-01' = {

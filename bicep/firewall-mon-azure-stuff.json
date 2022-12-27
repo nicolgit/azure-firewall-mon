@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "11673747401553235084"
+      "templateHash": "2266015696995589825"
     }
   },
   "parameters": {
@@ -19,7 +19,7 @@
     },
     "sharedkey": {
       "type": "string",
-      "defaultValue": "firewall-mon-sharedkey"
+      "defaultValue": "firewall-mon-key"
     },
     "location": {
       "type": "string",
