@@ -27,7 +27,7 @@ Now, open <https://az-firewall-mon.duckiesfarm.com/> and copy in the `Event Hub 
 
 Lazy engineers can performs steps 1, 2 and 3 by clicking the following button:
 
- [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fany-to-any.json)
+ [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json)
 
 
 # Install Azure-firewall-mon in your environment
