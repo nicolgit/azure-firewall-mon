@@ -1,10 +1,26 @@
-Azure-Firewall-mon provides an _alternative_and_opinable_ 😊 way to access and inspect Azure Firewall logs. The recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check what's happening. 
+<h1 align="center">az-firewall-mon</h1>
 
-In Azure-Firewall-mon, the idea is to provide an approach much more like Sysinternals Process Monitor or Check Point's SmartView, where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a log stream. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or almost). 
+<div align="center">
+  an <i>alternative and opinionable</i>😊 way to access and inspect Azure Firewall logs
+</div>
 
-> Are you curious? See Azure-Firewall-mon in action in this video: <https://www.youtube.com/watch?v=NNmRxgljtKE> 
+<br/>
+
+<div align="center">
+  <sub>Built with ❤︎ by
+  <a href="https://github.com/nicolgit">nicolgit</a> and
+  <a href="https://github.com/nicolgit/azure-firewall-mon/contributors">
+    contributors
+  </a>
+</div>
+
+<br/>
 
 ![azure-firewall-mon-app](images/firewall-mon-app.png)
+
+We all know the Microsoft's recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check the results. Azure-Firewall-mon focus more on answering a simple question "_what's happening right now?_": the idea is to provide an approach much more like Sysinternals Process Monitor or Check Point's SmartView, where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a **log** **stream**. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or almost). 
+
+> Are you curious? See Azure-Firewall-mon in action in this video: <https://www.youtube.com/watch?v=NNmRxgljtKE> 
 
 # Setup a connection with your Azure Firewall
 
