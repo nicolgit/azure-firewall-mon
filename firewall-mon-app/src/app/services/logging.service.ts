@@ -26,8 +26,14 @@ export class LoggingService {
           [angularPlugin.identifier]: { router: this.router }
       }
       } });
-      this.appInsights.loadAppInsights();
-  }
+
+      try {
+        this.appInsights.loadAppInsights();
+      } catch (error) {
+        console.error("ERROR loading AppInsights: " + error);
+        console.error("TIP: 'environment.prod.ts' must contain a valid Azure Application Insight connection string.");
+      }
+    }
 
   logPageView(name?: string, url?: string) { // option to call manually
     this.appInsights.trackPageView({

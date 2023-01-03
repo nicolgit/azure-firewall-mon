@@ -1,10 +1,26 @@
-Azure-Firewall-mon provides an _alternative_and_opinable_ 😊 way to access and inspect Azure Firewall logs. The recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check what's happening. 
+<h1 align="center">az-firewall-mon</h1>
 
-In Azure-Firewall-mon, the idea is to provide an approach much more like Sysinternals Process Monitor or Check Point's SmartView, where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a log stream. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or almost). 
+<div align="center">
+  an <i>alternative and opinionable</i>😊 way to access and inspect Azure Firewall logs
+</div>
 
-> Are you curious? See Azure-Firewall-mon in action in this video: <https://www.youtube.com/watch?v=NNmRxgljtKE> 
+<br/>
+
+<div align="center">
+  <sub>Built with ❤︎ by
+  <a href="https://github.com/nicolgit">nicolgit</a> and
+  <a href="https://github.com/nicolgit/azure-firewall-mon/contributors">
+    contributors
+  </a>
+</div>
+
+<br/>
 
 ![azure-firewall-mon-app](images/firewall-mon-app.png)
+
+We all know the Microsoft's recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check the results. Azure-Firewall-mon focus more on answering a simple question "_what's happening right now?_": the idea is to provide an approach much more like Sysinternals Process Monitor or Check Point's SmartView, where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a **log** **stream**. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or almost). 
+
+> Are you curious? See Azure-Firewall-mon in action in this video: <https://www.youtube.com/watch?v=NNmRxgljtKE> 
 
 # Setup a connection with your Azure Firewall
 
@@ -15,7 +31,7 @@ Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikip
 To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
 
 1. Create an Azure Event Hub Namespace
-2. Create an Azure Event Hub inside the namespace, with a `1-day retention`
+2. Create an Azure Event Hub inside the namespace, with a `1-day retention` and `1 partition`
 3. Create a Shared Access Policy, with  _Listen_ claim
 4. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
 
@@ -24,6 +40,11 @@ To use this app with **YOUR data**, you must perform the following steps on your
     - click `SAVE`
 
 Now, open <https://az-firewall-mon.duckiesfarm.com/> and copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above, and click on `Let's begin`.
+
+Lazy engineers can performs steps 1, 2 and 3 by clicking the following button:
+
+ [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json)
+
 
 # Install Azure-firewall-mon in your environment
 
