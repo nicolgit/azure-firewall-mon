@@ -3,6 +3,8 @@ import { Component, OnInit, Testability } from '@angular/core';
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
 import { EventHubSourceService } from '../services/event-hub-source.service';
+import { FlagsService } from '../services/flags.service';
+
 import { MatDialog} from '@angular/material/dialog';
 
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
@@ -22,6 +24,7 @@ export class MainPageComponent implements OnInit {
     private model: ModelService,
     private demoSource: DemoSourceService,
     private eventHubService: EventHubSourceService,
+    private flagService: FlagsService,
     private router: Router,
     public dialog: MatDialog
     ) {
@@ -177,6 +180,10 @@ export class MainPageComponent implements OnInit {
       return false;
     
     return !this.isInternalIP(ip);
+  }
+  
+  public getFlagFromIP(ip: string): string {
+    return this.flagService.getFlagFromIP(ip);
   }
 
   ngOnInit(): void {

@@ -61,6 +61,7 @@
       <ng-container matColumnDef="source">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.sourceip + ' ' + element.srcport)">
+          <img src="{{getFlagFromIP(element.sourceip)}}" alt="{{getFlagFromIP(element.sourceip)}}" class="flag-icon" />
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)">lan</span>
           <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip)">public</span>
           <span [innerHtml]="highlightSelection(element.sourceip) + ':' + highlightSelection(element.srcport)"></span>
