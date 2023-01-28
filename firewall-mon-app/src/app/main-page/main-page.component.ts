@@ -3,7 +3,7 @@ import { Component, OnInit, Testability } from '@angular/core';
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
 import { EventHubSourceService } from '../services/event-hub-source.service';
-import { FlagsService } from '../services/flags.service';
+import { FlagData, FlagsService } from '../services/flags.service';
 
 import { MatDialog} from '@angular/material/dialog';
 
@@ -182,7 +182,10 @@ export class MainPageComponent implements OnInit {
     return !this.isInternalIP(ip);
   }
   
-  public getFlagFromIP(ip: string): string {
+  public getFlagFromIP(ip: string): FlagData | undefined{
+    if (this.isInternalIP(ip))
+      return undefined;
+      
     return this.flagService.getFlagFromIP(ip);
   }
 

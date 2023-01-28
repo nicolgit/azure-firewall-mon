@@ -61,9 +61,9 @@
       <ng-container matColumnDef="source">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.sourceip + ' ' + element.srcport)">
-          <img src="{{getFlagFromIP(element.sourceip)}}" alt="{{getFlagFromIP(element.sourceip)}}" class="flag-icon" />
-          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)">lan</span>
-          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip)">public</span>
+          <span class="{{getFlagFromIP(element.sourceip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.sourceip)?.country}}" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) != undefined)"></span>
+          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)" title="internal ip">lan</span>
+          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) == undefined)" title="unknown public ip">public</span>
           <span [innerHtml]="highlightSelection(element.sourceip) + ':' + highlightSelection(element.srcport)"></span>
         </td>
       </ng-container>
@@ -71,8 +71,8 @@
       <ng-container matColumnDef="target">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetip + ' ' + element.targetport)">
-          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)">lan</span>
-          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip)">public</span>
+          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)" title="internal ip">lan</span>
+          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip)" title="unknown public ip">public</span>
           <span [innerHtml]="highlightSelection(element.targetip) + ':' + highlightSelection(element.targetport)"></span>
         </td>
       </ng-container>
