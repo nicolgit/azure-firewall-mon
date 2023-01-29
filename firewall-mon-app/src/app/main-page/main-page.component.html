@@ -73,7 +73,7 @@
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetip + ' ' + element.targetport)">
           <span class="{{getFlagFromIP(element.targetip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.targetip)?.country}}" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) != undefined)"></span>
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)" title="internal ip">lan</span>
-          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.sourceip) == undefined)" title="unknown public ip">public</span>
+          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) == undefined)" title="unknown public ip">public</span>
           <span [innerHtml]="highlightSelection(element.targetip) + ':' + highlightSelection(element.targetport)"></span>
         </td>
       </ng-container>
