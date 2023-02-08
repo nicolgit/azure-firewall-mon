@@ -9,12 +9,16 @@ import { IFirewallSource, FirewallDataRow, ModelService } from '../services/mode
 })
 export class DemoSourceService implements IFirewallSource {
   
+  private startingRows: number = 50000;
+  private moreRows: number = 3;//2000;
+  private intervalBetweenMoreRows: number = 3000000; // millisenconds
+
   constructor( private model:ModelService,
     private logginService: LoggingService,
     ) { 
     
     this.DATA = [];
-    for (let i = 0; i < 50000; i++) {
+    for (let i = 0; i < this.startingRows; i++) {
       var row = {
         time: new Date().toLocaleString(),
         category: this.categories[Math.floor(Math.random() * this.categories.length)],
@@ -55,7 +59,7 @@ export class DemoSourceService implements IFirewallSource {
     this.onDataArrived?.(this.DATA);
 
     this.intervalId = setInterval(() => {
-      const moreRows: number = Math.floor(Math.random() * 2000);
+      const moreRows: number = Math.floor(Math.random() * this.moreRows);
       for (let i = 0; i < moreRows; i++) {       
         if (Math.random() > 0.2) {
           var row = {
@@ -93,7 +97,7 @@ export class DemoSourceService implements IFirewallSource {
       this.outputMessage( moreRows + " more events received as of " + new Date().toLocaleString());
       
       this.logginService.logEvent ("DEMO Source heartbit");
-    }, 3000);
+    }, this.intervalBetweenMoreRows);
   }
 
   public async pause() {
