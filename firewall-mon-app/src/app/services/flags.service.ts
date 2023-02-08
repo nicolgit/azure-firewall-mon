@@ -53,9 +53,9 @@ export class FlagsService {
   ) { }
 
   public getFlagFromIP(ip:string):FlagData | undefined {
-    //if (this.model.demoMode) {
-    //  return this.getFlagFromIPCacheRandom(ip);
-    //}
+    if (this.model.demoMode) {
+      return this.getFlagFromIPCacheRandom(ip);
+    }
 
     return this.getFlagFromIPCache(ip);;
   }
