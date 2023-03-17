@@ -35,7 +35,7 @@ export class FlagsService {
 
   private cache: Map<string, FlagData> = new Map<string, FlagData>();
   private demoCache: Map<string, FlagData | undefined> = new Map<string, FlagData | undefined>();
-  
+
   // https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip=8.8.8.8&subscription-key=jlWg-EfqMymhIHpq7Lmm3ftpCnV8h7yWmO15tYx-aWY
   // result json: 
   /*
@@ -53,11 +53,19 @@ export class FlagsService {
   ) { }
 
   public getFlagFromIP(ip:string):FlagData | undefined {
-    if (this.model.demoMode) {
-      return this.getFlagFromIPCacheRandom(ip);
-    }
+    let result: FlagData | undefined;
+    let error: Error | undefined;
 
-    return this.getFlagFromIPCache(ip);;
+    error = undefined;
+
+    if (this.model.demoMode) {
+      result = this.getFlagFromIPCacheRandom(ip);
+    }
+    else {
+      result = this.getFlagFromIPCache(ip);;
+    }
+  
+  return result;    
   }
 
   private getFlagFromIPCache(ip:string):FlagData | undefined {
@@ -86,11 +94,15 @@ export class FlagsService {
     this.logginService.logTrace("FlagsService.getFlagFromIPRandomAsync(" + ip + ")" );
     this.demoCache.set(ip, new FlagData("", "", ""));
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
+
 
     var rnd = Math.random();
-    if (rnd < 0.2) {
-      this.demoCache.set(ip, undefined);  
+    if (rnd < 0.1) {
+      this.demoCache.set(ip, undefined);
+    }else if (rnd < 0.2)
+    {
+      throw new Error("FlagsService.getFlagFromIPRandomAsync - random error");
     }
     else {
       rnd = Math.floor(Math.random() * allCountries.length);
@@ -100,6 +112,11 @@ export class FlagsService {
   }
 
   private async getFlagFromIPAsync(ip:string) {
+    if (environment.AzureMapsSASKey == "") {
+      this.logginService.logTrace("FlagsService.getFlagFromIPAsync - geolocation API not set" );
+      return;
+    }
+
     this.logginService.logTrace("FlagsService.getFlagFromIPAsync(" + ip + ")" );
     this.cache.set(ip, new FlagData("", "", ""));
 
@@ -111,7 +128,6 @@ export class FlagsService {
       const isoCode = apiResponse.countryRegion.isoCode.toLowerCase();
       const countryName: string= allCountries.find(x => x.code == isoCode)?.name ?? "";
 
-      //this.logginService.logTrace(`Country:${countryName} - ${isoCode}`);
       this.cache.set(ip, new FlagData("fi fi-" + isoCode + "", countryName, isoCode));
     }
     

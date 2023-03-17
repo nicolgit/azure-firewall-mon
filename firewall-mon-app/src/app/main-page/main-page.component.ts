@@ -171,6 +171,24 @@ export class MainPageComponent implements OnInit {
       return false;
   }
 
+  public isIP(ip: string): boolean {
+    if (ip == null || ip.length == 0)
+      return false;
+      
+    var octets = ip.split(".");
+    if (octets.length != 4)
+      return false;
+    
+    // check if all octets are numbers
+    for (var i = 0; i < octets.length; i++) {
+      var octet = parseInt(octets[i]);
+      if (isNaN(octet))
+        return false;
+    }
+
+    return true;
+  }
+
   public isExternalIP(ip: string): boolean {
     if (ip == null || ip.length == 0)
       return false;
@@ -183,9 +201,12 @@ export class MainPageComponent implements OnInit {
   }
   
   public getFlagFromIP(ip: string): FlagData | undefined{
+    if (!this.isIP(ip))
+      return undefined;
+
     if (this.isInternalIP(ip))
       return undefined;
-      
+    
     return this.flagService.getFlagFromIP(ip);
   }
 

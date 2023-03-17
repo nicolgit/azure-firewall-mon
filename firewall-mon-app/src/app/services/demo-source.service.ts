@@ -10,8 +10,8 @@ import { IFirewallSource, FirewallDataRow, ModelService } from '../services/mode
 export class DemoSourceService implements IFirewallSource {
   
   private startingRows: number = 50000;
-  private moreRows: number = 3;//2000;
-  private intervalBetweenMoreRows: number = 3000000; // millisenconds
+  private moreRows: number = 2000;
+  private intervalBetweenMoreRows: number = 5000; // millisenconds
 
   constructor( private model:ModelService,
     private logginService: LoggingService,
