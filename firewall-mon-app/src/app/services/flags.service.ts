@@ -74,8 +74,9 @@ export class FlagsService {
     if (hasKey) {
       return this.cache.get(ip);
     }
-
+ 
     this.getFlagFromIPAsync(ip);
+
     return undefined;
   }
 
@@ -87,16 +88,14 @@ export class FlagsService {
     }
 
     this.getFlagFromIPRandomAsync(ip);
+
     return undefined;
   }
 
   private async getFlagFromIPRandomAsync(ip:string) {
     this.logginService.logTrace("FlagsService.getFlagFromIPRandomAsync(" + ip + ")" );
     this.demoCache.set(ip, new FlagData("", "", ""));
-
-    await new Promise(resolve => setTimeout(resolve, 10000));
-
-
+    
     var rnd = Math.random();
     if (rnd < 0.1) {
       this.demoCache.set(ip, undefined);
@@ -112,24 +111,29 @@ export class FlagsService {
   }
 
   private async getFlagFromIPAsync(ip:string) {
-    if (environment.AzureMapsSASKey == "") {
-      this.logginService.logTrace("FlagsService.getFlagFromIPAsync - geolocation API not set" );
-      return;
-    }
-
     this.logginService.logTrace("FlagsService.getFlagFromIPAsync(" + ip + ")" );
     this.cache.set(ip, new FlagData("", "", ""));
-
-    if (environment.AzureMapsSASKey != "") {
-      const callRequest = `https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip=${ip}&subscription-key=${environment.AzureMapsSASKey}`;
-      const response = await axios.get(callRequest);
-      const apiResponse : AzureAPIResponse = response.data;
-      
-      const isoCode = apiResponse.countryRegion.isoCode.toLowerCase();
-      const countryName: string= allCountries.find(x => x.code == isoCode)?.name ?? "";
-
-      this.cache.set(ip, new FlagData("fi fi-" + isoCode + "", countryName, isoCode));
-    }
     
+    var apiKey="";
+    if (this.model.azureMapsSharedKey == "") {
+      if (environment.AzureMapsSASKey == "") {
+      this.logginService.logTrace("FlagsService.getFlagFromIPAsync - geolocation API not set" );
+      return;
+      }
+      else {
+        apiKey = environment.AzureMapsSASKey;
+      }
+    }
+    else {
+      apiKey = this.model.azureMapsSharedKey;
+    }
+
+    const callRequest = `https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip=${ip}&subscription-key=${apiKey}`;
+    const response = await axios.get(callRequest);
+    const apiResponse : AzureAPIResponse = response.data;
+    const isoCode = apiResponse.countryRegion.isoCode.toLowerCase();
+    const countryName: string= allCountries.find(x => x.code == isoCode)?.name ?? "";
+
+    this.cache.set(ip, new FlagData("fi fi-" + isoCode + "", countryName, isoCode));  
   }
 }

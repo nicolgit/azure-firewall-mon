@@ -112,6 +112,10 @@ export class MainPageComponent implements OnInit {
 
   public panelOpenState = false;
 
+  public now(): string {
+    return Date.now().toString();
+  }
+
   public setActionBackground(action: string): string {
     if (this.hasHighlightColor(action) != '')
       return this.hasHighlightColor(action);

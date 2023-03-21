@@ -4,6 +4,7 @@
   <mat-toolbar color="primary" class="main-toolbar">
   <mat-toolbar-row>
     <span>Az-firewall-mon</span>
+    &nbsp;<span [innerHTML]="now()"></span>
     
     <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
       <span matPrefix class="material-symbols-outlined">search</span>

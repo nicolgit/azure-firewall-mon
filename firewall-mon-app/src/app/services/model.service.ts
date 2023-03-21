@@ -12,6 +12,7 @@ export class ModelService {
     this.demoMode = false;
     this.eventHubConnection = "";
     this.eventHubConsumerGroup = "$Default";
+    this.azureMapsSharedKey = "";
 
     this.load();
   }
@@ -19,6 +20,7 @@ export class ModelService {
   public demoMode: boolean;
   public eventHubConnection: string;
   public eventHubConsumerGroup: string;
+  public azureMapsSharedKey: string;
 
   public async load(): Promise<void> {
     var _demoMode = localStorage.getItem("demoMode");
@@ -35,12 +37,18 @@ export class ModelService {
     if (_eventHubConsumerGroup != null) {
       this.eventHubConsumerGroup = _eventHubConsumerGroup;
     }
+
+    var _azureMapsSharedKey = localStorage.getItem("azureMapsSharedKey");
+    if (_azureMapsSharedKey != null) {
+      this.azureMapsSharedKey = _azureMapsSharedKey;
+    }
   }
 
   public async save(): Promise<void> {
     localStorage.setItem("demoMode", this.demoMode.toString());
     localStorage.setItem("eventHubConnection", this.encryptionSvc.encrypt(this.eventHubConnection));
     localStorage.setItem("eventHubConsumerGroup", this.eventHubConsumerGroup);
+    localStorage.setItem("azureMapsSharedKey", this.azureMapsSharedKey);
   }  
 }
 
