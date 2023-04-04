@@ -3,6 +3,8 @@ import { Component, OnInit, Testability } from '@angular/core';
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
 import { EventHubSourceService } from '../services/event-hub-source.service';
+import { FlagData, FlagsService } from '../services/flags.service';
+
 import { MatDialog} from '@angular/material/dialog';
 
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
@@ -22,6 +24,7 @@ export class MainPageComponent implements OnInit {
     private model: ModelService,
     private demoSource: DemoSourceService,
     private eventHubService: EventHubSourceService,
+    private flagService: FlagsService,
     private router: Router,
     public dialog: MatDialog
     ) {
@@ -109,6 +112,10 @@ export class MainPageComponent implements OnInit {
 
   public panelOpenState = false;
 
+  public now(): string {
+    return Date.now().toString();
+  }
+
   public setActionBackground(action: string): string {
     if (this.hasHighlightColor(action) != '')
       return this.hasHighlightColor(action);
@@ -168,6 +175,24 @@ export class MainPageComponent implements OnInit {
       return false;
   }
 
+  public isIP(ip: string): boolean {
+    if (ip == null || ip.length == 0)
+      return false;
+      
+    var octets = ip.split(".");
+    if (octets.length != 4)
+      return false;
+    
+    // check if all octets are numbers
+    for (var i = 0; i < octets.length; i++) {
+      var octet = parseInt(octets[i]);
+      if (isNaN(octet))
+        return false;
+    }
+
+    return true;
+  }
+
   public isExternalIP(ip: string): boolean {
     if (ip == null || ip.length == 0)
       return false;
@@ -177,6 +202,16 @@ export class MainPageComponent implements OnInit {
       return false;
     
     return !this.isInternalIP(ip);
+  }
+  
+  public getFlagFromIP(ip: string): FlagData | undefined{
+    if (!this.isIP(ip))
+      return undefined;
+
+    if (this.isInternalIP(ip))
+      return undefined;
+    
+    return this.flagService.getFlagFromIP(ip);
   }
 
   ngOnInit(): void {

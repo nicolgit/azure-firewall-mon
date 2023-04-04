@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   buildDate: string = environment.BuildDate;
   eventHubConnectionString: string = this.model.eventHubConnection;
   eventHubConsumerGroup: string = this.model.eventHubConsumerGroup;
+  azureMapsSharedKey: string = this.model.azureMapsSharedKey;
   isDemoMode: boolean = this.model.demoMode;
   isStartDisabled: boolean = false;
 
@@ -53,6 +54,7 @@ export class LoginComponent implements OnInit {
       {
         this.model.eventHubConnection = this.eventHubConnectionString;
         this.model.eventHubConsumerGroup = this.eventHubConsumerGroup;
+        this.model.azureMapsSharedKey = this.azureMapsSharedKey;
         this.model.demoMode = this.isDemoMode;
         this.model.save();
 

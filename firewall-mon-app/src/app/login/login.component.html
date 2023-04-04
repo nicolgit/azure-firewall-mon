@@ -24,6 +24,11 @@
         <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="eventHubConsumerGroup" (input)="setStart()">
     </mat-form-field>
 
+    <mat-form-field appearance="fill" >
+        <mat-label>Azure Maps Account Shared Key (optional)</mat-label>
+        <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="azureMapsSharedKey" type="password">
+    </mat-form-field>
+
     <a mat-stroked-button color="primary" [disabled]="isStartDisabled" (click)="navigateNext()">Let's begin</a>
     <br/>
     <br/>
