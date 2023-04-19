@@ -7,7 +7,7 @@
 <br/>
 
 <div align="center">
-  <sub>Built with ❤︎ by
+  <sub>built by
   <a href="https://github.com/nicolgit">nicolgit</a> and
   <a href="https://github.com/nicolgit/azure-firewall-mon/contributors">
     contributors
@@ -18,7 +18,9 @@
 
 ![azure-firewall-mon-app](images/firewall-mon-app.png)
 
-We all know the Microsoft's recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check the results. Azure-Firewall-mon focus more on answering a simple question "_what's happening right now?_": the idea is to provide an approach much more like Sysinternals Process Monitor or Check Point's SmartView, where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a **log** **stream**. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or almost). 
+We all know that Microsoft's recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check the results. 
+
+Azure-Firewall-mon focuses more on providing a tool that can answer the simple question "_what is happening right now?_" in an alternative and hopefully practical way: the idea is to provide an approach much more like [Sysinternals Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) or [Check Point's SmartView/SmartLog](https://sc1.checkpoint.com/documents/R80.40/WebAdminGuides/EN/CP_R80.40_LoggingAndMonitoring_AdminGuide/Topics-LMG/Using-log-view.htm?tocpath=Logging%7C_____2), where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a _log-stream_. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or almost). 
 
 > Are you curious? See Azure-Firewall-mon in action in this video: <https://www.youtube.com/watch?v=NNmRxgljtKE> 
 
@@ -87,4 +89,4 @@ The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) 
 * [lf20_giodppcr.json](https://lottiefiles.com/95739-no-connection-to-internet) lottie animation by hdev coder
 
 # Feedback
-**This project is still at a very early stage**: Do you like the idea? Do you Love It? Do you hate it? Do you want to collaborate? Open an Issue and let me know!
+Do you like the idea? Do you want to collaborate? Do you have questions? [Open an Issue](issues)!
