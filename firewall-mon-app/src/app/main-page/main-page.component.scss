@@ -64,7 +64,7 @@ table {
   table-layout: fixed;
 }
 
-.mat-row:hover {
+.mat-mdc-row:hover {
   background-color: lightyellow;
 }
 
@@ -88,7 +88,7 @@ table {
 }
 
 
-.mat-table {
+.mat-mdc-table {
   width: 100%;
   &.resizing {
     -moz-user-select: none;
@@ -97,7 +97,7 @@ table {
     user-select: none;
     cursor: col-resize;
   }
-  .mat-cell {
+  .mat-mdc-cell {
     overflow:hidden;
     white-space: nowrap;
     span {   
@@ -106,7 +106,7 @@ table {
       white-space: nowrap;
     }
   }
-  .mat-header-cell {
+  .mat-mdc-header-cell {
     position: relative;      
     &:not(:last-child) {
       .resize-holder {
@@ -120,8 +120,8 @@ table {
       }
     }
   }
-  .mat-cell,
-  .mat-header-cell {
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
     border-right: 1px solid rgba(0, 0, 0, 0.12);
     &:not(:nth-child(1)) {
       padding: 0 10px;

@@ -5,7 +5,7 @@ import { DemoSourceService } from '../services/demo-source.service';
 import { EventHubSourceService } from '../services/event-hub-source.service';
 import { FlagData, FlagsService } from '../services/flags.service';
 
-import { MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import { MatDialog} from '@angular/material/dialog';
 
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 import { empty } from 'rxjs';
