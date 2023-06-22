@@ -29,6 +29,12 @@ $bottom-bar-size: 30px;
   margin-right: 0;
 }
 
+.main-toolbar-buttons button span{
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
+
 .parent {
   display: flex;
   flex-flow: column;
@@ -62,10 +68,6 @@ $bottom-bar-size: 30px;
 table {
   width: 100%;
   table-layout: fixed;
-}
-
-.mat-mdc-row:hover {
-  background-color: lightyellow;
 }
 
 .col-sm {

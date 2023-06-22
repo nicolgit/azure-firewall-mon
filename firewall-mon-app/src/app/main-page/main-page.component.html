@@ -6,13 +6,13 @@
     <span>Az-firewall-mon</span>
     
     <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
-      <span matPrefix class="material-symbols-outlined">search</span>
+      <span matPrefix class="material-symbols-outlined" style="color: grey;">search</span>
       <mat-label>filter</mat-label>
       <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
     </mat-form-field>
 
     <section class="main-toolbar-buttons">
-      <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined">delete</span>Clear</button>&nbsp;
+      <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined ">delete</span>Clear</button>&nbsp;
       <button mat-raised-button color="accent"  *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>&nbsp;
       <button mat-raised-button color="accent" *ngIf="isPaused" (click)="resume()"><span class="material-symbols-outlined">start</span>Resume</button>&nbsp;
       <button mat-raised-button color="warn" (click)="logout()"><span class="material-symbols-outlined">logout</span>Exit</button>&nbsp;
