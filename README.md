@@ -1,4 +1,4 @@
-<h1 align="center">az-firewall-mon</h1>
+<h1 align="center">az-firewall-mon🧑‍🚒</h1>
 
 <div align="center">
   an <i>alternative and opinionable</i>😊 way to access and inspect Azure Firewall logs
