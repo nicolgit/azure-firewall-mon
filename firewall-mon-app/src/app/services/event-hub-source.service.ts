@@ -123,15 +123,18 @@ export class EventHubSourceService implements Model.IFirewallSource {
         },
         subscribeOptions );
 
+      /*
       // After 30 seconds, stop processing.
       await new Promise<void>((resolve) => {
         setTimeout(async () => {
           this.outputMessage(`disconnecting consumerClient and subscription`);
           await this.subscription.close();
           await this.consumerClient?.close();
+          
           resolve();
-        }, 300000);
+        }, 30000);
       });
+      */
     }
     catch (err: any) {
       this.logginService.logException(err.toString());
@@ -143,6 +146,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
   public async pause() {
     await this.consumerClient?.close();
     this.logginService.logEvent(`paused connection with event hub`);
+    this.outputMessage("Connection with event hub - Paused");
   }
 
   public async stop() {
@@ -150,6 +154,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
     
     await this.consumerClient?.close();
     this.logginService.logEvent(`stopped connection with event hub`);
+    this.outputMessage("Connection with event hub - Stopped");
   }
 
   public async clear() {
