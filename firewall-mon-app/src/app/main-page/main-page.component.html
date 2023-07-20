@@ -79,7 +79,7 @@
       </ng-container>
 
       <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">ACTION</th>
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Action</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="setActionBackground(element.action)">
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'allow')">task_alt</span>
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'deny')">front_hand</span>
@@ -88,14 +88,14 @@
       </ng-container>    
 
       <ng-container matColumnDef="policy">
-        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">POLICY</th>
+        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">Policy</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.policy)">
           <span [innerHtml]="highlightSelection(element.policy)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="targetUrl">
-        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">URL</th>
+        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">More info</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetUrl)">
           <span [innerHtml]="highlightSelection(element.targetUrl)"></span>
         </td>
