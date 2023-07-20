@@ -96,8 +96,8 @@
 
       <ng-container matColumnDef="targetUrl">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">More info</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetUrl)">
-          <span [innerHtml]="highlightSelection(element.targetUrl)"></span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.moreInfo)">
+          <span [innerHtml]="highlightSelection(element.moreInfo)"></span>
         </td>
       </ng-container>
     </table>

@@ -76,7 +76,7 @@ export class DemoSourceService implements IFirewallSource {
           } as FirewallDataRow;
 
           if (Math.random() > 0.8) {
-            row.targetUrl = "https://www." + this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)].replace(/ /g,".") + ".com";
+            row.moreInfo = "https://www." + this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)].replace(/ /g,".") + ".com";
           }
         }
         else {

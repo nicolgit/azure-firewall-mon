@@ -71,7 +71,7 @@ export interface FirewallDataRow {
   srcport: string;
   targetip: string;
   targetport: string;
-  targetUrl: string;
+  moreInfo: string;
   action: string;
   policy: string;
   dataRow: any;

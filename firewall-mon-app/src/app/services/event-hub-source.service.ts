@@ -137,9 +137,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
       this.logginService.logException(err.toString());
       this.outputMessage(err.toString());
       throw err;
-    }
-
-    
+    }    
   }
 
   public async pause() {
@@ -171,7 +169,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
     try {
       switch (record.operationName) {
         case "AzureFirewallNetworkRuleLog": {
-          // OLD: UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
+          // OLD: UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.             
           // NEW: ICMP Type=8 request from 10.13.2.4:0 to 13.107.4.50:0. Action: Deny..
 
           const splitRequest = record.properties.msg.split(" request from ");
@@ -256,7 +254,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                 break;
               }
               case "Url": {
-                row.targetUrl = words[1];
+                row.moreInfo = words[1];
                 break;
               }
               case "No rule matched. Proceeding with default action": {
@@ -285,7 +283,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           row.sourceip = split[2].split(":")[0];
           row.srcport = split[2].split(":")[1];
           row.protocol = split[8];        
-          row.targetUrl = split[5] + " " + split[6] + " " + split[7];
+          row.moreInfo = split[5] + " " + split[6] + " " + split[7];
           
           row.dataRow = record;
 
