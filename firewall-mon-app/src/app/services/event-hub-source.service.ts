@@ -116,9 +116,9 @@ export class EventHubSourceService implements Model.IFirewallSource {
             }
 
           },
-          processError: async (err, context) => {
-            this.logginService.logException(err);
+          processError: async (err, context) => { 
             console.log(`${err}`);
+            this.logginService.logException(err);
           }
         },
         subscribeOptions );
@@ -170,20 +170,24 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
     switch (record.operationName) {
       case "AzureFirewallNetworkRuleLog": {
-        // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
-        const split = record.properties.msg.split(" ");
-        const ipport1 = split[3].split(":");
-        const ipport2 = split[5].split(":");
+        // OLD: UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
+        // NEW: ICMP Type=8 request from 10.13.2.4:0 to 13.107.4.50:0. Action: Deny..
+
+        const splitRequest = record.properties.msg.split(" request from ");
+        const splitDetail = splitRequest[1].split(" ");
+        
+        const ipport1 = splitDetail[0].split(":");
+        const ipport2 = splitDetail[2].split(":");
 
         row = {
           time: record.time.toString(),
           category: "NetworkRule",
-          protocol: split[0],
+          protocol: splitRequest[0],
           sourceip: ipport1[0],
           srcport: ipport1[1],
           targetip: ipport2[0],
           targetport: ipport2[1].replace(".", ""),
-          action: split[7].replace(".", ""),
+          action: splitDetail[4].replace(".", ""),
           dataRow: record
         } as Model.FirewallDataRow;    
         break; 
