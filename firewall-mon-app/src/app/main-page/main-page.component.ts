@@ -55,7 +55,7 @@ export class MainPageComponent implements OnInit {
             data.targetip?.toLowerCase().includes(word) || 
             data.targetport?.toLowerCase().includes(word) || 
             data.policy?.toLowerCase().includes(word) ||
-            data.targetUrl?.toLowerCase().includes(word) ||
+            data.moreInfo?.toLowerCase().includes(word) ||
             data.action?.toLowerCase().includes(word))
           {
             foundWords++;

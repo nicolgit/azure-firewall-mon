@@ -83,6 +83,7 @@
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="setActionBackground(element.action)">
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'allow')">task_alt</span>
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'deny')">front_hand</span>
+          &nbsp;
           <span [innerHtml]="highlightSelection(element.action)"></span>
         </td>
       </ng-container>    
@@ -96,8 +97,8 @@
 
       <ng-container matColumnDef="targetUrl">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">More info</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetUrl)">
-          <span [innerHtml]="highlightSelection(element.targetUrl)"></span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.moreInfo)">
+          <span [innerHtml]="highlightSelection(element.moreInfo)"></span>
         </td>
       </ng-container>
     </table>
