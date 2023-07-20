@@ -116,9 +116,9 @@ export class EventHubSourceService implements Model.IFirewallSource {
             }
 
           },
-          processError: async (err, context) => {
-            this.logginService.logException(err);
+          processError: async (err, context) => { 
             console.log(`${err}`);
+            this.logginService.logException(err);
           }
         },
         subscribeOptions );
@@ -168,128 +168,154 @@ export class EventHubSourceService implements Model.IFirewallSource {
   private parseAzureFirewallRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
     var row: Model.FirewallDataRow;
 
-    switch (record.operationName) {
-      case "AzureFirewallNetworkRuleLog": {
-        // UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
-        const split = record.properties.msg.split(" ");
-        const ipport1 = split[3].split(":");
-        const ipport2 = split[5].split(":");
+    try {
+      switch (record.operationName) {
+        case "AzureFirewallNetworkRuleLog": {
+          // OLD: UDP request from 10.13.1.4:62674 to 10.13.2.4:3389. Action: Allow.
+          // NEW: ICMP Type=8 request from 10.13.2.4:0 to 13.107.4.50:0. Action: Deny..
 
-        row = {
-          time: record.time.toString(),
-          category: "NetworkRule",
-          protocol: split[0],
-          sourceip: ipport1[0],
-          srcport: ipport1[1],
-          targetip: ipport2[0],
-          targetport: ipport2[1].replace(".", ""),
-          action: split[7].replace(".", ""),
-          dataRow: record
-        } as Model.FirewallDataRow;    
-        break; 
-      }
-      case "AzureFirewallNatRuleLog": {
-        // TCP request from 194.79.199.174:61563 to 20.31.19.13:3389 was DNAT'ed to 10.13.2.4:3389
-        const split = record.properties.msg.split(" ");
-        const ipport1 = split[3].split(":");
-        const ipport2 = split[5].split(":");
+          const splitRequest = record.properties.msg.split(" request from ");
+          const splitDetail = splitRequest[1].split(" ");
+          
+          const ipport1 = splitDetail[0].split(":");
+          const ipport2 = splitDetail[2].split(":");
 
-        row = {
-          time: record.time.toString(),
-          category: "NatRule",
-          protocol: split[0],
-          sourceip: ipport1[0],
-          srcport: ipport1[1],
-          targetip: ipport2[0],
-          targetport: ipport2[1],
-          action: split[7],
-          dataRow: record
-        } as Model.FirewallDataRow;
-        
-        for (let i = 8; i < split.length; i++) {
-          row.action += " " + split[i];
+          row = {
+            time: record.time.toString(),
+            category: "NetworkRule",
+            protocol: splitRequest[0],
+            sourceip: ipport1[0],
+            srcport: ipport1[1],
+            targetip: ipport2[0],
+            targetport: ipport2[1].replace(".", ""),
+            action: splitDetail[4].replace(".", "").replace(".", ""),
+            dataRow: record
+          } as Model.FirewallDataRow;    
+          break; 
         }
-        break; 
-      }
-      case "AzureFirewallApplicationRuleLog": {
-        //"HTTPS request from 10.13.1.4:55611 to md-zz400hv4xnwl.z32.blob.storage.azure.net:443. Action: Deny. No rule matched. Proceeding with default action"
-        //"HTTPS request from 10.13.1.4:55583 to winatp-gw-cus3.microsoft.com:443. Action: Deny. Policy: my-policy. Rule Collection Group: DefaultApplicationRuleCollectionGroup. Rule Collection: block-sites. Rule: block-microsoft"
-        //"HTTP  request from 10.13.1.4:55202 to au.download.windowsupdate.com:80. Url: au.download.windowsupdate.com/c/msdownload/update/software/updt/2021/01/windows10.0-kb4589208-v2-x64_c7af21cdf923f050a3dc8e7924c0245ee651da56.cab. Action: Deny. No rule matched. Proceeding with default action"
-  
-        row = {} as Model.FirewallDataRow;
-        
-        const splitStops = record.properties.msg.split(". ");
-        const splitSpaces = record.properties.msg.substring(6).split(" ");
-        const ipport1 = splitSpaces[2].split(":");
-        const ipport2 = splitSpaces[4].split(":");
+        case "AzureFirewallNatRuleLog": {
+          // TCP request from 194.79.199.174:61563 to 20.31.19.13:3389 was DNAT'ed to 10.13.2.4:3389
+          const split = record.properties.msg.split(" ");
+          const ipport1 = split[3].split(":");
+          const ipport2 = split[5].split(":");
 
-        row.time = record.time.toString();
-        row.category = "ApplicationRule";
-        row.protocol = splitStops[0].split(" ")[0];
-        row.policy ="";
-
-        row.sourceip = ipport1[0];
-        row.srcport = ipport1[1];
-        row.targetip = ipport2[0];
-        row.targetport = ipport2[1];
-        row.dataRow = record;
-
-        splitStops.forEach((sentence, index) => {
-          var words = sentence.split(": ");
-          switch (words[0]) {
-            case "Action":{
-              row.action = words[1];
-              break;
-            }
-            case "Policy": {
-              break;
-            }
-            case "Rule Collection Group":
-            case "Rule Collection": 
-            case "Rule": {
-              row.policy += ">" + words[1];
-              break;
-            }
-            case "Url": {
-              row.targetUrl = words[1];
-              break;
-            }
-            case "No rule matched. Proceeding with default action": {
-              row.policy = "N/A";
-              break;
-            }
-          }           
-        });
-
-        if (row.policy.startsWith(">")) {
-          row.policy = row.policy.substring(1);
+          row = {
+            time: record.time.toString(),
+            category: "NatRule",
+            protocol: split[0],
+            sourceip: ipport1[0],
+            srcport: ipport1[1],
+            targetip: ipport2[0],
+            targetport: ipport2[1],
+            action: split[7],
+            dataRow: record
+          } as Model.FirewallDataRow;
+          
+          for (let i = 8; i < split.length; i++) {
+            row.action += " " + split[i];
+          }
+          break; 
         }
+        case "AzureFirewallApplicationRuleLog": {
+          //"HTTPS request from 10.13.1.4:55611 to md-zz400hv4xnwl.z32.blob.storage.azure.net:443. Action: Deny. No rule matched. Proceeding with default action"
+          //"HTTPS request from 10.13.1.4:55583 to winatp-gw-cus3.microsoft.com:443. Action: Deny. Policy: my-policy. Rule Collection Group: DefaultApplicationRuleCollectionGroup. Rule Collection: block-sites. Rule: block-microsoft"
+          //"HTTP  request from 10.13.1.4:55202 to au.download.windowsupdate.com:80. Url: au.download.windowsupdate.com/c/msdownload/update/software/updt/2021/01/windows10.0-kb4589208-v2-x64_c7af21cdf923f050a3dc8e7924c0245ee651da56.cab. Action: Deny. No rule matched. Proceeding with default action"
+    
+          row = {} as Model.FirewallDataRow;
+          
+          const splitStops = record.properties.msg.split(". ");
+          const splitSpaces = record.properties.msg.substring(6).split(" ");
+          const ipport1 = splitSpaces[2].split(":");
+          const ipport2 = splitSpaces[4].split(":");
 
-        break; 
+          row.time = record.time.toString();
+          row.category = "ApplicationRule";
+          row.protocol = splitStops[0].split(" ")[0];
+          row.policy ="";
+
+          row.sourceip = ipport1[0];
+          row.srcport = ipport1[1];
+          row.targetip = ipport2[0];
+          row.targetport = ipport2[1];
+          row.dataRow = record;
+
+          splitStops.forEach((sentence, index) => {
+            var words = sentence.split(": ");
+            switch (words[0]) {
+              case "Action":{
+                row.action = words[1];
+                break;
+              }
+              case "Policy": {
+                break;
+              }
+              case "Rule Collection Group":
+              case "Rule Collection": 
+              case "Rule": {
+                row.policy += ">" + words[1];
+                break;
+              }
+              case "Url": {
+                row.targetUrl = words[1];
+                break;
+              }
+              case "No rule matched. Proceeding with default action": {
+                row.policy = "N/A";
+                break;
+              }
+            }           
+          });
+
+          if (row.policy.startsWith(">")) {
+            row.policy = row.policy.substring(1);
+          }
+
+          break; 
+        }
+        case "AzureFirewallDnsProxyLog": {
+          //  "DNS Request: 10.12.3.5:7943 - 8951 AAAA IN tsfe.trafficshaping.dsp.mp.microsoft.com. udp 58 false 512 NOERROR qr,rd,ra 135 0.004987569s"
+          //     " Error: 2 time.windows.com.reddog.microsoft.com. A: read udp 10.0.1.5:49126->168.63.129.160:53: i/o timeout”
+
+          const split = record.properties.msg.split(" ");
+
+          row = {} as Model.FirewallDataRow;
+          row.time = record.time.toString();
+          row.category = "DnsProxy";
+          row.action = split[1].replace(":", "");
+          row.sourceip = split[2].split(":")[0];
+          row.srcport = split[2].split(":")[1];
+          row.protocol = split[8];        
+          row.targetUrl = split[5] + " " + split[6] + " " + split[7];
+          
+          row.dataRow = record;
+
+          break;
+        }
+        default: {
+          row = {
+            time: record.time.toString(),
+            category: "SKIPPED - UNMANAGED Operation Name: " + record.category,
+            protocol: "-",
+            sourceip: "-",
+            srcport: "-",
+            targetip: "-",
+            targetport: "-",
+            action: "-",
+            dataRow: record
+          } as Model.FirewallDataRow;
+
+          this.skippedRows++;
+          this.onRowSkipped?.(this.skippedRows);
+          break; 
+        }
       }
-      case "AzureFirewallDnsProxyLog": {
-        //  "DNS Request: 10.12.3.5:7943 - 8951 AAAA IN tsfe.trafficshaping.dsp.mp.microsoft.com. udp 58 false 512 NOERROR qr,rd,ra 135 0.004987569s"
-        //     " Error: 2 time.windows.com.reddog.microsoft.com. A: read udp 10.0.1.5:49126->168.63.129.160:53: i/o timeout”
 
-        const split = record.properties.msg.split(" ");
-
-        row = {} as Model.FirewallDataRow;
-        row.time = record.time.toString();
-        row.category = "DnsProxy";
-        row.action = split[1].replace(":", "");
-        row.sourceip = split[2].split(":")[0];
-        row.srcport = split[2].split(":")[1];
-        row.protocol = split[8];        
-        row.targetUrl = split[5] + " " + split[6] + " " + split[7];
+    }  catch (err: any) {
+        this.logginService.logEvent(`ERROR in parsing AzureFirewallRule: ${err.toString()} - ${record}`);
         
-        row.dataRow = record;
-
-        break;
-      }
-      default: {
         row = {
           time: record.time.toString(),
-          category: "SKIPPED - UNMANAGED SUB Operation Name - " + record.category,
+          category: "SKIPPED - ERROR parsing message",
           protocol: "-",
           sourceip: "-",
           srcport: "-",
@@ -298,11 +324,6 @@ export class EventHubSourceService implements Model.IFirewallSource {
           action: "-",
           dataRow: record
         } as Model.FirewallDataRow;
-
-        this.skippedRows++;
-        this.onRowSkipped?.(this.skippedRows);
-        break; 
-      }
     }
 
     return row;
