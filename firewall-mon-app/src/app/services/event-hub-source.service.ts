@@ -72,7 +72,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                       row = this.parseAzureFirewallRuleLegacy(record);
                       break;
                     }
-                    case "AZFWNetworkRule":
+                    case "AZFWDnsQuery":
                       row = this.parseAzureFirewallRule(record);
                       break;
                     default: {
@@ -339,18 +339,19 @@ export class EventHubSourceService implements Model.IFirewallSource {
     var row: Model.FirewallDataRow;
 
     try {
-      switch (record.operationName) {
-        case "AZFWNetworkRule": {
+      switch (record.category) {
+        case "AZFWDnsQuery": {
           
           row = {
             time: record.time.toString(),
-            category: "???",
-            protocol: "-",
-            sourceip: "-",
-            srcport: "-",
-            targetip: "-",
-            targetport: "-",
-            action: "-",
+            category: "AzDnsQuery",
+            protocol: record.properties.Protocol,
+            sourceip: record.properties.SourceIp,
+            srcport: record.properties.SourcePort,
+            targetip: "",
+            targetport: "",
+            action: "REQUEST",
+            moreInfo: record.properties.QueryId + " " + record.properties.QueryType + " " + record.properties.QueryClass + " " + record.properties.QueryName + " " + record.properties.ResponseFlags + " " + record.properties.ResponseCode + " " + record.properties.ErrorNumber + " " + record.properties.ErrorMessage,
             dataRow: record
           } as Model.FirewallDataRow;
 
@@ -379,7 +380,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         default: {
           row = {
             time: record.time.toString(),
-            category: "SKIPPED - UNMANAGED Operation Name: " + record.category,
+            category: "SKIPPED - UNMANAGED Category Name: " + record.category,
             protocol: "-",
             sourceip: "-",
             srcport: "-",
