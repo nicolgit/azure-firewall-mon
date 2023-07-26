@@ -72,6 +72,9 @@ export class EventHubSourceService implements Model.IFirewallSource {
                       row = this.parseAzureFirewallRuleLegacy(record);
                       break;
                     }
+                    case "AZFWNetworkRule":
+                      row = this.parseAzureFirewallRule(record);
+                      break;
                     default: {
                       row = {
                         time: record.time.toString(),
@@ -314,7 +317,86 @@ export class EventHubSourceService implements Model.IFirewallSource {
       }
 
     }  catch (err: any) {
-        this.logginService.logEvent(`ERROR in parsing AzureFirewallRule: ${err.toString()} - ${record}`);
+        this.logginService.logEvent(`parseAzureFirewallRuleLegacy: ERROR in parsing AzureFirewallRule: ${err.toString()} - ${record}`);
+        
+        row = {
+          time: record.time.toString(),
+          category: "SKIPPED - ERROR parsing message",
+          protocol: "-",
+          sourceip: "-",
+          srcport: "-",
+          targetip: "-",
+          targetport: "-",
+          action: "-",
+          dataRow: record
+        } as Model.FirewallDataRow;
+    }
+
+    return row;
+  }
+
+  private parseAzureFirewallRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
+    var row: Model.FirewallDataRow;
+
+    try {
+      switch (record.operationName) {
+        case "AZFWNetworkRule": {
+          
+          row = {
+            time: record.time.toString(),
+            category: "???",
+            protocol: "-",
+            sourceip: "-",
+            srcport: "-",
+            targetip: "-",
+            targetport: "-",
+            action: "-",
+            dataRow: record
+          } as Model.FirewallDataRow;
+
+          /*
+          const splitRequest = record.properties.msg.split(" request from ");
+          const splitDetail = splitRequest[1].split(" ");
+          
+          const ipport1 = splitDetail[0].split(":");
+          const ipport2 = splitDetail[2].split(":");
+
+          row = {
+            time: record.time.toString(),
+            category: "NetworkRule (legacy)",
+            protocol: splitRequest[0],
+            sourceip: ipport1[0],
+            srcport: ipport1[1],
+            targetip: ipport2[0],
+            targetport: ipport2[1].replace(".", ""),
+            action: splitDetail[4].replace(".", "").replace(".", ""),
+            dataRow: record
+          } as Model.FirewallDataRow;
+          */    
+          break; 
+        }
+        
+        default: {
+          row = {
+            time: record.time.toString(),
+            category: "SKIPPED - UNMANAGED Operation Name: " + record.category,
+            protocol: "-",
+            sourceip: "-",
+            srcport: "-",
+            targetip: "-",
+            targetport: "-",
+            action: "-",
+            dataRow: record
+          } as Model.FirewallDataRow;
+
+          this.skippedRows++;
+          this.onRowSkipped?.(this.skippedRows);
+          break; 
+        }
+      }
+
+    }  catch (err: any) {
+        this.logginService.logEvent(`parseAzureFirewallRuleLegacy: ERROR in parsing AzureFirewallRule: ${err.toString()} - ${record}`);
         
         row = {
           time: record.time.toString(),
