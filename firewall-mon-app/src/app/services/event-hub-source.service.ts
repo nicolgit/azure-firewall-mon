@@ -69,7 +69,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                     case "AzureFirewallNetworkRule":
                     case "AzureFirewallApplicationRule":
                     case "AzureFirewallDnsProxy":    {
-                      row = this.parseAzureFirewallRule(record);
+                      row = this.parseAzureFirewallRuleLegacy(record);
                       break;
                     }
                     default: {
@@ -168,7 +168,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.logginService.logTrace(text);
   }
 
-  private parseAzureFirewallRule(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
+  private parseAzureFirewallRuleLegacy(record: Model.AzureFirewallRecord): Model.FirewallDataRow {
     var row: Model.FirewallDataRow;
 
     try {
@@ -185,7 +185,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
           row = {
             time: record.time.toString(),
-            category: "NetworkRule",
+            category: "NetworkRule (legacy)",
             protocol: splitRequest[0],
             sourceip: ipport1[0],
             srcport: ipport1[1],
@@ -204,7 +204,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
           row = {
             time: record.time.toString(),
-            category: "NatRule",
+            category: "NATRule (legacy)",
             protocol: split[0],
             sourceip: ipport1[0],
             srcport: ipport1[1],
@@ -232,7 +232,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           const ipport2 = splitSpaces[4].split(":");
 
           row.time = record.time.toString();
-          row.category = "ApplicationRule";
+          row.category = "AppRule (legacy)";
           row.protocol = splitStops[0].split(" ")[0];
           row.policy ="";
 
@@ -283,7 +283,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
           row = {} as Model.FirewallDataRow;
           row.time = record.time.toString();
-          row.category = "DnsProxy";
+          row.category = "DnsProxy (legacy)";
           row.action = split[1].replace(":", "");
           row.sourceip = split[2].split(":")[0];
           row.srcport = split[2].split(":")[1];
