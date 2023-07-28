@@ -108,6 +108,10 @@ export interface AzureFirewallRecordProperties {
   Rule?: string;
   TargetUrl?: string;
   WebCategory?: string;
+
+  DestinationIp?: string;
+  Policy?: string;
+  ActionReason?: string;
 }
 
 export interface AzureFirewallRecord {

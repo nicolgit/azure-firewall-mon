@@ -74,6 +74,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                     }
                     case "AZFWDnsQuery":
                     case "AZFWApplicationRule":
+                    case "AZFWNetworkRule":
                       row = this.parseAzureFirewallRule(record);
                       break;
                     default: {
@@ -368,24 +369,60 @@ export class EventHubSourceService implements Model.IFirewallSource {
         case "AZFWApplicationRule": {
           row = {
             time: record.time.toString(),
-            category: "ApplicationRule2",
+            category: "ApplicationRule",
             protocol: record.properties.Protocol?.toString(),
             sourceip: record.properties.SourceIp?.toString(),
             srcport: record.properties.SourcePort?.toString(),
             targetip: record.properties.Fqdn?.toString(),
             targetport: record.properties.DestinationPort?.toString(),
             action: record.properties.Action?.toString(),
-            policy: record.properties.RuleCollectionGroup?.toString() + "»" + 
+            policy: record.properties.Policy?.toString() + " " +
+                    record.properties.RuleCollectionGroup?.toString() + "»" + 
                     record.properties.RuleCollection?.toString() + "»" + 
                     record.properties.Rule?.toString(),
             moreInfo:
                     "target:"+ record.properties.TargetUrl?.toString() +
                     " WebCategory:" + record.properties.WebCategory?.toString(),
+                    
             
             dataRow: record
           } as Model.FirewallDataRow;
           break;
         }
+        
+        case "AZFWNetworkRule": {
+          var fullPolicy;
+
+          if (record.properties.RuleCollectionGroup?.toString() != "") {
+            fullPolicy = record.properties.RuleCollectionGroup?.toString() + "»" + 
+              record.properties.RuleCollection?.toString() + "»" + 
+              record.properties.Rule?.toString();
+          }
+          else {
+            fullPolicy = record.properties.ActionReason?.toString();
+          }
+
+          row = {
+            time: record.time.toString(),
+            category: "NetworkRule",
+            protocol: record.properties.Protocol?.toString(),
+            sourceip: record.properties.SourceIp?.toString(),
+            srcport: record.properties.SourcePort?.toString(),
+            targetip: record.properties.DestinationIp?.toString(),
+            targetport: record.properties.DestinationPort?.toString(),
+            action: record.properties.Action?.toString(),
+            policy: fullPolicy,
+            moreInfo: "",
+          
+            dataRow: record
+          } as Model.FirewallDataRow;
+          break;
+        }
+
+
+
+
+
         
         default: {
           row = {

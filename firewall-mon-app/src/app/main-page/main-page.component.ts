@@ -69,7 +69,7 @@ export class MainPageComponent implements OnInit {
     
         return true;
         } catch (error) {
-          console.log ("Error [" + error + "] in filterPredicate working on: " + data);
+          //console.log ("Error [" + error + "] in filterPredicate working on: " + data);
           return true;
         } 
     };
