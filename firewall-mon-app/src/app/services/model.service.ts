@@ -99,6 +99,15 @@ export interface AzureFirewallRecordProperties {
   RequestDurationSecs?: string;
   ErrorNumber?: string;
   ErrorMessage?: string;
+
+  Fqdn?: string;
+  DestinationPort?: string;
+  Action?: string;
+  RuleCollectionGroup?: string;
+  RuleCollection?: string;
+  Rule?: string;
+  TargetUrl?: string;
+  WebCategory?: string;
 }
 
 export interface AzureFirewallRecord {

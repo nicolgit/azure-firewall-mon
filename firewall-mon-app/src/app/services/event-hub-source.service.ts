@@ -73,6 +73,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                       break;
                     }
                     case "AZFWDnsQuery":
+                    case "AZFWApplicationRule":
                       row = this.parseAzureFirewallRule(record);
                       break;
                     default: {
@@ -345,36 +346,45 @@ export class EventHubSourceService implements Model.IFirewallSource {
           row = {
             time: record.time.toString(),
             category: "AzDnsQuery",
-            protocol: record.properties.Protocol,
-            sourceip: record.properties.SourceIp,
-            srcport: record.properties.SourcePort,
+            protocol: record.properties.Protocol?.toString(),
+            sourceip: record.properties.SourceIp?.toString(),
+            srcport: record.properties.SourcePort?.toString(),
             targetip: "",
             targetport: "",
             action: "REQUEST",
-            moreInfo: record.properties.QueryId + " " + record.properties.QueryType + " " + record.properties.QueryClass + " " + record.properties.QueryName + " " + record.properties.ResponseFlags + " " + record.properties.ResponseCode + " " + record.properties.ErrorNumber + " " + record.properties.ErrorMessage,
+            policy: "",
+            moreInfo: record.properties.QueryId?.toString() + 
+            " " + record.properties.QueryType?.toString() + 
+            " " + record.properties.QueryClass?.toString() + 
+            " " + record.properties.QueryName?.toString() + 
+            " " + record.properties.ResponseFlags?.toString() + 
+            " " + record.properties.ResponseCode?.toString() + 
+            " " + record.properties.ErrorNumber?.toString() +
+            " " + record.properties.ErrorMessage?.toString(),
             dataRow: record
-          } as Model.FirewallDataRow;
-
-          /*
-          const splitRequest = record.properties.msg.split(" request from ");
-          const splitDetail = splitRequest[1].split(" ");
-          
-          const ipport1 = splitDetail[0].split(":");
-          const ipport2 = splitDetail[2].split(":");
-
+          } as Model.FirewallDataRow; 
+          break; 
+        }
+        case "AZFWApplicationRule": {
           row = {
             time: record.time.toString(),
-            category: "NetworkRule (legacy)",
-            protocol: splitRequest[0],
-            sourceip: ipport1[0],
-            srcport: ipport1[1],
-            targetip: ipport2[0],
-            targetport: ipport2[1].replace(".", ""),
-            action: splitDetail[4].replace(".", "").replace(".", ""),
+            category: "ApplicationRule2",
+            protocol: record.properties.Protocol?.toString(),
+            sourceip: record.properties.SourceIp?.toString(),
+            srcport: record.properties.SourcePort?.toString(),
+            targetip: record.properties.Fqdn?.toString(),
+            targetport: record.properties.DestinationPort?.toString(),
+            action: record.properties.Action?.toString(),
+            policy: record.properties.RuleCollectionGroup?.toString() + "»" + 
+                    record.properties.RuleCollection?.toString() + "»" + 
+                    record.properties.Rule?.toString(),
+            moreInfo:
+                    "target:"+ record.properties.TargetUrl?.toString() +
+                    " WebCategory:" + record.properties.WebCategory?.toString(),
+            
             dataRow: record
           } as Model.FirewallDataRow;
-          */    
-          break; 
+          break;
         }
         
         default: {
