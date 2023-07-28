@@ -131,6 +131,8 @@ export class MainPageComponent implements OnInit {
       return '#ffe6f0';
     else if (action == "Allow")
       return '#e6fff7';
+    else if (action == "Request")
+      return '#e6faff';
     else
       return '';
   }

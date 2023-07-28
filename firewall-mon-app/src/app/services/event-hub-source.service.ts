@@ -34,11 +34,11 @@ export class EventHubSourceService implements Model.IFirewallSource {
       await new Promise(resolve => setTimeout(resolve, this.defaultSleepTime));
       this.consumerClient = new EventHubConsumerClient(this.model.eventHubConsumerGroup, this.model.eventHubConnection);
       
-      this.outputMessage(`connected! getting partitionIds`);
+      this.outputMessage(`getting partitionIds`);
       await new Promise(resolve => setTimeout(resolve, this.defaultSleepTime));
       const partitionIds = await this.consumerClient.getPartitionIds();
       
-      this.outputMessage(`done! reading events from partitions: ${partitionIds.join(", ")}`);
+      this.outputMessage(`reading events from partitions: ${partitionIds.join(", ")}`);
       await new Promise(resolve => setTimeout(resolve, this.defaultSleepTime));
 
       var subscribeOptions: SubscribeOptions = { startPosition: earliestEventPosition, maxBatchSize: 200 };
@@ -352,7 +352,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
             srcport: record.properties.SourcePort?.toString(),
             targetip: "",
             targetport: "",
-            action: "REQUEST",
+            action: "Request",
             policy: "",
             moreInfo: record.properties.QueryId?.toString() + 
             " " + record.properties.QueryType?.toString() + 
