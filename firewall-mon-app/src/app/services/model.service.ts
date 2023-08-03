@@ -112,6 +112,9 @@ export interface AzureFirewallRecordProperties {
   DestinationIp?: string;
   Policy?: string;
   ActionReason?: string;
+
+  TranslatedIp?: string;
+  TranslatedPort?: string;
 }
 
 export interface AzureFirewallRecord {

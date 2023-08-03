@@ -30,7 +30,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
   public async start() {
 
     try {
-      this.outputMessage(`connecting consumerClient to azure event hub`);
+      this.outputMessage(`connecting to azure event hub`);
       await new Promise(resolve => setTimeout(resolve, this.defaultSleepTime));
       this.consumerClient = new EventHubConsumerClient(this.model.eventHubConsumerGroup, this.model.eventHubConnection);
       
@@ -72,9 +72,11 @@ export class EventHubSourceService implements Model.IFirewallSource {
                       row = this.parseAzureFirewallRuleLegacy(record);
                       break;
                     }
+                    // new format (structured logs)
                     case "AZFWDnsQuery":
                     case "AZFWApplicationRule":
                     case "AZFWNetworkRule":
+                    case "AZFWNatRule":
                       row = this.parseAzureFirewallRule(record);
                       break;
                     default: {
@@ -388,13 +390,14 @@ export class EventHubSourceService implements Model.IFirewallSource {
             dataRow: record
           } as Model.FirewallDataRow;
           break;
-        }
-        
+        } 
         case "AZFWNetworkRule": {
           var fullPolicy;
 
           if (record.properties.RuleCollectionGroup?.toString() != "") {
-            fullPolicy = record.properties.RuleCollectionGroup?.toString() + "»" + 
+            fullPolicy = 
+              record.properties.Policy?.toString() + "»" +
+              record.properties.RuleCollectionGroup?.toString() + "»" + 
               record.properties.RuleCollection?.toString() + "»" + 
               record.properties.Rule?.toString();
           }
@@ -411,6 +414,35 @@ export class EventHubSourceService implements Model.IFirewallSource {
             targetip: record.properties.DestinationIp?.toString(),
             targetport: record.properties.DestinationPort?.toString(),
             action: record.properties.Action?.toString(),
+            policy: fullPolicy,
+            moreInfo: "",
+          
+            dataRow: record
+          } as Model.FirewallDataRow;
+          break;
+        }
+        case "AZFWNatRule": {
+          var fullPolicy;
+
+          if (record.properties.RuleCollectionGroup?.toString() != "") {
+            fullPolicy = 
+              record.properties.Policy?.toString() + "»" +
+              record.properties.RuleCollectionGroup?.toString() + "»" + 
+              record.properties.RuleCollection?.toString() + "»" + 
+              record.properties.Rule?.toString();
+          }
+          else {
+            fullPolicy = record.properties.ActionReason?.toString();
+          }
+
+          row = {
+            time: record.time.toString(),
+            category: "NATRule",
+            protocol: record.properties.Protocol?.toString(),
+            sourceip: record.properties.SourceIp?.toString(),
+            srcport: record.properties.SourcePort?.toString(),
+            targetip: record.properties.TranslatedIp?.toString(),
+            targetport: record.properties.TranslatedPort?.toString(),
             policy: fullPolicy,
             moreInfo: "",
           
