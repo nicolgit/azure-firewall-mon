@@ -81,6 +81,40 @@ export interface FirewallDataRow {
 
 export interface AzureFirewallRecordProperties {
   msg: string;
+
+  // Azure firewall Structured log
+  SourceIp?: string;
+  SourcePort?: string;
+  QueryId?: string;
+  QueryType?: string;
+  QueryClass?: string;
+  QueryName?: string;
+  Protocol?: string;
+  RequestSize?: string;
+  DnssecOkBit?: string;
+  EDNS0BufferSize?: string;
+  ResponseCode?: string;
+  ResponseFlags?: string;
+  ResponseSize?: string;
+  RequestDurationSecs?: string;
+  ErrorNumber?: string;
+  ErrorMessage?: string;
+
+  Fqdn?: string;
+  DestinationPort?: string;
+  Action?: string;
+  RuleCollectionGroup?: string;
+  RuleCollection?: string;
+  Rule?: string;
+  TargetUrl?: string;
+  WebCategory?: string;
+
+  DestinationIp?: string;
+  Policy?: string;
+  ActionReason?: string;
+
+  TranslatedIp?: string;
+  TranslatedPort?: string;
 }
 
 export interface AzureFirewallRecord {
