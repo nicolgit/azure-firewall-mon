@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { LoggingService } from './logging.service';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -91,6 +92,11 @@ export class DemoSourceService implements IFirewallSource {
           this.onRowSkipped?.(this.skippedRows); 
         }
       this.DATA.unshift(row);
+
+      while (this.DATA.length > environment.EventsQueueLength) {
+        this.DATA.pop();
+      }
+
       }
 
       this.onDataArrived?.(this.DATA);
