@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import * as Model from '../services/model.service';
 import { LoggingService } from './logging.service';
 
-import { EventHubConsumerClient, earliestEventPosition, latestEventPosition, ReceivedEventData, SubscribeOptions } from "@azure/event-hubs";
-
+import { EventHubConsumerClient, earliestEventPosition, ReceivedEventData, SubscribeOptions } from "@azure/event-hubs";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -109,6 +109,11 @@ export class EventHubSourceService implements Model.IFirewallSource {
                 }
                 moreRows++;
                 this.DATA.unshift(row);
+
+                while (this.DATA.length > environment.EventsQueueLength) {
+                  this.DATA.pop();
+                }
+          
               }
 
               this.onDataArrived?.(this.DATA); 
