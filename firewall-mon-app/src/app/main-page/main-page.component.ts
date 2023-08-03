@@ -11,6 +11,7 @@ import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 import { empty } from 'rxjs';
 import { Router } from '@angular/router';
 import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
+import { LoggingService } from '../services/logging.service';
 
 @Component({
   selector: 'app-main-page',
@@ -26,6 +27,7 @@ export class MainPageComponent implements OnInit {
     private eventHubService: EventHubSourceService,
     private flagService: FlagsService,
     private router: Router,
+    private logging: LoggingService,
     public dialog: MatDialog
     ) {
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
@@ -38,7 +40,8 @@ export class MainPageComponent implements OnInit {
     this.dataSource = new TableVirtualScrollDataSource(data); 
     this.dataSource.filterPredicate = (data: FirewallDataRow, filter: string) => {
       
-        if (filter == null || filter.length == 0)
+        try {
+          if (filter == null || filter.length == 0)
           return true;
     
         var words = filter.toLowerCase().split(" ");
@@ -65,6 +68,10 @@ export class MainPageComponent implements OnInit {
         }
     
         return true;
+        } catch (error) {
+          //console.log ("Error [" + error + "] in filterPredicate working on: " + data);
+          return true;
+        } 
     };
     this.dataSource.filter = this.filterText;
     this.totalRows = data.length;
@@ -124,6 +131,8 @@ export class MainPageComponent implements OnInit {
       return '#ffe6f0';
     else if (action == "Allow")
       return '#e6fff7';
+    else if (action == "Request")
+      return '#e6faff';
     else
       return '';
   }
