@@ -5,5 +5,6 @@ export const environment = {
     production: false,
     ApplicationInsightsConnectionString: "",
     BuildDate: "???",
-    AzureMapsSASKey: ""
+    AzureMapsSASKey: "",
+    EventsQueueLength: 1000
   };
