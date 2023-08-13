@@ -1,3 +1,8 @@
+
+
+<div align="center">
+<img alt="logo" src="images\logo.png" width="72" height="72" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;">
+</div>
 <h1 align="center">az-firewall-mon🧑‍🚒</h1>
 
 <div align="center">
