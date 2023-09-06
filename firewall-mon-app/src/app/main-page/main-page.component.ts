@@ -127,11 +127,11 @@ export class MainPageComponent implements OnInit {
     if (this.hasHighlightColor(action) != '')
       return this.hasHighlightColor(action);
 
-    if (action == "Deny")
+    if (action == "Deny" || action == "drop")
       return '#ffe6f0';
     else if (action == "Allow")
       return '#e6fff7';
-    else if (action == "Request")
+    else if (action == "Request" || action == "alert")
       return '#e6faff';
     else
       return '';

@@ -77,6 +77,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                     case "AZFWApplicationRule":
                     case "AZFWNetworkRule":
                     case "AZFWNatRule":
+                    case "AZFWIdpsSignature":
                       row = this.parseAzureFirewallRule(record);
                       break;
                     default: {
@@ -455,7 +456,45 @@ export class EventHubSourceService implements Model.IFirewallSource {
           } as Model.FirewallDataRow;
           break;
         }
+        case "AZFWIdpsSignature": {
+          /* SAMPLE
+          {
+            "category": "AZFWIdpsSignature",
+            "time": "2023-09-06T14:04:01.7660350Z",
+            "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+            "properties": {
+              "Protocol": "TCP",
+              "SourceIp": "10.12.3.6",
+              "SourcePort": 44592,
+              "DestinationIp": "104.21.49.135",
+              "DestinationPort": 80,
+              "Action": "alert",
+              "SignatureId": "2008989",
+              "Category": "Attempted Information Leak",
+              "Description": "POLICY IP Check Domain (showmyip in HTTP Host)",
+              "Severity": 2
+            }
+          }
+          */
+          row = {
+            time: record.time.toString(),
+            category: "IdpsSignature",
+            protocol: record.properties.Protocol?.toString(),
+            sourceip: record.properties.SourceIp?.toString(),
+            srcport: record.properties.SourcePort?.toString(),
+            targetip: record.properties.DestinationIp?.toString(),
+            targetport: record.properties.DestinationPort?.toString(),
+            action: record.properties.Action?.toString(),
+            moreInfo: "SEV:" + record.properties.Severity?.toString() + 
+                      " " + record.properties.SignatureId?.toString() + 
+                      " " + record.properties.Category?.toString() + 
+                      " " + record.properties.Description?.toString(),
 
+            dataRow: record
+          } as Model.FirewallDataRow;
+
+          break;
+        }
 
 
 
