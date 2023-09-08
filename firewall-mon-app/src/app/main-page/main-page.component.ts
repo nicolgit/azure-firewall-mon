@@ -127,11 +127,11 @@ export class MainPageComponent implements OnInit {
     if (this.hasHighlightColor(action) != '')
       return this.hasHighlightColor(action);
 
-    if (action == "Deny" || action == "drop")
+    if (this.safeCheckString(action,"Deny") || this.safeCheckString(action,"drop"))
       return '#ffe6f0';
-    else if (action == "Allow")
+    else if (this.safeCheckString(action,"Allow"))
       return '#e6fff7';
-    else if (action == "Request" || action == "alert")
+    else if (this.safeCheckString(action,"Request") || this.safeCheckString(action,"alert"))
       return '#e6faff';
     else
       return '';
@@ -227,6 +227,7 @@ export class MainPageComponent implements OnInit {
     this.firewallSource.start();    
   }
 
+  /// check if a string is equal to another string, ignoring case
   public safeCheckString(text:string, content:string): boolean {
     if (text == null || text.length == 0)
       return false;
@@ -234,7 +235,7 @@ export class MainPageComponent implements OnInit {
     if (content == null || content.length == 0)
       return false;
 
-    return content.toLowerCase().includes(text.toLowerCase());
+    return content.toLowerCase() == text.toLowerCase();
   }
 
   public logout() {

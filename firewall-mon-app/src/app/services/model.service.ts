@@ -120,6 +120,8 @@ export interface AzureFirewallRecordProperties {
   SignatureId?: string;
   Category?: string;
   Description?: string;
+
+  ThreatDescription?: string;
 }
 
 export interface AzureFirewallRecord {
