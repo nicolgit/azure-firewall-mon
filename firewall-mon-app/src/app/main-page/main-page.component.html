@@ -30,7 +30,6 @@
     </lottie-player>
     <div class="lottie-text">{{message}}</div>
   </div>
-  
 
   <cdk-virtual-scroll-viewport tvsItemSize class="main mat-elevation-z2"  *ngIf="totalRows>0">
     <table mat-table [dataSource]="dataSource">
@@ -83,7 +82,9 @@
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="setActionBackground(element.action)">
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'allow')">task_alt</span>
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'deny')">cancel</span>
+          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'drop')">cancel</span>
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'request')">psychology_alt</span>
+          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'alert')">warning_amber</span>
           &nbsp;
           <span [innerHtml]="highlightSelection(element.action)"></span>
         </td>

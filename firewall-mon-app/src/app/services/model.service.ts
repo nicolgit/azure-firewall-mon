@@ -115,6 +115,13 @@ export interface AzureFirewallRecordProperties {
 
   TranslatedIp?: string;
   TranslatedPort?: string;
+
+  Severity?: string;
+  SignatureId?: string;
+  Category?: string;
+  Description?: string;
+
+  ThreatDescription?: string;
 }
 
 export interface AzureFirewallRecord {

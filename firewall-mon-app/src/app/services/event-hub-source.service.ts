@@ -57,7 +57,21 @@ export class EventHubSourceService implements Model.IFirewallSource {
             }
             
             for (const event of events) {
-              const eventBody: Model.EventHubBody = event.body;
+              var eventBody: Model.EventHubBody = event.body;
+
+              // *********************** fix for malformed json - TO BE REMOVED WHEN FIXED IN AZURE
+              if (eventBody.records == null) {
+                console.log(`${eventBody.toString()}`);
+
+                var asString: string = event.body.toString();
+               
+                if (asString.endsWith('",}}]}')) {
+                  asString = asString.slice(0,-6) + '"}}]}' ;
+                  
+                  eventBody = JSON.parse(asString);
+                }
+              }
+              // *********************** end fix for malformed json
 
               for (const record of eventBody.records) {
                 const resourceId:string = record.resourceId;
@@ -77,6 +91,8 @@ export class EventHubSourceService implements Model.IFirewallSource {
                     case "AZFWApplicationRule":
                     case "AZFWNetworkRule":
                     case "AZFWNatRule":
+                    case "AZFWIdpsSignature":
+                    case "AZFWThreatIntel": 
                       row = this.parseAzureFirewallRule(record);
                       break;
                     default: {
@@ -350,7 +366,31 @@ export class EventHubSourceService implements Model.IFirewallSource {
     try {
       switch (record.category) {
         case "AZFWDnsQuery": {
-          
+          /* SAMPLE
+          {
+            "category": "AZFWDnsQuery",
+            "time": "2023-09-06T14:33:46.8119710Z",
+            "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+            "properties": {
+              "SourceIp": "10.12.3.6",
+              "SourcePort": 17312,
+              "QueryId": 10433,
+              "QueryType": "A",
+              "QueryClass": "IN",
+              "QueryName": "winatp-gw-cus3.microsoft.com.",
+              "Protocol": "udp",
+              "RequestSize": 46,
+              "DnssecOkBit": false,
+              "EDNS0BufferSize": 512,
+              "ResponseCode": "NOERROR",
+              "ResponseFlags": "qr,rd,ra",
+              "ResponseSize": 308,
+              "RequestDurationSecs": 0.005563465,
+              "ErrorNumber": 0,
+              "ErrorMessage": ""
+            }
+          }     
+          */
           row = {
             time: record.time.toString(),
             category: "AzDnsQuery",
@@ -374,6 +414,30 @@ export class EventHubSourceService implements Model.IFirewallSource {
           break; 
         }
         case "AZFWApplicationRule": {
+          /* SAMPLE
+          {
+            "category": "AZFWApplicationRule",
+            "time": "2023-09-06T14:33:46.8121070Z",
+            "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+            "properties": {
+              "Protocol": "HTTPS",
+              "SourceIp": "10.13.2.4",
+              "SourcePort": 50975,
+              "DestinationPort": 443,
+              "Fqdn": "winatp-gw-cus3.microsoft.com",
+              "TargetUrl": "",
+              "Action": "Allow",
+              "Policy": "my-firewall-policy",
+              "RuleCollectionGroup": "DefaultApplicationRuleCollectionGroup",
+              "RuleCollection": "internet-out-collection",
+              "Rule": "allow-internet-traffic-out",
+              "ActionReason": "",
+              "IsTlsInspected": false,
+              "WebCategory": "",
+              "IsExplicitProxyRequest": false
+            }
+          }
+          */
           row = {
             time: record.time.toString(),
             category: "ApplicationRule",
@@ -397,6 +461,26 @@ export class EventHubSourceService implements Model.IFirewallSource {
           break;
         } 
         case "AZFWNetworkRule": {
+          /* SAMPLE
+          {
+            "category": "AZFWNetworkRule",
+            "time": "2023-09-06T14:22:44.9546030Z",
+            "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+            "properties": {
+              "Protocol": "UDP",
+              "SourceIp": "10.13.1.4",
+              "SourcePort": 52555,
+              "DestinationIp": "23.72.254.146",
+              "DestinationPort": 443,
+              "Action": "Deny",
+              "Policy": "",
+              "RuleCollectionGroup": "",
+              "RuleCollection": "",
+              "Rule": "",
+              "ActionReason": "Default Action"
+            }
+          }
+          */
           var fullPolicy;
 
           if (record.properties.RuleCollectionGroup?.toString() != "") {
@@ -455,11 +539,81 @@ export class EventHubSourceService implements Model.IFirewallSource {
           } as Model.FirewallDataRow;
           break;
         }
+        case "AZFWIdpsSignature": {
+          /* SAMPLE
+          {
+            "category": "AZFWIdpsSignature",
+            "time": "2023-09-06T14:04:01.7660350Z",
+            "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+            "properties": {
+              "Protocol": "TCP",
+              "SourceIp": "10.12.3.6",
+              "SourcePort": 44592,
+              "DestinationIp": "104.21.49.135",
+              "DestinationPort": 80,
+              "Action": "alert",
+              "SignatureId": "2008989",
+              "Category": "Attempted Information Leak",
+              "Description": "POLICY IP Check Domain (showmyip in HTTP Host)",
+              "Severity": 2
+            }
+          }
+          */
+          row = {
+            time: record.time.toString(),
+            category: "IdpsSignature",
+            protocol: record.properties.Protocol?.toString(),
+            sourceip: record.properties.SourceIp?.toString(),
+            srcport: record.properties.SourcePort?.toString(),
+            targetip: record.properties.DestinationIp?.toString(),
+            targetport: record.properties.DestinationPort?.toString(),
+            action: record.properties.Action?.toString(),
+            moreInfo: "SEV:" + record.properties.Severity?.toString() + 
+                      " " + record.properties.SignatureId?.toString() + 
+                      " " + record.properties.Category?.toString() + 
+                      " " + record.properties.Description?.toString(),
 
+            dataRow: record
+          } as Model.FirewallDataRow;
 
+          break;
+          }
+          case "AZFWThreatIntel": {
+          /* SAMPLE
+          {
+            "category": "AZFWThreatIntel",
+            "time": "2023-09-06T14:41:59.4005840Z",
+            "resourceId": "/SUBSCRIPTIONS/0DE6ABDE-B801-4CB3-AABE-4082A63C0A4D/RESOURCEGROUPS/HUB-AND-SPOKE-PLAYGROUND/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/LAB-FIREWALL",
+            "properties": {
+              "Protocol": "HTTP",
+              "SourceIp": "10.13.1.4",
+              "SourcePort": 51674,
+              "DestinationIp": "",
+              "DestinationPort": 80,
+              "Fqdn": "testmaliciousdomain.eastus.cloudapp.azure.com",
+              "TargetUrl": "",
+              "Action": "Alert",
+              "ThreatDescription": "This is a test indicator for a Microsoft owned domain.",
+              "IsTlsInspected": "false"
+            }
+          }
+          */
+          row = {
+            time: record.time.toString(),
+            category: "ThreatIntel",
+            protocol: record.properties.Protocol?.toString(),
+            sourceip: record.properties.SourceIp?.toString(),
+            srcport: record.properties.SourcePort?.toString(),
+            targetip: record.properties.Fqdn?.toString(),
+            targetport: record.properties.DestinationPort?.toString(),
+            action: record.properties.Action?.toString(),
+            moreInfo: record.properties.ThreatDescription?.toString(),
 
+            dataRow: record
+          } as Model.FirewallDataRow;
 
-
+          break;
+          }
         
         default: {
           row = {
