@@ -10,16 +10,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~15.2.9",
-    "@angular/cdk": "^15.2.9",
-    "@angular/common": "~15.2.9",
-    "@angular/compiler": "~15.2.9",
-    "@angular/core": "~15.2.9",
-    "@angular/forms": "~15.2.9",
-    "@angular/material": "^15.2.9",
-    "@angular/platform-browser": "~15.2.9",
-    "@angular/platform-browser-dynamic": "~15.2.9",
-    "@angular/router": "~15.2.9",
+    "@angular/animations": "~16.2.4",
+    "@angular/cdk": "^16.2.3",
+    "@angular/common": "~16.2.4",
+    "@angular/compiler": "~16.2.4",
+    "@angular/core": "~16.2.4",
+    "@angular/forms": "~16.2.4",
+    "@angular/material": "^16.2.3",
+    "@angular/platform-browser": "~16.2.4",
+    "@angular/platform-browser-dynamic": "~16.2.4",
+    "@angular/router": "~16.2.4",
     "@azure/event-hubs": "^5.10.0",
     "@lottiefiles/lottie-player": "^2.0.2",
     "@microsoft/applicationinsights-angularplugin-js": "^3.0.2",
@@ -32,13 +32,13 @@
     "rxjs": "^7.8.1",
     "secure-web-storage": "^1.0.2",
     "tslib": "^2.3.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.13.1"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "^15.0.0",
-    "@angular-devkit/build-angular": "~15.2.8",
-    "@angular/cli": "^15.2.8",
-    "@angular/compiler-cli": "~15.2.9",
+    "@angular-builders/custom-webpack": "^16.0.1",
+    "@angular-devkit/build-angular": "~16.2.1",
+    "@angular/cli": "^16.2.1",
+    "@angular/compiler-cli": "~16.2.4",
     "@types/crypto-js": "^4.1.1",
     "@types/jasmine": "~3.8.0",
     "@types/node": "^12.20.55",
@@ -52,6 +52,6 @@
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
-    "typescript": "~4.8.3"
+    "typescript": "~5.1.6"
   }
 }
