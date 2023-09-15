@@ -134,7 +134,17 @@ export class DemoSourceService implements IFirewallSource {
       "resourceId": "/SUBSCRIPTIONS/` + crypto.randomUUID() + `",
       "operationName": "AzureFirewallNatRuleLog",
       "properties": {
-          "msg": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        "Protocol": "HTTP",
+        "SourceIp": "10.13.1.4",
+        "SourcePort": 51674,
+        "DestinationIp": "",
+        "DestinationPort": 80,
+        "Fqdn": "testmaliciousdomain.eastus.cloudapp.azure.com",
+        "TargetUrl": "",
+        "Action": "Alert",
+        "ThreatDescription": "This is a test indicator for a Microsoft owned domain.",
+        "IsTlsInspected": "false",
+        "msg": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
       }}`
     return JSON.parse(datarow);
   }
