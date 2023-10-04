@@ -71,19 +71,38 @@ table {
   table-layout: fixed;
 }
 
-.col-sm {
-  width: 220px;
+.column01 {
+  width: 175px;
   border-right: 1px solid currentColor;
   padding-right: 6px;
 }
 
-.col-sm-2 {
+.column02 {
   padding-left: 6px;
-  width: 120px;
+  width: 132px;
 }
 
-.col-small {
-  width: 60px;
+.column03 {
+  width: 77px;
+}
+
+.column04 {
+  width: 195px;
+}
+
+.column05 {
+  width: 195px;
+}
+
+.column06 {
+  width: 122px;
+}
+
+.column07 {
+  width: 300px;
+}
+
+.column08 {
 }
 
 .col {
