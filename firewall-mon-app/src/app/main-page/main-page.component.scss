@@ -141,14 +141,42 @@ table {
   'opsz' 20
 }
 
+.flag-icon {
+  margin: 3px;
+}
+
 pre {
   white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
   white-space: pre-wrap;       /* css-3 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
+
+  outline: 1px solid #ccc; padding: 5px; margin: 5px;
 }
 
-.flag-icon {
-  margin: 3px;
+.jsontexttoolbar
+{
+  position: absolute;
+  top: 120px;
+  right: 60px;
 }
+
+.jsontext
+{
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  white-space: pre-wrap;       /* css-3 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+
+  outline: 1px solid #ccc; padding: 5px; margin: 5px;
+  //height: 180px;
+  overflow-y: scroll;
+}
+
+:host ::ng-deep .jsontext > span.string { font-weight: bold; }
+:host ::ng-deep .jsontext > span.number { font-weight: bold; }
+:host ::ng-deep .jsontext > span.boolean { font-style: italic; }
+:host ::ng-deep .jsontext > span.null { color: red; }
+:host ::ng-deep .jsontext > span.key { font-style: italic; }

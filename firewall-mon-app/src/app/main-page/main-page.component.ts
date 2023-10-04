@@ -6,9 +6,9 @@ import { EventHubSourceService } from '../services/event-hub-source.service';
 import { FlagData, FlagsService } from '../services/flags.service';
 
 import { MatDialog} from '@angular/material/dialog';
+import { MatSnackBar} from '@angular/material/snack-bar';
 
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
-import { empty } from 'rxjs';
 import { Router } from '@angular/router';
 import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
 import { LoggingService } from '../services/logging.service';
@@ -28,12 +28,15 @@ export class MainPageComponent implements OnInit {
     private flagService: FlagsService,
     private router: Router,
     private logging: LoggingService,
-    public dialog: MatDialog
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog,
     ) {
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
       this.firewallSource.onDataArrived = (data) => this.onDataSourceChanged(data);
       this.firewallSource.onRowSkipped = (skipped) => this.onRowSkipped(skipped);
       this.firewallSource.onMessageArrived = (message) => this.onMessageArrived(message);
+
+      this.toggleExpandJsonSpace();
   }
   
   private onDataSourceChanged(data: Array<FirewallDataRow>) {
@@ -87,17 +90,47 @@ export class MainPageComponent implements OnInit {
   }
 
   public onRowClicked(row: FirewallDataRow) {
+    if (this.panelOpenState == true)
+    {
+      this.panelOpenState = false;
+      return;
+    }
+
     this.selectedRow = row.dataRow;
-
-    if (this.selectedRowJson === JSON.stringify(row.dataRow, null, 2)) {
-      this.panelOpenState = ! this.panelOpenState;
-    }
-    else {
-      this.panelOpenState = true;
-    }
-
-    this.selectedRowJson = JSON.stringify(row.dataRow, null, 2);
+    this.panelOpenState = true;
+    
+    this.selectedRowJson = this.syntaxHighlight( JSON.stringify(row.dataRow, null, 2) );
   }
+
+  // format a json string to be more readable with bold and colors
+  prettyPrintJson(json: string): string {
+    if (json == null || json.length == 0)
+      return "";
+
+    
+    var result = json.replace(/{/g, '<b>{</b>').replace(/}/g, '<b>}</b>').replace(/:/g, '<b>:</b>').replace(/,/g, '<b>,</b>').replace(/"/g, '<b>"</b>');
+    return result;
+  }
+
+  // https://stackoverflow.com/questions/4810841/pretty-print-json-using-javascript
+  syntaxHighlight(json: string): string {
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match: string) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            } else {
+                cls = 'string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        } else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
 
   filterTextChanged(): void {
     this.dataSource.filter = this.filterText;
@@ -116,6 +149,7 @@ export class MainPageComponent implements OnInit {
   public selectedRow: FirewallDataRow|null = null;
   public selectedRowJson: string|null = null;
   public isPaused: boolean = false;
+  public jsontextHeight: string = "";
 
   public panelOpenState = false;
 
@@ -277,5 +311,19 @@ export class MainPageComponent implements OnInit {
   public resume() {
     this.isPaused = false;
     this.firewallSource.start();
+  }
+
+  public copyJson() {
+      navigator.clipboard.writeText( JSON.stringify(this.selectedRow, null, 2));
+      this.snackBar.open("JSON copied successfully!","",{duration: 2000});
+  }
+
+  public toggleExpandJsonSpace() {
+    const values = ["120px", "400px"];
+
+    if (this.jsontextHeight == values[0])
+      this.jsontextHeight = values[1];
+    else
+      this.jsontextHeight = values[0];
   }
 } 

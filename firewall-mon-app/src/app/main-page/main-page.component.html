@@ -13,8 +13,10 @@
 
     <section class="main-toolbar-buttons">
       <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined ">delete</span>Clear</button>&nbsp;
-      <button mat-raised-button color="accent"  *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>&nbsp;
+
+      <button mat-raised-button color="accent"  *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
       <button mat-raised-button color="accent" *ngIf="isPaused" (click)="resume()"><span class="material-symbols-outlined">start</span>Resume</button>&nbsp;
+      
       <button mat-raised-button color="warn" (click)="logout()"><span class="material-symbols-outlined">logout</span>Exit</button>&nbsp;
     </section>
   </mat-toolbar-row>
@@ -115,7 +117,17 @@
             rows: {{totalRows}} availables, {{visibleRows}} visibles, {{skippedRows}} skipped
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <pre>{{selectedRowJson}}</pre>
+        <div>
+          <div class="jsontexttoolbar">
+          <button mat-flat-button matTooltip="copy JSON" (click)="copyJson()">
+            <span class="material-symbols-outlined">content_copy</span>
+          </button>
+          <button mat-flat-button matTooltip="expand">
+            <span class="material-symbols-outlined" (click)="toggleExpandJsonSpace()">settings_overscan</span>
+          </button></div>
+          <div class="jsontext" [innerHtml]="selectedRowJson" [style.height]="jsontextHeight">
+        </div>
+        </div>
       </mat-expansion-panel>
     </mat-accordion>
   </div>

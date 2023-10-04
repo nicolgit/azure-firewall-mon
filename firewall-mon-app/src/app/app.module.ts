@@ -15,7 +15,9 @@ import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatExpansionModule} from '@angular/material/expansion';
 import { MatInputModule} from '@angular/material/input';
 import { MatCheckboxModule} from '@angular/material/checkbox';
+import { MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table'  
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatBadgeModule} from '@angular/material/badge';
@@ -47,7 +49,9 @@ import { ApplicationinsightsAngularpluginErrorService } from '@microsoft/applica
     MatExpansionModule,
     MatInputModule,
     MatCheckboxModule,
+    MatSnackBarModule,
     MatTableModule,
+    MatTooltipModule,
     ScrollingModule,
     TableVirtualScrollModule,
     MatToolbarModule
