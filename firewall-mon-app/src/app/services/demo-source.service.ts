@@ -21,7 +21,7 @@ export class DemoSourceService implements IFirewallSource {
     this.DATA = [];
     for (let i = 0; i < this.startingRows; i++) {
       var row = {
-        time: new Date().toLocaleString(),
+        time: JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""), //2022-10-18T10:19:05.9886250Z
         category: this.categories[Math.floor(Math.random() * this.categories.length)],
         protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
         sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
@@ -64,7 +64,7 @@ export class DemoSourceService implements IFirewallSource {
       for (let i = 0; i < moreRows; i++) {       
         if (Math.random() > 0.2) {
           var row = {
-            time: new Date().toLocaleString(),
+            time: JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""), //2022-10-18T10:19:05.9886250Z
             category: this.categories[Math.floor(Math.random() * this.categories.length)],
             protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
             sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
@@ -82,7 +82,7 @@ export class DemoSourceService implements IFirewallSource {
         }
         else {
           row = {
-            time: new Date().toLocaleString(),
+            time: JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""), //2022-10-18T10:19:05.9886250Z
             category: "SKIPPED",
             action: "unmanaged row type",
             dataRow: this.buildDatarow()
