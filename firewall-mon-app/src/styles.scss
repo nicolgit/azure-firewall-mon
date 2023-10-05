@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -18,3 +21,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   'GRAD' 200,
   'opsz' 24
 }
+
+$my-theme: mat.define-light-theme((
+ density: -2,
+));
+
+// Emit theme-dependent styles for common features used across multiple components.
+//@include mat.core-theme($my-theme);
+
+// Emit styles for MatButton based on `$my-theme`. Because the configuration
+// passed to `define-light-theme` omits typography, `button-theme` will not
+// emit any typography styles.
+@include mat.all-component-densities(-2);
+@include mat.table-density(-4);
