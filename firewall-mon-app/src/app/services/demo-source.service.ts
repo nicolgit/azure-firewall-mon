@@ -20,8 +20,9 @@ export class DemoSourceService implements IFirewallSource {
     
     this.DATA = [];
     for (let i = 0; i < this.startingRows; i++) {
+      var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
       var row = {
-        time: JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""), //2022-10-18T10:19:05.9886250Z
+        time: time,
         category: this.categories[Math.floor(Math.random() * this.categories.length)],
         protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
         sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
@@ -30,7 +31,7 @@ export class DemoSourceService implements IFirewallSource {
         targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
         action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
         policy: this.policies[Math.floor(Math.random() * this.policies.length)],
-        dataRow: this.buildDatarow()
+        dataRow: this.buildDatarow(time)
       } as FirewallDataRow;
 
       this.DATA.push(row);
@@ -63,8 +64,9 @@ export class DemoSourceService implements IFirewallSource {
       const moreRows: number = Math.floor(Math.random() * this.moreRows);
       for (let i = 0; i < moreRows; i++) {       
         if (Math.random() > 0.2) {
+          var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
           var row = {
-            time: JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""), //2022-10-18T10:19:05.9886250Z
+            time: time,
             category: this.categories[Math.floor(Math.random() * this.categories.length)],
             protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
             sourceip: (Math.floor(Math.random() * 255) + 1)+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255))+"."+(Math.floor(Math.random() * 255)),
@@ -73,7 +75,7 @@ export class DemoSourceService implements IFirewallSource {
             targetport: this.portsArray[Math.floor(Math.random() * this.portsArray.length)],
             action: this.actionsArray[Math.floor(Math.random() * this.actionsArray.length)],
             policy: this.policies[Math.floor(Math.random() * this.policies.length)],
-            dataRow: this.buildDatarow()
+            dataRow: this.buildDatarow(time)
           } as FirewallDataRow;
 
           if (Math.random() > 0.8) {
@@ -81,11 +83,12 @@ export class DemoSourceService implements IFirewallSource {
           }
         }
         else {
+          var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
           row = {
-            time: JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""), //2022-10-18T10:19:05.9886250Z
+            time: time,
             category: "SKIPPED",
             action: "unmanaged row type",
-            dataRow: this.buildDatarow()
+            dataRow: this.buildDatarow(time)
           } as FirewallDataRow;
 
           this.skippedRows++;
@@ -127,10 +130,10 @@ export class DemoSourceService implements IFirewallSource {
     this.logginService.logTrace(text);
   }
 
-  private buildDatarow():any {
+  private buildDatarow(time:string):any {
     const datarow:string = `{
       "category": "AzureFirewallNetworkRule",
-      "time": "2022-10-18T10:19:05.9886250Z",
+      "time": "` + time + `",
       "resourceId": "/SUBSCRIPTIONS/` + crypto.randomUUID() + `",
       "operationName": "AzureFirewallNatRuleLog",
       "properties": {
