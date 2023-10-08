@@ -64,6 +64,8 @@ export interface IFirewallSource {
 }
 
 export interface FirewallDataRow {  
+  rowid: string;
+
   time: string;
   category: string;
   protocol: string;

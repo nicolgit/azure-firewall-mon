@@ -193,12 +193,12 @@ pre {
   white-space: -o-pre-wrap;    /* Opera 7 */
   white-space: pre-wrap;       /* css-3 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
-
+  
+  background-color: #faf5c8;
   outline: 1px solid #ccc; padding: 5px; margin: 5px;
   //height: 180px;
   overflow-y: scroll;
 }
-
 :host ::ng-deep .jsontext > span.string { font-weight: bold; }
 :host ::ng-deep .jsontext > span.number { font-weight: bold; }
 :host ::ng-deep .jsontext > span.boolean { font-style: italic; }

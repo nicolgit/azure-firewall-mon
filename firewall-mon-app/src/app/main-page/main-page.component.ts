@@ -90,16 +90,17 @@ export class MainPageComponent implements OnInit {
   }
 
   public onRowClicked(row: FirewallDataRow) {
-    if (this.panelOpenState == true)
+    if (row == this.selectedRow)
     {
+      this.selectedRow = null;
+      this.selectedRowJson = null;
       this.panelOpenState = false;
       return;
     }
-
-    this.selectedRow = row.dataRow;
+    this.selectedRow = row;
     this.panelOpenState = true;
-    
     this.selectedRowJson = this.syntaxHighlight( JSON.stringify(row.dataRow, null, 2) );
+    return;
   }
 
   // format a json string to be more readable with bold and colors
@@ -158,9 +159,7 @@ export class MainPageComponent implements OnInit {
   }
 
   public setActionBackground(action: string): string {
-    if (this.hasHighlightColor(action) != '')
-      return this.hasHighlightColor(action);
-
+    
     if (this.safeCheckString(action,"Deny") || this.safeCheckString(action,"drop"))
       return '#ffe6f0';
     else if (this.safeCheckString(action,"Allow"))
@@ -190,11 +189,28 @@ export class MainPageComponent implements OnInit {
     return text;
   }
 
-  public hasHighlightColor(text: string): string {
+  public hasHighlightColor_old(text: string): string {
     if (text == null || text.length == 0)
       return "";
 
     var result = text.length != this.highlightSelection(text).length;
+    return result ? "SeaShell" : "";
+  }
+
+  public hasHighlightColor(text: string, rowid: string): string {
+    var result = false;
+
+    if (text != null && text.length > 0)
+    {
+      result = text.length != this.highlightSelection(text).length;
+    }
+
+    if (rowid != null && rowid.length> 0)
+    {
+      if (rowid == this.selectedRow?.rowid)
+        return "#faf5c8";
+    }
+    
     return result ? "SeaShell" : "";
   }
 

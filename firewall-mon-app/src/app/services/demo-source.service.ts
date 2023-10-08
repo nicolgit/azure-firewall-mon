@@ -22,6 +22,8 @@ export class DemoSourceService implements IFirewallSource {
     for (let i = 0; i < this.startingRows; i++) {
       var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
       var row = {
+        rowid: this.getRowID(),
+
         time: time,
         category: this.categories[Math.floor(Math.random() * this.categories.length)],
         protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
@@ -40,7 +42,7 @@ export class DemoSourceService implements IFirewallSource {
 
   private intervalId: any=null;
   private protocolsArray: Array<string> = ["TCP", "UDP"];
-  private actionsArray: Array<string> = ["Allow", "Deny"];
+  private actionsArray: Array<string> = ["Allow", "Deny", "Request", "Alert", "Drop"];
   private portsArray: Array<string> = ["80", "443", "8080", "8443","22","21","23","25","53","110","143","389","443","445","993","995","1723","3306","3389","5900","8080","8443"];
   private categories: Array<string> = ["NetworkRule", "ApplicationRule", "NatRule"];
   private policies: Array<string> = ["Category01>Group01>Policy01", "Category02>Group02>Policy02", "Category03>Group03>Policy03", "Category04>Group04>Policy04" ];
@@ -66,6 +68,8 @@ export class DemoSourceService implements IFirewallSource {
         if (Math.random() > 0.2) {
           var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
           var row = {
+            rowid: this.getRowID(),
+
             time: time,
             category: this.categories[Math.floor(Math.random() * this.categories.length)],
             protocol: this.protocolsArray[Math.floor(Math.random() * this.protocolsArray.length)],
@@ -85,6 +89,8 @@ export class DemoSourceService implements IFirewallSource {
         else {
           var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
           row = {
+            rowid: this.getRowID(),
+            
             time: time,
             category: "SKIPPED",
             action: "unmanaged row type",
@@ -157,6 +163,19 @@ export class DemoSourceService implements IFirewallSource {
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
+  private lastRowID: number = 0;
+  private getRowID(): string {
+    this.lastRowID++;
+    return this.lastRowID.toString();
+
+    //let d = new Date().getTime();
+    //const guid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    //    const r = (d + Math.random() * 16) % 16 | 0;
+    //    d = Math.floor(d / 16);
+    //    return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+    //});
+    //return guid;
+  }
 
   private randomQuotes:Array<string> = [
     "Reticulating splines...",
