@@ -71,19 +71,38 @@ table {
   table-layout: fixed;
 }
 
-.col-sm {
-  width: 220px;
+.column01 {
+  width: 255px;
   border-right: 1px solid currentColor;
   padding-right: 6px;
 }
 
-.col-sm-2 {
+.column02 {
   padding-left: 6px;
-  width: 120px;
+  width: 132px;
 }
 
-.col-small {
-  width: 60px;
+.column03 {
+  width: 77px;
+}
+
+.column04 {
+  width: 195px;
+}
+
+.column05 {
+  width: 195px;
+}
+
+.column06 {
+  width: 122px;
+}
+
+.column07 {
+  width: 300px;
+}
+
+.column08 {
 }
 
 .col {
@@ -132,6 +151,11 @@ table {
   }
 }
 
+.mat-mdc-row:hover {
+  background-color: rgb(240, 240, 240);
+}
+
+
 .highlight-flag {
   color: red;  
   font-variation-settings:
@@ -141,14 +165,42 @@ table {
   'opsz' 20
 }
 
+.flag-icon {
+  margin: 3px;
+}
+
 pre {
   white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
   white-space: pre-wrap;       /* css-3 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
+
+  outline: 1px solid #ccc; padding: 5px; margin: 5px;
 }
 
-.flag-icon {
-  margin: 3px;
+.jsontexttoolbar
+{
+  position: absolute;
+  top: 120px;
+  right: 60px;
 }
+
+.jsontext
+{
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  white-space: pre-wrap;       /* css-3 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  
+  background-color: #faf5c8;
+  outline: 1px solid #ccc; padding: 5px; margin: 5px;
+  //height: 180px;
+  overflow-y: scroll;
+}
+:host ::ng-deep .jsontext > span.string { font-weight: bold; }
+:host ::ng-deep .jsontext > span.number { font-weight: bold; }
+:host ::ng-deep .jsontext > span.boolean { font-style: italic; }
+:host ::ng-deep .jsontext > span.null { color: red; }
+:host ::ng-deep .jsontext > span.key { font-style: italic; }

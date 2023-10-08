@@ -97,6 +97,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                       break;
                     default: {
                       row = {
+                        rowid: this.getRowID(),
                         time: record.time.toString(),
                         category: "SKIPPED Category - " + record.category,
                         protocol: "-",
@@ -116,6 +117,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                 }
                 else {
                   row = {
+                    rowid: this.getRowID(),
                     time: record.time.toString(),
                     category: "SKIPPED Res Type - " + resourceId,
                   } as Model.FirewallDataRow;
@@ -212,6 +214,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           const ipport2 = splitDetail[2].split(":");
 
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "NetworkRule (legacy)",
             protocol: splitRequest[0],
@@ -231,6 +234,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           const ipport2 = split[5].split(":");
 
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "NATRule (legacy)",
             protocol: split[0],
@@ -259,6 +263,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           const ipport1 = splitSpaces[2].split(":");
           const ipport2 = splitSpaces[4].split(":");
 
+          row.rowid = this.getRowID(),
           row.time = record.time.toString();
           row.category = "AppRule (legacy)";
           row.protocol = splitStops[0].split(" ")[0];
@@ -310,6 +315,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           const split = record.properties.msg.split(" ");
 
           row = {} as Model.FirewallDataRow;
+          row.rowid = this.getRowID(),
           row.time = record.time.toString();
           row.category = "DnsProxy (legacy)";
           row.action = split[1].replace(":", "");
@@ -324,6 +330,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         }
         default: {
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "SKIPPED - UNMANAGED Operation Name: " + record.category,
             protocol: "-",
@@ -345,6 +352,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         this.logginService.logEvent(`parseAzureFirewallRuleLegacy: ERROR in parsing AzureFirewallRule: ${err.toString()} - ${record}`);
         
         row = {
+          rowid: this.getRowID(),
           time: record.time.toString(),
           category: "SKIPPED - ERROR parsing message",
           protocol: "-",
@@ -392,6 +400,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           }     
           */
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "AzDnsQuery",
             protocol: record.properties.Protocol?.toString(),
@@ -439,6 +448,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           }
           */
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "ApplicationRule",
             protocol: record.properties.Protocol?.toString(),
@@ -495,6 +505,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           }
 
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "NetworkRule",
             protocol: record.properties.Protocol?.toString(),
@@ -525,6 +536,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           }
 
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "NATRule",
             protocol: record.properties.Protocol?.toString(),
@@ -560,6 +572,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           }
           */
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "IdpsSignature",
             protocol: record.properties.Protocol?.toString(),
@@ -599,6 +612,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
           }
           */
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "ThreatIntel",
             protocol: record.properties.Protocol?.toString(),
@@ -617,6 +631,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         
         default: {
           row = {
+            rowid: this.getRowID(),
             time: record.time.toString(),
             category: "SKIPPED - UNMANAGED Category Name: " + record.category,
             protocol: "-",
@@ -638,6 +653,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
         this.logginService.logEvent(`parseAzureFirewallRuleLegacy: ERROR in parsing AzureFirewallRule: ${err.toString()} - ${record}`);
         
         row = {
+          rowid: this.getRowID(),
           time: record.time.toString(),
           category: "SKIPPED - ERROR parsing message",
           protocol: "-",
@@ -651,5 +667,11 @@ export class EventHubSourceService implements Model.IFirewallSource {
     }
 
     return row;
+  }
+
+  private lastRowID: number = 0;
+  private getRowID(): string {
+    this.lastRowID++;
+    return this.lastRowID.toString();
   }
 }

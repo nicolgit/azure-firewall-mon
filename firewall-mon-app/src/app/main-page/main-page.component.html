@@ -3,9 +3,9 @@
 
   <mat-toolbar color="primary" class="main-toolbar">
   <mat-toolbar-row>
-    <img alt="logo" src="assets/logo.png" width="54" height="54" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;"/>&nbsp;<span>az-firewall-mon</span>
+    <img alt="logo" src="assets/logo.png" width="48" height="48" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;"/>&nbsp;<span>az-firewall-mon</span>
     
-    <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0">
+    <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0" subscriptSizing="dynamic">
       <span matPrefix class="material-symbols-outlined" style="color: grey;">search</span>
       <mat-label>filter</mat-label>
       <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
@@ -13,8 +13,10 @@
 
     <section class="main-toolbar-buttons">
       <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined ">delete</span>Clear</button>&nbsp;
-      <button mat-raised-button color="accent"  *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>&nbsp;
+
+      <button mat-raised-button color="accent"  *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
       <button mat-raised-button color="accent" *ngIf="isPaused" (click)="resume()"><span class="material-symbols-outlined">start</span>Resume</button>&nbsp;
+      
       <button mat-raised-button color="warn" (click)="logout()"><span class="material-symbols-outlined">logout</span>Exit</button>&nbsp;
     </section>
   </mat-toolbar-row>
@@ -34,32 +36,32 @@
   <cdk-virtual-scroll-viewport tvsItemSize class="main mat-elevation-z2"  *ngIf="totalRows>0">
     <table mat-table [dataSource]="dataSource">
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
 
       <ng-container matColumnDef="time">
-        <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm" [style.background]="hasHighlightColor(element.time)">
+        <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true" class="column01">Timestamp</th>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.time, element.rowid)">
           <span [innerHtml]="highlightSelection(element.time)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true">Category</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-sm-2" [style.background]="hasHighlightColor(element.category)">
+        <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true" class="column02">Category</th>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.category, element.rowid)">
           <span [innerHtml]="highlightSelection(element.category)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="protocol">
-        <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true">Protocol</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" class="col-small" [style.background]="hasHighlightColor(element.protocol)">
+        <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true" class="column03">Protocol</th>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"[style.background]="hasHighlightColor(element.protocol, element.rowid)">
           <span [innerHtml]="highlightSelection(element.protocol)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="source">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Source</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.sourceip + ' ' + element.srcport)">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column04">Source</th>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.sourceip + ' ' + element.srcport, element.rowid)">
           <span class="{{getFlagFromIP(element.sourceip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.sourceip)?.country}}" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) != undefined)"></span>
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)" title="internal ip">lan</span>
           <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) == undefined)" title="unknown public ip">public</span>
@@ -68,8 +70,8 @@
       </ng-container>
 
       <ng-container matColumnDef="target">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetip + ' ' + element.targetport)">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column05">Target</th>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetip + ' ' + element.targetport, element.rowid)">
           <span class="{{getFlagFromIP(element.targetip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.targetip)?.country}}" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) != undefined)"></span>
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)" title="internal ip">lan</span>
           <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) == undefined)" title="unknown public ip">public</span>
@@ -78,7 +80,7 @@
       </ng-container>
 
       <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">Action</th>
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column06">Action</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="setActionBackground(element.action)">
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'allow')">task_alt</span>
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'deny')">cancel</span>
@@ -91,15 +93,15 @@
       </ng-container>    
 
       <ng-container matColumnDef="policy">
-        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">Policy</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.policy)">
+        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column07">Policy</th>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.policy, element.rowid)">
           <span [innerHtml]="highlightSelection(element.policy)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="targetUrl">
-        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true">More info</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.moreInfo)">
+        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column08">More info</th>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.moreInfo, element.rowid)">
           <i><span [innerHtml]="highlightSelection(element.moreInfo)"></span></i>
         </td>
       </ng-container>
@@ -115,7 +117,17 @@
             rows: {{totalRows}} availables, {{visibleRows}} visibles, {{skippedRows}} skipped
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <pre>{{selectedRowJson}}</pre>
+        <div>
+          <div class="jsontexttoolbar">
+          <button mat-button matTooltip="copy JSON to clipboard" (click)="copyJson()">
+            <span class="material-symbols-outlined">content_copy</span>
+          </button>
+          <button mat-button matTooltip="expand/minimize">
+            <span class="material-symbols-outlined" (click)="toggleExpandJsonSpace()">settings_overscan</span>
+          </button></div>
+          <div class="jsontext" [innerHtml]="selectedRowJson" [style.height]="jsontextHeight">
+        </div>
+        </div>
       </mat-expansion-panel>
     </mat-accordion>
   </div>
