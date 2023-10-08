@@ -92,6 +92,7 @@ The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) 
 
 * [90342-security.json](https://lottiefiles.com/90342-security) lottie animation by Kawsar Mahmud
 * [lf20_giodppcr.json](https://lottiefiles.com/95739-no-connection-to-internet) lottie animation by hdev coder
+* Logo built with the [new Bing](https://www.bing.com/new)
 
 # Feedback
 Do you like the idea? Do you want to collaborate? Do you have questions? [Open an Issue](https://github.com/nicolgit/azure-firewall-mon/issues)!

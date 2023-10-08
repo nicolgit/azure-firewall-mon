@@ -1,7 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; }
 
 #globalfooter {
     position: fixed;
@@ -18,3 +21,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   'GRAD' 200,
   'opsz' 24
 }
+
+$my-custom-typography-config: mat.define-typography-config(
+  $font-family: 'Sofia Sans',
+);
+
+$my-theme: mat.define-light-theme((
+ density: -2,
+ typography: $my-custom-typography-config,
+));
+
+@include mat.all-component-themes($my-theme);
+@include mat.typography-hierarchy($my-custom-typography-config);
