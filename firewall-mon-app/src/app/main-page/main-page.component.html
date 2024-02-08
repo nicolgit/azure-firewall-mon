@@ -9,12 +9,15 @@
       <span matPrefix class="material-symbols-outlined" style="color: grey;">search</span>
       <mat-label>filter</mat-label>
       <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
+      <button mat-mini-fab matSuffix matTooltip="advanced search" (click)="advSearchVisibility = !advSearchVisibility">
+        <span class="material-symbols-outlined ">display_settings</span>
+      </button>
     </mat-form-field>
 
     <section class="main-toolbar-buttons">
       <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined ">delete</span>Clear</button>&nbsp;
 
-      <button mat-raised-button color="accent"  *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
+      <button mat-raised-button color="accent" *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
       <button mat-raised-button color="accent" *ngIf="isPaused" (click)="resume()"><span class="material-symbols-outlined">start</span>Resume</button>&nbsp;
       
       <button mat-raised-button color="warn" (click)="logout()"><span class="material-symbols-outlined">logout</span>Exit</button>&nbsp;
@@ -33,6 +36,34 @@
     <div class="lottie-text">{{message}}</div>
   </div>
 
+  <div class="main-accordionbar" *ngIf="totalRows>0 && advSearchVisibility == true">
+    <mat-card>
+      <mat-card-content>
+        <label>aloha</label>
+        <mat-chip-listbox>
+          <mat-chip-option>GMT</mat-chip-option>
+          <mat-chip-option>local time</mat-chip-option>
+        </mat-chip-listbox>
+        
+          filter
+        <mat-chip-listbox>
+          <mat-chip-option>all</mat-chip-option>
+          <mat-chip-option>last 5 minutes</mat-chip-option>
+          <mat-chip-option>last 30 minutes</mat-chip-option>
+          <mat-chip-option>last hour</mat-chip-option>
+          <mat-chip-option>custom</mat-chip-option>
+        </mat-chip-listbox>
+        <mat-form-field appearance="outline">
+          <mat-label>start</mat-label>
+          <input matInput type="datetime-local" placeholder="start date">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>end</mat-label>
+          <input matInput type="datetime-local" placeholder="end date">
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+  </div>
   <cdk-virtual-scroll-viewport tvsItemSize class="main mat-elevation-z2"  *ngIf="totalRows>0">
     <table mat-table [dataSource]="dataSource">
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

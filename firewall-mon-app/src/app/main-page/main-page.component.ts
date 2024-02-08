@@ -146,6 +146,7 @@ export class MainPageComponent implements OnInit {
   public filterText: string = "";
   public totalRows: number = 0;
   public visibleRows: number = 0;
+  public advSearchVisibility = false;
   public message: string = "";
   public selectedRow: FirewallDataRow|null = null;
   public selectedRowJson: string|null = null;

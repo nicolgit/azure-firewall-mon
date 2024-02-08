@@ -14,7 +14,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatExpansionModule} from '@angular/material/expansion';
 import { MatInputModule} from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule} from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table'  
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -44,11 +46,13 @@ import { ApplicationinsightsAngularpluginErrorService } from '@microsoft/applica
     BrowserAnimationsModule,
     MatButtonModule,
     MatBadgeModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatChipsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatExpansionModule,
     MatInputModule,
-    MatCheckboxModule,
     MatSnackBarModule,
     MatTableModule,
     MatTooltipModule,
