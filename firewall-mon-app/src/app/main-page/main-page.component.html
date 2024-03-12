@@ -39,10 +39,10 @@
   <div class="main-accordionbar" *ngIf="totalRows>0 && advSearchVisibility == true">
     <mat-card>
       <mat-card-content>
-        <label>aloha</label>
+        <label>timestamp</label>
         <mat-chip-listbox>
-          <mat-chip-option>GMT</mat-chip-option>
-          <mat-chip-option>local time</mat-chip-option>
+          <mat-chip-option [selected]="isTimestampGMT()">GMT</mat-chip-option>
+          <mat-chip-option [selected]="isTimestampLocal()">local time</mat-chip-option>
         </mat-chip-listbox>
         
           filter
@@ -72,7 +72,7 @@
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true" class="column01">Timestamp</th>
         <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.time, element.rowid)">
-          <span [innerHtml]="highlightSelection(element.time)"></span>
+          <span [innerHtml]="showTimestamp(element.time)"></span>
         </td>
       </ng-container>
 

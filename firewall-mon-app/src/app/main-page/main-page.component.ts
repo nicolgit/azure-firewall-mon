@@ -13,12 +13,16 @@ import { Router } from '@angular/router';
 import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
 import { LoggingService } from '../services/logging.service';
 
+
+enum TimestampFormat { GMT, local};
+
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
+
   private firewallSource: IFirewallSource;
 
   constructor(
@@ -139,7 +143,7 @@ export class MainPageComponent implements OnInit {
     this.visibleRows = this.dataSource.filteredData.length;
   }
 
-
+  public timestampFormat: TimestampFormat = TimestampFormat.GMT;
   public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy', 'targetUrl'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
   public skippedRows: number = 0;
@@ -263,6 +267,14 @@ export class MainPageComponent implements OnInit {
     
     return !this.isInternalIP(ip);
   }
+
+  public isTimestampLocal() {
+    return this.timestampFormat == TimestampFormat.local;
+  }
+
+  public isTimestampGMT() {
+    return this.timestampFormat == TimestampFormat.GMT;
+  }
   
   public getFlagFromIP(ip: string): FlagData | undefined{
     if (!this.isIP(ip))
@@ -342,5 +354,16 @@ export class MainPageComponent implements OnInit {
       this.jsontextHeight = values[1];
     else
       this.jsontextHeight = values[0];
+  }
+
+  public showTimestamp(timestamp: string): string {
+    if (timestamp == null || timestamp.length == 0)
+      return "";
+
+    var date = new Date(timestamp);
+    if (this.timestampFormat == TimestampFormat.GMT)
+      return timestamp;
+    else
+      return date.toString() + " (Local)";
   }
 } 
