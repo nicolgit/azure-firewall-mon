@@ -57,7 +57,7 @@ export class MainPageComponent implements OnInit {
         for (var i = 0; i < words.length; i++) {
           var word = words[i];
           if (word.length > 0 && 
-            data.time?.toLowerCase().includes(word) || 
+            //data.time?.toLowerCase().includes(word) || 
             data.category?.toLowerCase().includes(word) || 
             data.protocol?.toLowerCase().includes(word) || 
             data.sourceip?.toLowerCase().includes(word) || 
@@ -275,6 +275,15 @@ export class MainPageComponent implements OnInit {
   public isTimestampGMT() {
     return this.timestampFormat == TimestampFormat.GMT;
   }
+
+  public setTimestampLocal() {
+    this.timestampFormat = TimestampFormat.local;
+  }
+  
+  public setTimeStampGMT() {
+    this.timestampFormat = TimestampFormat.GMT;
+  }
+    
   
   public getFlagFromIP(ip: string): FlagData | undefined{
     if (!this.isIP(ip))
@@ -364,6 +373,6 @@ export class MainPageComponent implements OnInit {
     if (this.timestampFormat == TimestampFormat.GMT)
       return timestamp;
     else
-      return date.toString() + " (Local)";
+      return date.toLocaleString() + " (Local)";
   }
 } 

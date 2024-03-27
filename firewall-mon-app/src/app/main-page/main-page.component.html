@@ -40,9 +40,9 @@
     <mat-card>
       <mat-card-content>
         <label>timestamp</label>
-        <mat-chip-listbox>
-          <mat-chip-option [selected]="isTimestampGMT()">GMT</mat-chip-option>
-          <mat-chip-option [selected]="isTimestampLocal()">local time</mat-chip-option>
+        <mat-chip-listbox [multiple]="false">
+          <mat-chip-option [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">GMT</mat-chip-option>
+          <mat-chip-option [selected]="isTimestampLocal()" (click)="setTimestampLocal()">local time</mat-chip-option>
         </mat-chip-listbox>
         
           filter
@@ -71,7 +71,7 @@
 
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true" class="column01">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.time, element.rowid)">
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
           <span [innerHtml]="showTimestamp(element.time)"></span>
         </td>
       </ng-container>
