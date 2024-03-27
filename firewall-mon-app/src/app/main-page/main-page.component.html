@@ -9,12 +9,15 @@
       <span matPrefix class="material-symbols-outlined" style="color: grey;">search</span>
       <mat-label>filter</mat-label>
       <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
+      <button mat-mini-fab matSuffix matTooltip="advanced search" (click)="advSearchVisibility = !advSearchVisibility">
+        <span class="material-symbols-outlined ">display_settings</span>
+      </button>
     </mat-form-field>
 
     <section class="main-toolbar-buttons">
       <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined ">delete</span>Clear</button>&nbsp;
 
-      <button mat-raised-button color="accent"  *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
+      <button mat-raised-button color="accent" *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
       <button mat-raised-button color="accent" *ngIf="isPaused" (click)="resume()"><span class="material-symbols-outlined">start</span>Resume</button>&nbsp;
       
       <button mat-raised-button color="warn" (click)="logout()"><span class="material-symbols-outlined">logout</span>Exit</button>&nbsp;
@@ -33,6 +36,39 @@
     <div class="lottie-text">{{message}}</div>
   </div>
 
+  <div class="main-accordionbar" *ngIf="totalRows>0 && advSearchVisibility == true">
+    <mat-card>
+      <mat-card-content>
+        <label>timestamp</label>
+        <mat-chip-listbox >
+          <mat-chip-option selectable="false" [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">GMT</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="isTimestampLocal()" (click)="setTimestampLocal()">local time</mat-chip-option>
+        </mat-chip-listbox>
+        <br/>
+
+        filter
+        <mat-chip-listbox>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 0" (click)="this.timestampFilterMinutes = 0">all</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 5" (click)="this.timestampFilterMinutes = 5">last 5 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 10" (click)="this.timestampFilterMinutes = 10">last 10 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 20" (click)="this.timestampFilterMinutes = 20">last 20 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 30" (click)="this.timestampFilterMinutes = 30">last 30 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 60" (click)="this.timestampFilterMinutes = 60">last hour</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == -1" (click)="this.timestampFilterMinutes = -1">custom</mat-chip-option>
+        </mat-chip-listbox>
+        <br/>
+        <mat-form-field appearance="outline" *ngIf="this.timestampFilterMinutes == -1">
+          <mat-label>start (local time)</mat-label>
+          <input matInput type="datetime-local" placeholder="start date time"  [(ngModel)]="timestampStartDateString">
+        </mat-form-field> &nbsp;
+        <mat-form-field appearance="outline" *ngIf="this.timestampFilterMinutes == -1">
+          <mat-label>end (local time)</mat-label>
+          <input matInput type="datetime-local" placeholder="end date time" [(ngModel)]="timestampEndDateString">
+        </mat-form-field><br/>
+        <label *ngIf="timestampEndDateString < timestampStartDateString"><b>end time</b> bust be > than <b>start time and in 24H time format</b></label>
+      </mat-card-content>
+    </mat-card>
+  </div>
   <cdk-virtual-scroll-viewport tvsItemSize class="main mat-elevation-z2"  *ngIf="totalRows>0">
     <table mat-table [dataSource]="dataSource">
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -40,8 +76,8 @@
 
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true" class="column01">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.time, element.rowid)">
-          <span [innerHtml]="highlightSelection(element.time)"></span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.category, element.rowid)">
+          <span [innerHtml]="showTimestamp(element.time)"></span>
         </td>
       </ng-container>
 
