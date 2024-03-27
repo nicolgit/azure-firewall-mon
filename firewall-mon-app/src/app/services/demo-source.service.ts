@@ -19,8 +19,15 @@ export class DemoSourceService implements IFirewallSource {
     ) { 
     
     this.DATA = [];
+
     for (let i = 0; i < this.startingRows; i++) {
-      var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
+      
+      var currentTime = new Date();
+      currentTime.setSeconds(currentTime.getSeconds() - i);
+
+      var time = JSON.stringify({'now': currentTime}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
+      //var time = JSON.stringify({'now': new Date()}).replace("{\"now\":\"","").replace("\"}",""); //2022-10-18T10:19:05.9886250Z
+      
       var row = {
         rowid: this.getRowID(),
 
@@ -160,21 +167,13 @@ export class DemoSourceService implements IFirewallSource {
 
   private async randomQuote() {
     this.outputMessage(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   private lastRowID: number = 0;
   private getRowID(): string {
     this.lastRowID++;
     return this.lastRowID.toString();
-
-    //let d = new Date().getTime();
-    //const guid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    //    const r = (d + Math.random() * 16) % 16 | 0;
-    //    d = Math.floor(d / 16);
-    //    return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
-    //});
-    //return guid;
   }
 
   private randomQuotes:Array<string> = [
