@@ -40,27 +40,32 @@
     <mat-card>
       <mat-card-content>
         <label>timestamp</label>
-        <mat-chip-listbox [multiple]="false">
-          <mat-chip-option [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">GMT</mat-chip-option>
-          <mat-chip-option [selected]="isTimestampLocal()" (click)="setTimestampLocal()">local time</mat-chip-option>
+        <mat-chip-listbox >
+          <mat-chip-option selectable="false" [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">GMT</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="isTimestampLocal()" (click)="setTimestampLocal()">local time</mat-chip-option>
         </mat-chip-listbox>
-        
-          filter
+        <br/>
+
+        filter
         <mat-chip-listbox>
-          <mat-chip-option>all</mat-chip-option>
-          <mat-chip-option>last 5 minutes</mat-chip-option>
-          <mat-chip-option>last 30 minutes</mat-chip-option>
-          <mat-chip-option>last hour</mat-chip-option>
-          <mat-chip-option>custom</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 0" (click)="this.timestampFilterMinutes = 0">all</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 5" (click)="this.timestampFilterMinutes = 5">last 5 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 10" (click)="this.timestampFilterMinutes = 10">last 10 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 20" (click)="this.timestampFilterMinutes = 20">last 20 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 30" (click)="this.timestampFilterMinutes = 30">last 30 minutes</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 60" (click)="this.timestampFilterMinutes = 60">last hour</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == -1" (click)="this.timestampFilterMinutes = -1">custom</mat-chip-option>
         </mat-chip-listbox>
-        <mat-form-field appearance="outline">
-          <mat-label>start</mat-label>
-          <input matInput type="datetime-local" placeholder="start date">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>end</mat-label>
-          <input matInput type="datetime-local" placeholder="end date">
-        </mat-form-field>
+        <br/>
+        <mat-form-field appearance="outline" *ngIf="this.timestampFilterMinutes == -1">
+          <mat-label>start (local time)</mat-label>
+          <input matInput type="datetime-local" placeholder="start date time"  [(ngModel)]="timestampStartDateString">
+        </mat-form-field> &nbsp;
+        <mat-form-field appearance="outline" *ngIf="this.timestampFilterMinutes == -1">
+          <mat-label>end (local time)</mat-label>
+          <input matInput type="datetime-local" placeholder="end date time" [(ngModel)]="timestampEndDateString">
+        </mat-form-field><br/>
+        <label *ngIf="timestampEndDateString < timestampStartDateString"><b>end time</b> bust be > than <b>start time and in 24H time format</b></label>
       </mat-card-content>
     </mat-card>
   </div>
@@ -71,7 +76,7 @@
 
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true" class="column01">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element">
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.category, element.rowid)">
           <span [innerHtml]="showTimestamp(element.time)"></span>
         </td>
       </ng-container>
