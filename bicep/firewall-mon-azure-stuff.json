@@ -4,22 +4,26 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.13.1.58284",
-      "templateHash": "2266015696995589825"
+      "version": "0.26.54.24096",
+      "templateHash": "17155256235117028707"
     }
   },
   "parameters": {
     "namespace": {
       "type": "string",
-      "defaultValue": "firewall-mon-namespace"
+      "defaultValue": "fwmonns"
     },
     "hubname": {
       "type": "string",
-      "defaultValue": "firewall-mon-hub"
+      "defaultValue": "fwmonhub"
     },
     "sharedkey": {
       "type": "string",
-      "defaultValue": "firewall-mon-key"
+      "defaultValue": "fwmonkey"
+    },
+    "mapAccountName": {
+      "type": "string",
+      "defaultValue": "fwmonflags"
     },
     "location": {
       "type": "string",
@@ -42,7 +46,7 @@
       "apiVersion": "2017-04-01",
       "name": "[format('{0}/{1}', parameters('namespace'), parameters('hubname'))]",
       "properties": {
-        "messageRetentionInDays": 7,
+        "messageRetentionInDays": 1,
         "partitionCount": 1
       },
       "dependsOn": [
@@ -62,6 +66,16 @@
         "[resourceId('Microsoft.EventHub/namespaces/eventhubs', split(format('{0}/{1}', parameters('namespace'), parameters('hubname')), '/')[0], split(format('{0}/{1}', parameters('namespace'), parameters('hubname')), '/')[1])]",
         "[resourceId('Microsoft.EventHub/namespaces', parameters('namespace'))]"
       ]
+    },
+    {
+      "type": "Microsoft.Maps/accounts",
+      "apiVersion": "2023-06-01",
+      "name": "[format('{0}', parameters('mapAccountName'))]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "G2"
+      },
+      "kind": "Gen2"
     }
   ]
 }

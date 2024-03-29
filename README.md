@@ -40,22 +40,27 @@ To use this app with **YOUR data**, you must perform the following steps on your
 1. Create an Azure Event Hub Namespace
 2. Create an Azure Event Hub inside the namespace, with a `1-day retention` and `1 partition`
 3. Create a Shared Access Policy, with  _Listen_ claim
-4. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
+4. Create an Azure Map Account
+5. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
 
     - Select _all_ _logs_ and "Stream to Event Hub"
     - Select the Event Hub Namespace and Hub created above
     - click `SAVE`
 
-Now, open <https://az-firewall-mon.duckiesfarm.com/> and copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above, and click on `Let's begin`.
+Now, open <https://az-firewall-mon.duckiesfarm.com/> and do the following:
 
-Lazy engineers can performs steps 1, 2 and 3 by clicking the following button:
+1. copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above
+2. copy in the `Azure Map Account Shared Key` field the primary or secondary Shared Key of the Azure Map Account created above
+3. click on `Let's begin`.
+
+Lazy engineers can performs steps 1, 2, 3 and 4 by clicking the following button:
 
  [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json)
 
 
 # Install Azure-firewall-mon in your environment
 
-@lukemurraynz has written a very detailed blog post on how deploy Azure-Firewall-mon in an Azure Static Web App. If you prefer this approach, have a look at his blog post <https://luke.geek.nz/azure/deploy-azure-firewall-mon-to-a-static-web-app/>
+[@lukemurraynz](https://github.com/lukemurraynz) has written a very detailed blog post on how deploy Azure-Firewall-mon in an Azure Static Web App. If you prefer this approach, have a look at his blog post <https://luke.geek.nz/azure/deploy-azure-firewall-mon-to-a-static-web-app/>
 
 > NOTE: `environment.prod.ts` must be updated with your environment information. az-firewall-mon requires an [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) instance to work properly.
 
