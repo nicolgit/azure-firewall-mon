@@ -1,4 +1,4 @@
-import { Component, OnInit, Testability } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
@@ -23,9 +23,13 @@ enum TimestampFormat { GMT, local};
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
-export class MainPageComponent implements OnInit {
-
+export class MainPageComponent implements AfterViewInit, OnInit {
+  @ViewChild('searchInput') searchInput!: ElementRef;
   private firewallSource: IFirewallSource;
+
+  ngAfterViewInit() {
+    this.searchInput.nativeElement.focus();
+  }
 
   constructor(
     private model: ModelService,
@@ -41,10 +45,32 @@ export class MainPageComponent implements OnInit {
       this.firewallSource.onDataArrived = (data) => this.onDataSourceChanged(data);
       this.firewallSource.onRowSkipped = (skipped) => this.onRowSkipped(skipped);
       this.firewallSource.onMessageArrived = (message) => this.onMessageArrived(message);
-      
+
       this.toggleExpandJsonSpace();
   }
-  
+
+  @HostListener('document:keypress', ['$event'])
+
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    if (event.key === 'Enter') {
+      this.advSearchVisibility = false;
+       this.searchInput.nativeElement.blur();
+    }
+
+    // avoid handling keypress events when typing in input fields
+    if (event.target instanceof HTMLInputElement || 
+      event.target instanceof HTMLTextAreaElement || 
+      event.target instanceof HTMLSelectElement) {
+    return;
+  }
+
+    this.advSearchVisibility = !this.advSearchVisibility;
+
+    if (this.advSearchVisibility) {
+      this.searchInput.nativeElement.focus();  
+    }
+  }
+
   private onDataSourceChanged(data: Array<FirewallDataRow>) {
     this.dataSource = new TableVirtualScrollDataSource(data); 
     this.dataSource.filterPredicate = (data: FirewallDataRow, filter: string) => {
