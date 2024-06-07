@@ -8,7 +8,7 @@
     <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0" subscriptSizing="dynamic">
       <span matPrefix class="material-symbols-outlined" style="color: grey;">search</span>
       <mat-label>filter</mat-label>
-      <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()">
+      <input title="not used" matInput [(ngModel)]="filterText" (input)="filterTextChanged()" #searchInput>
       <button mat-mini-fab matSuffix matTooltip="advanced search" (click)="advSearchVisibility = !advSearchVisibility">
         <span class="material-symbols-outlined ">display_settings</span>
       </button>

@@ -1,1 +1,56 @@
-<mxfile host="Electron" modified="2022-11-08T22:54:09.432Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/20.3.0 Chrome/104.0.5112.114 Electron/20.1.3 Safari/537.36" etag="rIklwetsHxaCmJQZxtFm" version="20.3.0" type="device"><diagram id="Xb-PZCZlOUzePBldmh3a" name="Page-1">7VZNb6MwEP01HFMBDiQcG5Jsu9uVVoraPUYuTMBbg5Ft8tFfvzaYEEKitJFa9dAciHmMxzPvPWwsFGbbHxwX6W8WA7VcO95aaGq5ruMEY/WnkV2NjFwDJJzEJqgFFuQVDGgbtCQxiE6gZIxKUnTBiOU5RLKDYc7Zphu2YrS7aoET6AGLCNM++pfEMq3RsTtq8TsgSdqs7PhB/STDTbDpRKQ4ZpsDCM0sFHLGZD3KtiFQTV7DSz1vfubpvjAOuXzLhJ/3G293//TEf9mPMzzF/x4WjwOTZY1paRq+fS05KGhOOGywzlAVL3cNI+IFZKRbsy00waKoWV+RLaiFJqnMqLp11LBgJJcV/d7E8qY6mpIkV0CkSgauAJJV9E9WLJdGe8du8SnJEtUQJc/qmokIq8LmVYHLprwbsU5MgpBRxqsakW0PwyBQuGkPuITtWd6cvRrKxsAykHynQpoJgRHQONhB5n7T+sEzUHpghQbDxoHJPnMrkm6r1ukdmrlnNZutdU+ufVc+92T7RKWwLkc3iXNMd5JEQo2r2paqsmVIS6GSio+XDvnji9L5wxPSuR8kHToh3aCx8iBj+ZeQTe2lEpNcSaRft6JYLoCvSQSfoJjnf7GXbdhT7IEloicT5PGtPm009xQLQaKuVJyVeaz1q3bNcwQeqyQkZy9wEOn7E3c+31MNce/wukj0G4nkQLEk6276U+yaFf5oL7Y6usc6et7N6CiLYCWPwEw8PLiOcqFeLr+bSGKegOwlqvTed369BbyeBaq97NsEl0wwPGUCO2h/4+sM4Xnvy3u1P9Rt+31Wh7dfuWj2Hw==</diagram></mxfile>
+<mxfile host="Electron" modified="2024-03-29T16:10:20.625Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.1.0 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="R8o6e34yKkbFFJnOn9jQ" version="24.1.0" type="device">
+  <diagram id="Xb-PZCZlOUzePBldmh3a" name="Page-1">
+    <mxGraphModel dx="825" dy="1722" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="JIw5yIVVrK0UEaDajLSU-1" value="Azure Firewall" style="sketch=0;aspect=fixed;html=1;points=[];align=center;image;fontSize=10;image=img/lib/mscae/Azure_Firewall.svg;fontColor=#004C99;" parent="1" vertex="1">
+          <mxGeometry x="190" y="130" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="JIw5yIVVrK0UEaDajLSU-2" value="Azure Event Hub" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=10;image=img/lib/azure2/analytics/Event_Hub_Clusters.svg;fontColor=#004C99;" parent="1" vertex="1">
+          <mxGeometry x="368" y="130" width="64" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="JIw5yIVVrK0UEaDajLSU-3" value="&lt;div&gt;Azure Static WebApp&lt;/div&gt;&lt;b&gt;Az-Firewall-mon&lt;/b&gt;" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=10;image=img/lib/azure2/containers/App_Services.svg;fontColor=#004C99;" parent="1" vertex="1">
+          <mxGeometry x="560" y="130" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="JIw5yIVVrK0UEaDajLSU-4" value="Structured&lt;br style=&quot;font-size: 8px;&quot;&gt;Logs" style="endArrow=classic;html=1;rounded=0;fontColor=#67AB9F;fontSize=8;strokeColor=#67AB9F;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="260" y="155.71" as="sourcePoint" />
+            <mxPoint x="360" y="156" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="JIw5yIVVrK0UEaDajLSU-5" value="Events" style="endArrow=classic;html=1;rounded=0;fontColor=#67AB9F;fontSize=8;strokeColor=#67AB9F;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="460" y="155.70999999999998" as="sourcePoint" />
+            <mxPoint x="550" y="155.70999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QNq35E5Y383en_XDT51g-1" value="Azure Map&lt;br style=&quot;font-size: 10px;&quot;&gt;account" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/iot/Azure_Maps_Accounts.svg;fontColor=#004C99;" vertex="1" parent="1">
+          <mxGeometry x="560" y="300" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="QNq35E5Y383en_XDT51g-2" value="IP lookup" style="endArrow=classic;html=1;rounded=0;fontColor=#67AB9F;fontSize=8;strokeColor=#67AB9F;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="584.7800000000001" y="219.99999999999997" as="sourcePoint" />
+            <mxPoint x="585.07" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QNq35E5Y383en_XDT51g-4" value="application insight" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=10;image=img/lib/azure2/management_governance/Application_Insights.svg;fontColor=#004C99;" vertex="1" parent="1">
+          <mxGeometry x="567.54" y="-10" width="34.92" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="QNq35E5Y383en_XDT51g-5" value="application logs" style="endArrow=classic;html=1;rounded=0;fontColor=#67AB9F;fontSize=8;strokeColor=#67AB9F;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="584.81" y="120" as="sourcePoint" />
+            <mxPoint x="584.81" y="60" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QNq35E5Y383en_XDT51g-7" value="https://az-firewall-mon.duckiesfarm.com" style="endArrow=classic;html=1;rounded=0;fontColor=#67AB9F;fontSize=8;strokeColor=#67AB9F;" edge="1" parent="1">
+          <mxGeometry x="0.0476" y="-10" width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="790" y="160" as="sourcePoint" />
+            <mxPoint x="620" y="160" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

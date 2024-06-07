@@ -1,6 +1,7 @@
-param namespace string = 'firewall-mon-namespace'
-param hubname string = 'firewall-mon-hub'
-param sharedkey string = 'firewall-mon-key'
+param namespace string = 'fwmonns'
+param hubname string = 'fwmonhub'
+param sharedkey string = 'fwmonkey'
+param mapAccountName string = 'fwmonflags'
 param location string = resourceGroup().location
 
 resource eventHubNamespace 'Microsoft.EventHub/namespaces@2017-04-01' = {
@@ -15,7 +16,7 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2017-04-01' = {
 resource eventhub 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
   name: '${eventHubNamespace.name}/${hubname}'
   properties: {
-    messageRetentionInDays: 7
+    messageRetentionInDays: 1
     partitionCount: 1
   }
 }
@@ -31,3 +32,14 @@ resource firewallMonHub 'Microsoft.EventHub/namespaces/eventhubs/authorizationRu
     ]
   }
 }
+
+resource mapsAccount 'Microsoft.Maps/accounts@2023-06-01' = {
+  name: '${mapAccountName}'
+  location: location
+  sku: {
+    name: 'G2'
+  }
+  kind: 'Gen2'
+}
+
+
