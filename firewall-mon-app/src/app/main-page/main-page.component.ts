@@ -78,7 +78,6 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.dataSource = new TableVirtualScrollDataSource(data); 
     this.dataSource.filterPredicate = (data: FirewallDataRow, filter_in: string) => {
         try {
-
           var startdate = this.searchFieldService.searchParams.startdate;
           var enddate = this.searchFieldService.searchParams.enddate;
 

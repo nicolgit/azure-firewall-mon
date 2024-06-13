@@ -36,7 +36,10 @@ export class SearchFieldService {
     this.prompt = prompt;
 
     if (this.promptType === PromptType.Classic) {
-      this.parseprompt(prompt);
+      this.parsePromptClassic(prompt);
+    }
+    else {
+      this.parsePromptChatGpt(prompt);
     }
   }
 
@@ -53,7 +56,7 @@ export class SearchFieldService {
     this.searchParams.startdate = formatDate(startdate.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
   }
 
-  private parseprompt(prompt: string) {
+  private parsePromptClassic(prompt: string) {
     this.resetParams();
 
     var words = prompt.toLowerCase().split(" ");
@@ -63,6 +66,13 @@ export class SearchFieldService {
       }
     }
   }
+
+  private parsePromptChatGpt(prompt: string) {
+    this.resetParams();
+
+    
+  }
+
 }
 
 export interface ISearchParams {
