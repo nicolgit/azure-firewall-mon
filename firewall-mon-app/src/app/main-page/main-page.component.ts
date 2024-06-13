@@ -14,7 +14,8 @@ import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
 import { LoggingService } from '../services/logging.service';
 import { time } from 'console';
 import { formatDate } from '@angular/common';
-import { SearchFieldService } from '../services/search-field.service';
+import { PromptType, SearchFieldService } from '../services/search-field.service';
+import { elementAt } from 'rxjs';
 
 
 enum TimestampFormat { GMT, local};
@@ -39,8 +40,8 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     private flagService: FlagsService,
     private router: Router,
     private logging: LoggingService,
-    private searchFieldService: SearchFieldService,
     private snackBar: MatSnackBar,
+    public searchFieldService: SearchFieldService,
     public dialog: MatDialog,
     ) {
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
@@ -75,34 +76,24 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 
   private onDataSourceChanged(data: Array<FirewallDataRow>) {
     this.dataSource = new TableVirtualScrollDataSource(data); 
-    this.dataSource.filterPredicate = (data: FirewallDataRow, filter: string) => {
-      
+    this.dataSource.filterPredicate = (data: FirewallDataRow, filter_in: string) => {
         try {
-          if (this.timestampFilterMinutes > 0) {
-            if (data.time == null || data.time.length == 0)
-              return false;
 
-            var now = new Date();
-            var date = new Date(data.time);
+          var startdate = this.searchFieldService.searchParams.startdate;
+          var enddate = this.searchFieldService.searchParams.enddate;
 
-            var diff = now.getTime() - date.getTime();
-            var minutes = diff / 60000;
-            if (minutes > this.timestampFilterMinutes)
-              return false;
-          }
-
-          if (this.timestampFilterMinutes == -1) {
+          if (startdate != "" && enddate != "") {
             var currentString =  formatDate(data.time, 'yyyy-MM-ddTHH:mm', 'en_US');
-            if (currentString < this.timestampStartDateString || currentString > this.timestampEndDateString)
+            if (currentString < startdate || currentString > enddate)
               return false;
           }
 
-          if (filter == null || filter.length == 0)
+          if (this.searchFieldService.searchParams.fulltext.length ==0)
             return true;
 
-          var words = filter.toLowerCase().split(" ");
-          var foundWords:number = 0;
-      
+          var foundWords:number = 0;      
+          var words = this.searchFieldService.searchParams.fulltext;
+          
           for (var i = 0; i < words.length; i++) {
             var word = words[i];
             if (word.length > 0 && 
@@ -187,7 +178,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 }
 
   filterTextChanged(): void {
-    this.dataSource.filter = " " + this.filterText; // not empty filter string forces filterPredicate to be called
+    this.searchFieldService.setPrompt(this.filterText);
+
+    this.dataSource.filter = " " + this.searchFieldService.searchParams.fulltext; // not empty filter string forces filterPredicate to be called
     this.dataSource.filteredData.length;
     this.visibleRows = this.dataSource.filteredData.length;
   }
@@ -195,7 +188,6 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy', 'targetUrl'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
   public skippedRows: number = 0;
-  public filterText: string = "";
   public totalRows: number = 0;
   public visibleRows: number = 0;
   public advSearchVisibility = false;
@@ -207,10 +199,25 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 
   public panelOpenState = false;
   public timestampFormat: TimestampFormat = TimestampFormat.GMT;
+  public filterText: string = "";
   public timestampFilterMinutes: number = 0;
-  public timestampStartDateString: String = formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');
-  public timestampEndDateString: String = formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');
   
+  setTimestampFilterMinutes(newValue: number) {
+    if (newValue > 0) {
+      this.timestampFilterMinutes = newValue;
+      this.searchFieldService.setDatesIntervalFromMinutes(newValue);
+    }
+    else if (newValue == -1) {
+      this.timestampFilterMinutes = -1;
+
+      var now = new Date();
+      this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = formatDate(now.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
+    }
+    else {
+      this.timestampFilterMinutes = 0;
+      this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = "";
+    }
+  }
 
   public setActionBackground(action: string): string {
     
@@ -249,6 +256,18 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 
     var result = text.length != this.highlightSelection(text).length;
     return result ? "SeaShell" : "";
+  }
+
+  public hasHighlightColorTimestamp(rowid: string): string {
+    if (rowid == this.selectedRow?.rowid)
+      return "#faf5c8";
+
+    if (this.searchFieldService.searchParams.startdate != "" &&
+      this.searchFieldService.searchParams.enddate != "")
+      return "SeaShell";
+    
+
+    return "";
   }
 
   public hasHighlightColor(text: string, rowid: string): string {
@@ -331,6 +350,32 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   
   public setTimeStampGMT() {
     this.timestampFormat = TimestampFormat.GMT;
+  }
+
+  public isPromptTypeClassic() {
+    return this.searchFieldService.promptType == PromptType.Classic;
+  }
+
+  public isPromptTypeChat() {
+    return this.searchFieldService.promptType == PromptType.Chatgpt;
+  } 
+
+  public setPromptTypeClassic() {
+    this.filterText = "";
+    this.timestampFilterMinutes = 0;
+    this.searchFieldService.resetParams();
+    this.searchFieldService.promptType = PromptType.Classic;
+  }
+
+  public setPromptTypeChat() {
+    this.filterText = "";
+    this.timestampFilterMinutes = 0;
+    this.searchFieldService.resetParams(); 
+    this.searchFieldService.promptType = PromptType.Chatgpt;
+  }
+
+  public JSONfySearchParams() {
+    return JSON.stringify(this.searchFieldService.searchParams);
   }
 
   public getFlagFromIP(ip: string): FlagData | undefined{
@@ -423,7 +468,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       returnString = timestamp;
     else
       returnString = date.toLocaleString() + " (Local)";
-  
+
     if (this.timestampFilterMinutes != 0) {
       returnString = "<b>" + returnString + "</b>";
     }

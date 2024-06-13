@@ -9,12 +9,25 @@ export class SearchFieldService {
   public promptType: PromptType = PromptType.Classic;
 
   private prompt: string = "";
-
   public promptAnswer: string = "";
   public searchParams: ISearchParams = {} as ISearchParams;
 
-  constructor() { }
+  constructor() {
+    this.resetParams();
+   }
 
+  public resetParams(): void {  
+    this.searchParams = {} as ISearchParams;
+    this.searchParams.fulltext = [];
+    this.searchParams.startdate = ""; // formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
+    this.searchParams.enddate = ""; //formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
+    this.searchParams.category = [];
+    this.searchParams.protocol = [];
+    this.searchParams.source = [];
+    this.searchParams.target = [];
+    this.searchParams.action = [];
+    this.searchParams.policy = [];
+  }
   public getPrompt(): string {
     return this.prompt;
   }
@@ -23,7 +36,7 @@ export class SearchFieldService {
     this.prompt = prompt;
 
     if (this.promptType === PromptType.Classic) {
-      this.searchParams = this.parseprompt(prompt);
+      this.parseprompt(prompt);
     }
   }
 
@@ -32,7 +45,7 @@ export class SearchFieldService {
     this.searchParams.enddate = enddate;
   }
 
-  public setDatesIntervalFromMinuter(minutes: number): void {
+  public setDatesIntervalFromMinutes(minutes: number): void {
     var enddate = new Date();
     var startdate = new Date(enddate.getTime() - minutes * 60000);
 
@@ -40,17 +53,15 @@ export class SearchFieldService {
     this.searchParams.startdate = formatDate(startdate.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
   }
 
-  private parseprompt(prompt: string): ISearchParams {
-    var searchParams = {} as ISearchParams;
+  private parseprompt(prompt: string) {
+    this.resetParams();
 
     var words = prompt.toLowerCase().split(" ");
     for (var word of words) {
       if (word.length > 0) {
-        searchParams.fulltext.push(word);
+        this.searchParams.fulltext.push(word);
       }
     }
-
-    return searchParams;
   }
 }
 
