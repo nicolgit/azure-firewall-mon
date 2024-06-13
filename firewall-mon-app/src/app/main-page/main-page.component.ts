@@ -14,6 +14,7 @@ import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
 import { LoggingService } from '../services/logging.service';
 import { time } from 'console';
 import { formatDate } from '@angular/common';
+import { SearchFieldService } from '../services/search-field.service';
 
 
 enum TimestampFormat { GMT, local};
@@ -38,6 +39,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     private flagService: FlagsService,
     private router: Router,
     private logging: LoggingService,
+    private searchFieldService: SearchFieldService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
     ) {

@@ -39,13 +39,18 @@
   <div class="main-accordionbar" *ngIf="totalRows>0 && advSearchVisibility == true">
     <mat-card>
       <mat-card-content>
+
+        query mode
+        <mat-chip-listbox >
+          <mat-chip-option selectable="false" [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">text filter</mat-chip-option>
+          <mat-chip-option selectable="false" [selected]="isTimestampLocal()" (click)="setTimestampLocal()">chatGPT (experimental)</mat-chip-option>
+        </mat-chip-listbox>
+
         <label>timestamp</label>
         <mat-chip-listbox >
           <mat-chip-option selectable="false" [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">GMT</mat-chip-option>
           <mat-chip-option selectable="false" [selected]="isTimestampLocal()" (click)="setTimestampLocal()">local time</mat-chip-option>
         </mat-chip-listbox>
-        <br/>
-
         filter
         <mat-chip-listbox>
           <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 0" (click)="this.timestampFilterMinutes = 0">all</mat-chip-option>
