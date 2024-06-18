@@ -6,5 +6,8 @@ export const environment = {
     ApplicationInsightsConnectionString: "",
     BuildDate: "???",
     AzureMapsSASKey: "",
-    EventsQueueLength: 1000
+    EventsQueueLength: 1000,
+    OpenAIEndpoint: "",
+    OpenAIDeploymentId: "",
+    OpenAIAccessKey: "",  
   };

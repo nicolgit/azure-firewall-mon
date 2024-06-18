@@ -1,5 +1,8 @@
 import { formatDate } from '@angular/common';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+const { AzureOpenAI } = require("openai");
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +15,17 @@ export class SearchFieldService {
   public promptAnswer: string = "";
   public searchParams: ISearchParams = {} as ISearchParams;
 
+  private aoaiEndpoint: string = "";
+  private aoaiDeploymentId: string = "";
+  private aoaiAccessKey: string = "";
+
+
   constructor() {
     this.resetParams();
+
+    this.aoaiEndpoint = environment.OpenAIEndpoint;
+    this.aoaiDeploymentId = environment.OpenAIDeploymentId;
+    this.aoaiAccessKey = environment.OpenAIAccessKey;
    }
 
   public resetParams(): void {  
@@ -67,10 +79,41 @@ export class SearchFieldService {
     }
   }
 
-  private parsePromptChatGpt(prompt: string) {
+  private async parsePromptChatGpt(prompt: string) {
     this.resetParams();
 
+    var client = new AzureOpenAI({ endpoint:this.aoaiEndpoint, apiKey:this.aoaiAccessKey, apiVersion:"2024-05-01-preview", deployment:this.aoaiDeploymentId });
+
+    const result = await client.chat.completions.create({
+      messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "Does Azure OpenAI support customer managed keys?" },
+      { role: "assistant", content: "Yes, customer managed keys are supported by Azure OpenAI?" },
+      { role: "user", content: "Do other Azure AI services support this too?" },
+      ],
+      model: "",
+    });
     
+    /*const client = new OpenAIClient(this.aoaiEndpoint, new AzureKeyCredential(this.aoaiAccessKey));
+    const deploymentId = this.aoaiDeploymentId;
+    const events = await client.streamChatCompletions(
+    deploymentId,
+      [
+        { role: "system", content: "You are a helpful assistant. You will talk like a pirate." },
+        { role: "user", content: "Can you help me?" },
+        { role: "assistant", content: "Arrrr! Of course, me hearty! What can I do for ye?" },
+        { role: "user", content: "What's the best way to train a parrot?" },
+      ],
+      { maxTokens: 128 },
+    );
+    */
+
+    for await (const event of result.choice) {
+      for (const choice of event.choices) {
+        console.log(choice.delta?.content);
+      }
+    }
+
   }
 
 }
