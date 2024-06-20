@@ -184,6 +184,10 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.visibleRows = this.dataSource.filteredData.length;
   }
 
+  filterTextEnter(): void {
+    this.searchFieldService.parsePrompt();
+  }
+
   public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy', 'targetUrl'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
   public skippedRows: number = 0;

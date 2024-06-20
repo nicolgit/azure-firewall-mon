@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { LoggingService } from './logging.service';
 
-const { AzureOpenAI } = require("openai");
+const { OpenAIClient, AzureKeyCredential } = require("@azure/openai");
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class SearchFieldService {
   private aoaiAccessKey: string = "";
 
 
-  constructor() {
+  constructor(private loggingService: LoggingService) {
     this.resetParams();
 
     this.aoaiEndpoint = environment.OpenAIEndpoint;
@@ -48,10 +49,19 @@ export class SearchFieldService {
     this.prompt = prompt;
 
     if (this.promptType === PromptType.Classic) {
-      this.parsePromptClassic(prompt);
+      this.parsePromptClassic();
     }
     else {
-      this.parsePromptChatGpt(prompt);
+      //this.parsePromptChatGpt(prompt);
+    }
+  } 
+
+  public parsePrompt(): void {
+    if (this.promptType === PromptType.Classic) {
+      this.parsePromptClassic();
+    }
+    else {
+      this.parsePromptChatGpt();
     }
   }
 
@@ -68,10 +78,10 @@ export class SearchFieldService {
     this.searchParams.startdate = formatDate(startdate.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
   }
 
-  private parsePromptClassic(prompt: string) {
+  private parsePromptClassic() {
     this.resetParams();
 
-    var words = prompt.toLowerCase().split(" ");
+    var words = this.prompt.toLowerCase().split(" ");
     for (var word of words) {
       if (word.length > 0) {
         this.searchParams.fulltext.push(word);
@@ -79,40 +89,26 @@ export class SearchFieldService {
     }
   }
 
-  private async parsePromptChatGpt(prompt: string) {
+  private async parsePromptChatGpt() {
     this.resetParams();
 
-    var client = new AzureOpenAI({ endpoint:this.aoaiEndpoint, apiKey:this.aoaiAccessKey, apiVersion:"2024-05-01-preview", deployment:this.aoaiDeploymentId });
+    this.loggingService.logTrace ("parsePromptChatGpt: " + this.prompt);
 
-    const result = await client.chat.completions.create({
-      messages: [
-      { role: "system", content: "You are a helpful assistant." },
-      { role: "user", content: "Does Azure OpenAI support customer managed keys?" },
-      { role: "assistant", content: "Yes, customer managed keys are supported by Azure OpenAI?" },
-      { role: "user", content: "Do other Azure AI services support this too?" },
-      ],
-      model: "",
-    });
-    
-    /*const client = new OpenAIClient(this.aoaiEndpoint, new AzureKeyCredential(this.aoaiAccessKey));
-    const deploymentId = this.aoaiDeploymentId;
-    const events = await client.streamChatCompletions(
-    deploymentId,
-      [
-        { role: "system", content: "You are a helpful assistant. You will talk like a pirate." },
-        { role: "user", content: "Can you help me?" },
-        { role: "assistant", content: "Arrrr! Of course, me hearty! What can I do for ye?" },
-        { role: "user", content: "What's the best way to train a parrot?" },
-      ],
-      { maxTokens: 128 },
+    const client = new OpenAIClient(
+      this.aoaiEndpoint, 
+      new AzureKeyCredential(this.aoaiAccessKey)
     );
-    */
+    
+    const messages = [
+      { role: "system", content: "You are a helpful assistant. You will talk like a pirate." },
+      { role: "user", content: "Can you help me?" },
+      { role: "assistant", content: "Arrrr! Of course, me hearty! What can I do for ye?" },
+      { role: "user", content: "What's the best way to train a parrot?" },
+    ];
 
-    for await (const event of result.choice) {
-      for (const choice of event.choices) {
-        console.log(choice.delta?.content);
-      }
-    }
+    const events = await client.getChatCompletions(this.aoaiDeploymentId, messages);
+
+    this.loggingService.logTrace("Event: " + JSON.stringify(events));
 
   }
 
