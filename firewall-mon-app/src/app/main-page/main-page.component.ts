@@ -15,7 +15,7 @@ import { LoggingService } from '../services/logging.service';
 import { time } from 'console';
 import { formatDate } from '@angular/common';
 import { PromptType, SearchFieldService } from '../services/search-field.service';
-import { elementAt } from 'rxjs';
+import { elementAt, filter } from 'rxjs';
 
 
 enum TimestampFormat { GMT, local};
@@ -55,11 +55,6 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   @HostListener('document:keypress', ['$event'])
 
   handleKeyboardEvent(event: KeyboardEvent) { 
-    if (event.key === 'Enter') {
-      this.advSearchVisibility = false;
-       this.searchInput.nativeElement.blur();
-    }
-
     // avoid handling keypress events when typing in input fields
     if (event.target instanceof HTMLInputElement || 
       event.target instanceof HTMLTextAreaElement || 
@@ -87,12 +82,102 @@ export class MainPageComponent implements AfterViewInit, OnInit {
               return false;
           }
 
-          if (this.searchFieldService.searchParams.fulltext.length ==0)
+          var filters = 0;
+          if (this.searchFieldService.searchParams.fulltext.length > 0) filters++;
+          if (this.searchFieldService.searchParams.category.length > 0) filters++;
+          if (this.searchFieldService.searchParams.protocol.length > 0) filters++;
+          if (this.searchFieldService.searchParams.source.length > 0) filters++;
+          if (this.searchFieldService.searchParams.target.length > 0) filters++;
+          if (this.searchFieldService.searchParams.action.length > 0) filters++;
+          if (this.searchFieldService.searchParams.policy.length > 0) filters++;
+          if (this.searchFieldService.searchParams.moreinfo.length > 0) filters++;
+
+          if (filters == 0)
             return true;
 
-          var foundWords:number = 0;      
-          var words = this.searchFieldService.searchParams.fulltext;
+          var filterHits = 0;
+          for (let word of this.searchFieldService.searchParams.fulltext) {
+            if (word.length > 0 && 
+              data.category?.toLowerCase().includes(word) || 
+              data.protocol?.toLowerCase().includes(word) || 
+              data.sourceip?.toLowerCase().includes(word) || 
+              data.srcport?.toLowerCase().includes(word) || 
+              data.targetip?.toLowerCase().includes(word) || 
+              data.targetport?.toLowerCase().includes(word) || 
+              data.policy?.toLowerCase().includes(word) ||
+              data.moreInfo?.toLowerCase().includes(word) ||
+              data.action?.toLowerCase().includes(word)  
+            )
+            {
+              filterHits++;
+            }
+          }
+          if (filters == filterHits) return true;
+
+          for (let word of this.searchFieldService.searchParams.category) {
+            if (word.length > 0 && data.category?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.protocol) {
+            if (word.length > 0 && data.protocol?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.source) {
+            if (word.length > 0 && data.sourceip?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.target) {
+            if (word.length > 0 && data.targetip?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.action) {
+            if (word.length > 0 && data.action?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
           
+          for (let word of this.searchFieldService.searchParams.policy) {
+            if (word.length > 0 && data.policy?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.moreinfo) {
+            if (word.length > 0 && data.moreInfo?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+          
+          return filters == filterHits;
+          /*
+          if (this.searchFieldService.searchParams.fulltext.length ==0 &&
+            this.searchFieldService.searchParams.category.length == 0 &&
+            this.searchFieldService.searchParams.protocol.length == 0 &&
+            this.searchFieldService.searchParams.source.length == 0 &&
+            this.searchFieldService.searchParams.target.length == 0 &&
+            this.searchFieldService.searchParams.action.length == 0 &&
+            this.searchFieldService.searchParams.policy.length == 0 &&
+            this.searchFieldService.searchParams.moreinfo.length == 0
+          )
+            return true;
+
+          var foundWords:number = 0;   
+          var words = this.searchFieldService.searchParams.fulltext;
           for (var i = 0; i < words.length; i++) {
             var word = words[i];
             if (word.length > 0 && 
@@ -105,15 +190,17 @@ export class MainPageComponent implements AfterViewInit, OnInit {
               data.targetport?.toLowerCase().includes(word) || 
               data.policy?.toLowerCase().includes(word) ||
               data.moreInfo?.toLowerCase().includes(word) ||
-              data.action?.toLowerCase().includes(word))
+              data.action?.toLowerCase().includes(word)  
+            )
             {
               foundWords++;
             }
             else
               return false;
         }
-    
+
         return true;
+        */
         } catch (error) {
           //console.log ("Error [" + error + "] in filterPredicate working on: " + data);
           return true;
@@ -376,6 +463,13 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.searchFieldService.resetParams(); 
     this.searchFieldService.promptType = PromptType.Chatgpt;
   }
+
+  PromptAnswer() {
+    if (this.searchFieldService.getPromptAnswer() == null || this.searchFieldService.getPromptAnswer().length == 0)
+      return "";
+
+    return "your prompt > " + this.searchFieldService.getPrompt() + "<br/>result > " +  this.searchFieldService.getPromptAnswer();
+    }
 
   public JSONfySearchParams() {
     return JSON.stringify(this.searchFieldService.searchParams);

@@ -72,6 +72,7 @@
           <label class="error-text" *ngIf="this.searchFieldService.searchParams.enddate < this.searchFieldService.searchParams.startdate"><b>end time</b> must be > than <b>start time</b> and in <b>24H time format</b></label>
         </div>
         <br/>
+        <label class="error-text"  [innerHTML]="this.PromptAnswer()"></label><br/>
         <label>{{JSONfySearchParams()}}</label>
       </mat-card-content>
     </mat-card>
