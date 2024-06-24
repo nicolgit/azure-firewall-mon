@@ -11,6 +11,7 @@ const { OpenAIClient, AzureKeyCredential } = require("@azure/openai");
 export class SearchFieldService {
 
   public promptType: PromptType = PromptType.Classic;
+  public isThinking: boolean = false;
 
   private prompt: string = "";
   private promptAnswer: string = "";
@@ -99,6 +100,7 @@ export class SearchFieldService {
   private async parsePromptChatGpt() {
     this.resetParams();
 
+    this.isThinking = true;
     this.loggingService.logTrace ("parsePromptChatGpt: " + this.prompt);
 
     const client = new OpenAIClient(
@@ -112,6 +114,7 @@ converts user requests to a JSON (not JSON5) message to use as filters for a web
 
 Allowed fields are: timestamp, category, protocol, source, target, action, policy, moreinfo 
 
+timestamp is a string in the format "HH:mm" or "HH:mm:ss"
 the request can be generic, search the text on all fields, or specific to one or more fields.
 by default, the request adds parameters to the current json message, but it is also possible to replace the JSON message with a new one.
 
@@ -139,6 +142,8 @@ current json message is: ${JSON.stringify(this.searchParams)}
     else {
       this.promptAnswer = events.choices[0].message.content;
     }
+
+    this.isThinking = false;
   }
 
   private isJsonString(myString: string): boolean {
