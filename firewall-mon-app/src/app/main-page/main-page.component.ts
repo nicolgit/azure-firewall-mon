@@ -83,7 +83,8 @@ export class MainPageComponent implements AfterViewInit, OnInit {
           }
 
           var filters = 0;
-          if (this.searchFieldService.searchParams.fulltext.length > 0) filters++;
+          filters += this.searchFieldService.searchParams.fulltext.length;
+          
           if (this.searchFieldService.searchParams.category.length > 0) filters++;
           if (this.searchFieldService.searchParams.protocol.length > 0) filters++;
           if (this.searchFieldService.searchParams.source.length > 0) filters++;
@@ -480,6 +481,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     return "your prompt > " + this.searchFieldService.getPrompt() + "<br/>result > " +  this.searchFieldService.getPromptAnswer();
     }
 
+  isThinking(): boolean {
+      return this.searchFieldService.isThinking;
+    }
   public JSONfySearchParams() {
     return JSON.stringify(this.searchFieldService.searchParams);
   }
