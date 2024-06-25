@@ -485,7 +485,8 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       return this.searchFieldService.isThinking;
     }
   public JSONfySearchParams() {
-    return JSON.stringify(this.searchFieldService.searchParams);
+    return this.syntaxHighlight( JSON.stringify(this.searchFieldService.searchParams));
+    //return JSON.stringify(this.searchFieldService.searchParams);
   }
 
   public getFlagFromIP(ip: string): FlagData | undefined{

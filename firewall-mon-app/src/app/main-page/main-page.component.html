@@ -74,7 +74,7 @@
         <br/>
         <label *ngIf="this.isThinking()">thinking...</label>
         <label class="error-text"  [innerHTML]="this.PromptAnswer()"></label><br/>
-        <label>{{JSONfySearchParams()}}</label>
+        <label  class="jsontext" *ngIf="this.PromptAnswer().length==0" [innerHTML]="this.JSONfySearchParams()"></label>
       </mat-card-content>
     </mat-card>
   </div>
