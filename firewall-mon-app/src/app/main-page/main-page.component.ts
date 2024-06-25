@@ -164,43 +164,6 @@ export class MainPageComponent implements AfterViewInit, OnInit {
           }
           
           return filters == filterHits;
-          /*
-          if (this.searchFieldService.searchParams.fulltext.length ==0 &&
-            this.searchFieldService.searchParams.category.length == 0 &&
-            this.searchFieldService.searchParams.protocol.length == 0 &&
-            this.searchFieldService.searchParams.source.length == 0 &&
-            this.searchFieldService.searchParams.target.length == 0 &&
-            this.searchFieldService.searchParams.action.length == 0 &&
-            this.searchFieldService.searchParams.policy.length == 0 &&
-            this.searchFieldService.searchParams.moreinfo.length == 0
-          )
-            return true;
-
-          var foundWords:number = 0;   
-          var words = this.searchFieldService.searchParams.fulltext;
-          for (var i = 0; i < words.length; i++) {
-            var word = words[i];
-            if (word.length > 0 && 
-              //data.time?.toLowerCase().includes(word) || 
-              data.category?.toLowerCase().includes(word) || 
-              data.protocol?.toLowerCase().includes(word) || 
-              data.sourceip?.toLowerCase().includes(word) || 
-              data.srcport?.toLowerCase().includes(word) || 
-              data.targetip?.toLowerCase().includes(word) || 
-              data.targetport?.toLowerCase().includes(word) || 
-              data.policy?.toLowerCase().includes(word) ||
-              data.moreInfo?.toLowerCase().includes(word) ||
-              data.action?.toLowerCase().includes(word)  
-            )
-            {
-              foundWords++;
-            }
-            else
-              return false;
-        }
-
-        return true;
-        */
         } catch (error) {
           //console.log ("Error [" + error + "] in filterPredicate working on: " + data);
           return true;
@@ -321,32 +284,78 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       return '';
   }
 
-  public highlightSelection(text:string): string {
-    if (text == null || text.length == 0) {
-      return "";
-    }
-
-    if (this.filterText != null && this.filterText.length > 0 && text.length > 0) {
-      const words = this.filterText.split(" ");
-    
-      words.forEach(word => {
-        const position = text.toLowerCase().indexOf(word.toLowerCase());
-        if (position >= 0 && word.length > 0) {
-          text = text.substring(0, position) + "<b>" + text.substring(position, position + word.length) + "</b>" + text.substring(position + word.length);
-        }      
-      });
-    }
-
-    return text;
-  }
-
-  public hasHighlightColor_old(text: string): string {
-    if (text == null || text.length == 0)
+  public highlightSelection(columnName:string, textContent:string) {
+    if (textContent == null || textContent.length == 0)
       return "";
 
-    var result = text.length != this.highlightSelection(text).length;
-    return result ? "SeaShell" : "";
-  }
+    this.searchFieldService.searchParams.fulltext.forEach(word => {
+      const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+      if (position >= 0 && word.length > 0) {
+        textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+      }      
+    });
+
+    switch (columnName) {
+      case "category":
+        this.searchFieldService.searchParams.category.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "protocol":
+        this.searchFieldService.searchParams.protocol.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "source":
+        this.searchFieldService.searchParams.source.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "target":
+        this.searchFieldService.searchParams.target.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "action":
+        this.searchFieldService.searchParams.action.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "policy":
+        this.searchFieldService.searchParams.policy.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "moreinfo":
+        this.searchFieldService.searchParams.moreinfo.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      }
+
+    return textContent;
+  }  
 
   public hasHighlightColorTimestamp(rowid: string): string {
     if (rowid == this.selectedRow?.rowid)
@@ -360,12 +369,12 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     return "";
   }
 
-  public hasHighlightColor(text: string, rowid: string): string {
+  public hasHighlightColor(columnName:string, text: string, rowid: string): string {
     var result = false;
 
     if (text != null && text.length > 0)
     {
-      result = text.length != this.highlightSelection(text).length;
+      result = text.length != this.highlightSelection(columnName, text).length;
     }
 
     if (rowid != null && rowid.length> 0)

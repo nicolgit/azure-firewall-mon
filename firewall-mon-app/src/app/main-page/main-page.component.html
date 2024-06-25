@@ -91,35 +91,35 @@
 
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true" class="column02">Category</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.category, element.rowid)">
-          <span [innerHtml]="highlightSelection(element.category)"></span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('category', element.category, element.rowid)">
+          <span [innerHtml]="highlightSelection('category',element.category)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="protocol">
         <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true" class="column03">Protocol</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"[style.background]="hasHighlightColor(element.protocol, element.rowid)">
-          <span [innerHtml]="highlightSelection(element.protocol)"></span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"[style.background]="hasHighlightColor('protocol', element.protocol, element.rowid)">
+          <span [innerHtml]="highlightSelection('protocol', element.protocol)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="source">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column04">Source</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.sourceip + ' ' + element.srcport, element.rowid)">
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('source', element.sourceip + ' ' + element.srcport, element.rowid)">
           <span class="{{getFlagFromIP(element.sourceip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.sourceip)?.country}}" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) != undefined)"></span>
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)" title="internal ip">lan</span>
           <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) == undefined)" title="unknown public ip">public</span>
-          <span [innerHtml]="highlightSelection(element.sourceip) + ':' + highlightSelection(element.srcport)"></span>
+          <span [innerHtml]="highlightSelection('source', element.sourceip) + ':' + highlightSelection('source', element.srcport)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="target">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column05">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.targetip + ' ' + element.targetport, element.rowid)">
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('target', element.targetip + ' ' + element.targetport, element.rowid)">
           <span class="{{getFlagFromIP(element.targetip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.targetip)?.country}}" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) != undefined)"></span>
           <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)" title="internal ip">lan</span>
           <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) == undefined)" title="unknown public ip">public</span>
-          <span [innerHtml]="highlightSelection(element.targetip) + ':' + highlightSelection(element.targetport)"></span>
+          <span [innerHtml]="highlightSelection('target', element.targetip) + ':' + highlightSelection('target', element.targetport)"></span>
         </td>
       </ng-container>
 
@@ -132,21 +132,21 @@
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'request')">psychology_alt</span>
           <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'alert')">warning_amber</span>
           &nbsp;
-          <span [innerHtml]="highlightSelection(element.action)"></span>
+          <span [innerHtml]="highlightSelection('action', element.action)"></span>
         </td>
       </ng-container>    
 
       <ng-container matColumnDef="policy">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column07">Policy</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.policy, element.rowid)">
-          <span [innerHtml]="highlightSelection(element.policy)"></span>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('policy', element.policy, element.rowid)">
+          <span [innerHtml]="highlightSelection('policy', element.policy)"></span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="targetUrl">
         <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column08">More info</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor(element.moreInfo, element.rowid)">
-          <i><span [innerHtml]="highlightSelection(element.moreInfo)"></span></i>
+        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('moreinfo', element.moreInfo, element.rowid)">
+          <i><span [innerHtml]="highlightSelection('moreinfo', element.moreInfo)"></span></i>
         </td>
       </ng-container>
     </table>

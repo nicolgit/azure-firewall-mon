@@ -97,8 +97,6 @@ export class SearchFieldService {
   }
 
   private async parsePromptChatGpt() {
-    this.resetParams();
-
     this.loggingService.logTrace ("parsePromptChatGpt: " + this.prompt);
 
     const client = new OpenAIClient(
@@ -107,25 +105,31 @@ export class SearchFieldService {
     );
     
     const messages = [
-      { role: "system", content: `You are an AI assistant that 
+      { role: "system", content: `
+You are an AI assistant that 
 converts user requests to a JSON (not JSON5) message to use as filters for a web console that filters flow logs coming from an Azure Firewall. 
 
 Allowed fields are: timestamp, category, protocol, source, target, action, policy, moreinfo 
+All values must be converted to lowercase.
 
-the request can be generic, search the text on all fields, or specific to one or more fields.
+The request can be generic, search the text on all fields, or specific to one or more fields.
 by default, the request adds parameters to the current json message, but it is also possible to replace the JSON message with a new one.
+
+some examples:
+user: search pippo pluto paperino
+answer:{"fulltext":["pippo","pluto","paperino"],"startdate":"","enddate":"","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+
+user: filter rows with category containing "NetworkRule"
+answer: {"fulltext":[],"startdate":"","enddate":"","category":["NetworkRule"],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+
+user: filter event between 10:30 and 10:45
+answer: {"fulltext":[],"startdate":"10:30","enddate":"10:45","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+
+user: clear all filters
+answer: {"fulltext":[],"startdate":"","enddate":"","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
 
 current json message is: ${JSON.stringify(this.searchParams)}
 `},
-      { role: "user", content: `search pippo pluto paperino` },
-      { role: "assistant", content: `{"fulltext":["pippo","pluto","paperino"],"startdate":"","enddate":"","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}` },
-      { role: "user", content: ` filter rows with category containing "NetworkRule"` },
-      { role: "assistant", content: `{"fulltext":[],"startdate":"","enddate":"","category":["NetworkRule"],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}` },
-      { role: "user", content: `filter event between 10:30 and 10:45` },
-      { role: "assistant", content: `{"fulltext":[],"startdate":"10:30","enddate":"10:45","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}` },
-      { role: "user", content: `clear all filters` },
-      { role: "assistant", content: `{"fulltext":[],"startdate":"","enddate":"","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}` },
-
       { role: "user", content: this.prompt },
     ];
 
