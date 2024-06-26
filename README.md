@@ -97,6 +97,7 @@ The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) 
 
 * [90342-security.json](https://lottiefiles.com/90342-security) lottie animation by Kawsar Mahmud
 * [lf20_giodppcr.json](https://lottiefiles.com/95739-no-connection-to-internet) lottie animation by hdev coder
+* [rubik.json](https://lottiefiles.com/animations/abstract-modular-cube-1-INITf22TH2) lottie animation by Ision Industries
 * Logo built with the [new Bing](https://www.bing.com/new)
 
 # Feedback
