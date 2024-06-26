@@ -478,7 +478,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     if (this.searchFieldService.getPromptAnswer() == null || this.searchFieldService.getPromptAnswer().length == 0)
       return "";
 
-    return "your prompt > " + this.searchFieldService.getPrompt() + "<br/>result > " +  this.searchFieldService.getPromptAnswer();
+    return " > " +  this.searchFieldService.getPromptAnswer();
     }
 
   isThinking(): boolean {

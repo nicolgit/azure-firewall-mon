@@ -72,8 +72,17 @@
           <label class="error-text" *ngIf="this.searchFieldService.searchParams.enddate < this.searchFieldService.searchParams.startdate"><b>end time</b> must be > than <b>start time</b> and in <b>24H time format</b></label>
         </div>
         <br/>
-        <label *ngIf="this.isThinking()">thinking...</label>
-        <label class="error-text"  [innerHTML]="this.PromptAnswer()"></label><br/>
+
+        <label  [innerHTML]="this.filterText"></label><br/>
+        <label  [innerHTML]="this.PromptAnswer()"></label><br/>
+        <div *ngIf="this.isThinking()" class="centered-container-lottie" >
+          <lottie-player src="assets/lottie/rubik.json"  
+            background="transparent"  
+            speed="1" 
+            loop  
+            autoplay
+            class="container-lottie"/>
+        </div>
         <label  class="jsontext" *ngIf="this.PromptAnswer().length==0" [innerHTML]="this.JSONfySearchParams()"></label>
       </mat-card-content>
     </mat-card>
