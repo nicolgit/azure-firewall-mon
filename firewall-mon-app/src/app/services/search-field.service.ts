@@ -107,7 +107,7 @@ export class SearchFieldService {
       new AzureKeyCredential(this.aoaiAccessKey)
     );
     
-    const messages = [
+    var messages = [
       { role: "system", content: `
 You are an AI assistant that 
 converts user requests to a JSON (not JSON5) message to use as filters for a web console that filters flow logs coming from an Azure Firewall. 
@@ -143,6 +143,10 @@ current json message is: ${JSON.stringify(this.searchParams)}
     
     if (this.isJsonString(events.choices[0].message.content)) {
       this.searchParams = JSON.parse(events.choices[0].message.content);
+
+      messages[1] = { role: "user", content: `convert following JSON message in a human readable text. omit empty fields. start the answer with 'I am currently showing ...': ${JSON.stringify(this.searchParams)}`};
+      const events2 = await client.getChatCompletions(this.aoaiDeploymentId, messages);
+      this.promptAnswer = events2.choices[0].message.content;
     }
     else {
       this.promptAnswer = events.choices[0].message.content;

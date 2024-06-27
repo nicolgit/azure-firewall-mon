@@ -83,7 +83,7 @@
             autoplay
             class="container-lottie"/>
         </div>
-        <label  class="jsontext" *ngIf="this.PromptAnswer().length==0" [innerHTML]="this.JSONfySearchParams()"></label>
+        <label  class="jsontext" *ngIf="this.PromptAnswer().length==0 && !this.isThinking()" [innerHTML]="this.JSONfySearchParams()"></label>
       </mat-card-content>
     </mat-card>
   </div>
