@@ -23,7 +23,7 @@ enum TimestampFormat { GMT, local};
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss']
+  styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent implements AfterViewInit, OnInit {
   @ViewChild('searchInput') searchInput!: ElementRef;
@@ -70,11 +70,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       return;
     }
 
-    this.advSearchVisibility = !this.advSearchVisibility;
-
-    if (this.advSearchVisibility) {
-      this.searchInput.nativeElement.focus();  
-    }
+    this.advSearchVisibility = true;
+    this.searchInput.nativeElement.focus();  
+    
   }
 
   private onDataSourceChanged(data: Array<FirewallDataRow>) {
@@ -481,6 +479,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.timestampFilterMinutes = 0;
     this.searchFieldService.resetParams();
     this.searchFieldService.promptType = PromptType.Classic;
+    this.searchInput.nativeElement.focus();  
   }
 
   public setPromptTypeChat() {
@@ -488,6 +487,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.timestampFilterMinutes = 0;
     this.searchFieldService.resetParams(); 
     this.searchFieldService.promptType = PromptType.Chatgpt;
+    this.searchInput.nativeElement.focus();  
   }
 
   PromptAnswer() {

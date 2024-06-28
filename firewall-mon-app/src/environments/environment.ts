@@ -7,7 +7,4 @@ export const environment = {
     BuildDate: "???",
     AzureMapsSASKey: "",
     EventsQueueLength: 1000,
-    OpenAIEndpoint: "",
-    OpenAIDeploymentId: "",
-    OpenAIAccessKey: "",  
   };

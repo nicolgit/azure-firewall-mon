@@ -2,6 +2,7 @@ import { formatDate } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { LoggingService } from './logging.service';
+import { ModelService } from './model.service';
 
 const { OpenAIClient, AzureKeyCredential } = require("@azure/openai");
 
@@ -17,17 +18,8 @@ export class SearchFieldService {
   private promptAnswer: string = "";
   public searchParams: ISearchParams = {} as ISearchParams;
 
-  private aoaiEndpoint: string = "";
-  private aoaiDeploymentId: string = "";
-  private aoaiAccessKey: string = "";
-
-
-  constructor(private loggingService: LoggingService) {
+  constructor(private loggingService: LoggingService, private model: ModelService) {
     this.resetParams();
-
-    this.aoaiEndpoint = environment.OpenAIEndpoint;
-    this.aoaiDeploymentId = environment.OpenAIDeploymentId;
-    this.aoaiAccessKey = environment.OpenAIAccessKey;
    }
 
   public resetParams(): void {  
@@ -98,17 +90,22 @@ export class SearchFieldService {
   }
 
   private async parsePromptChatGpt() {
-    this.isThinking = true;
+    try {
+      var aoaiEndpoint = this.model.aoaiEndpoint
+      var aoaiDeploymentId = this.model.aoaiDeploymentId;
+      var aoaiAccessKey = this.model.aoaiAccessKey;
 
-    this.loggingService.logTrace ("parsePromptChatGpt: " + this.prompt);
+      this.isThinking = true;
 
-    const client = new OpenAIClient(
-      this.aoaiEndpoint, 
-      new AzureKeyCredential(this.aoaiAccessKey)
-    );
-    
-    var messages = [
-      { role: "system", content: `
+      this.loggingService.logTrace ("parsePromptChatGpt: " + this.prompt);
+
+      const client = new OpenAIClient(
+        aoaiEndpoint, 
+        new AzureKeyCredential(aoaiAccessKey)
+      );
+      
+      var messages = [
+        { role: "system", content: `
 You are an AI assistant that 
 converts user requests to a JSON (not JSON5) message to use as filters for a web console that filters flow logs coming from an Azure Firewall. 
 
@@ -138,24 +135,29 @@ answer: {"fulltext":[],"startdate":"","enddate":"","category":[],"protocol":[],"
 
 current json message is: ${JSON.stringify(this.searchParams)}
 `},
-      { role: "user", content: this.prompt },
-    ];
+        { role: "user", content: this.prompt },
+      ];
 
-    const events = await client.getChatCompletions(this.aoaiDeploymentId, messages);
+      const events = await client.getChatCompletions(aoaiDeploymentId, messages);
 
-    this.loggingService.logTrace("Event: " + JSON.stringify(events));
-    
-    if (this.isJsonString(events.choices[0].message.content)) {
-      this.searchParams = JSON.parse(events.choices[0].message.content);
+      this.loggingService.logTrace("Event: " + JSON.stringify(events));
+      
+      if (this.isJsonString(events.choices[0].message.content)) {
+        this.searchParams = JSON.parse(events.choices[0].message.content);
 
-      messages[1] = { role: "user", content: `convert following JSON message in a human readable text. omit empty fields. start the answer with 'I am currently showing ...': ${JSON.stringify(this.searchParams)}`};
-      const events2 = await client.getChatCompletions(this.aoaiDeploymentId, messages);
-      this.promptAnswer = events2.choices[0].message.content;
-    }
-    else {
-      this.promptAnswer = events.choices[0].message.content;
-    }
+        messages[1] = { role: "user", content: `convert following JSON message in a human readable text. omit empty fields. start the answer with 'I am currently showing ...': ${JSON.stringify(this.searchParams)}`};
+        const events2 = await client.getChatCompletions(aoaiDeploymentId, messages);
+        this.promptAnswer = events2.choices[0].message.content;
+      }
+      else {
+        this.promptAnswer = events.choices[0].message.content;
+      }
 
+    } catch (error) {
+      this.loggingService.logTrace("parsePromptChatGpt: " + error);
+      this.promptAnswer = "Unexpected error, please be sure that aoaiEndpoint, deployment and key are valid.<br/>";
+      this.promptAnswer += error;
+  }
     this.isThinking = false;
   }
 
