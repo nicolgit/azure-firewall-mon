@@ -52,15 +52,23 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       this.toggleExpandJsonSpace();
   }
 
-  @HostListener('document:keypress', ['$event'])
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    console.log(event);
 
+    this.advSearchVisibility = !this.advSearchVisibility;
+
+    if (this.advSearchVisibility) {
+      this.searchInput.nativeElement.focus();  
+    }
+  }
+  @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) { 
     // avoid handling keypress events when typing in input fields
     if (event.target instanceof HTMLInputElement || 
       event.target instanceof HTMLTextAreaElement || 
       event.target instanceof HTMLSelectElement) {
-    return;
-  }
+      return;
+    }
 
     this.advSearchVisibility = !this.advSearchVisibility;
 
@@ -228,15 +236,23 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 }
 
   filterTextChanged(): void {
-    this.searchFieldService.setPrompt(this.filterText);
-
-    this.dataSource.filter = " " + this.searchFieldService.searchParams.fulltext; // not empty filter string forces filterPredicate to be called
+    if (this.searchFieldService.promptType == PromptType.Classic)
+      {
+        this.searchFieldService.setPrompt(this.filterText);
+      }
+    
+    this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
     this.dataSource.filteredData.length;
     this.visibleRows = this.dataSource.filteredData.length;
   }
 
   filterTextEnter(): void {
-    this.searchFieldService.parsePrompt();
+    if (this.searchFieldService.promptType == PromptType.Chatgpt) {
+      this.searchFieldService.setPrompt(this.filterText);
+      this.searchFieldService.parsePrompt();
+
+      this.filterText = "";
+    }
   }
 
   public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy', 'targetUrl'];
@@ -478,7 +494,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     if (this.searchFieldService.getPromptAnswer() == null || this.searchFieldService.getPromptAnswer().length == 0)
       return "";
 
-    return " > " +  this.searchFieldService.getPromptAnswer();
+    return "az-firewallnmon > <b>" +  this.searchFieldService.getPromptAnswer() + "</b>";
     }
 
   isThinking(): boolean {

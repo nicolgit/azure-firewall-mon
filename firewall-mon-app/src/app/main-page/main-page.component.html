@@ -73,7 +73,7 @@
         </div>
         <br/>
 
-        <label  [innerHTML]="this.filterText"></label><br/>
+        <!-- <label  [innerHTML]="this.filterText"></label><br/> -->
         <label  [innerHTML]="this.PromptAnswer()"></label><br/>
         <div *ngIf="this.isThinking()" class="centered-container-lottie" >
           <lottie-player src="assets/lottie/rubik.json"  
@@ -83,7 +83,8 @@
             autoplay
             class="container-lottie"/>
         </div>
-        <label  class="jsontext" *ngIf="this.PromptAnswer().length==0 && !this.isThinking()" [innerHTML]="this.JSONfySearchParams()"></label>
+
+        <!-- <label  class="jsontext" *ngIf="this.PromptAnswer().length==0 && !this.isThinking()" [innerHTML]="this.JSONfySearchParams()"></label> -->
       </mat-card-content>
     </mat-card>
   </div>

@@ -116,8 +116,12 @@ Allowed fields are: timestamp, category, protocol, source, target, action, polic
 All values must be converted to lowercase.
 
 timestamp is a string in the format "HH:mm" or "HH:mm:ss"
+
 the request can be generic, search the text on all fields, or specific to one or more fields.
+
 by default, the request adds parameters to the current json message, but it is also possible to replace the JSON message with a new one.
+
+if you want to show how to use this agent, just show sample requests and not the JSON output, and begins the sentence with 'here some examples query you can use:'
 
 some examples:
 user: search pippo pluto paperino
