@@ -107,15 +107,15 @@ export class MainPageComponent implements AfterViewInit, OnInit {
           */
 
           var filters = 0;
-          filters += this.searchFieldService.searchParams.fulltext.length;
+          filters+=this.searchFieldService.searchParams.fulltext.length;
           
-          if (this.searchFieldService.searchParams.category.length > 0) filters++;
-          if (this.searchFieldService.searchParams.protocol.length > 0) filters++;
-          if (this.searchFieldService.searchParams.source.length > 0) filters++;
-          if (this.searchFieldService.searchParams.target.length > 0) filters++;
-          if (this.searchFieldService.searchParams.action.length > 0) filters++;
-          if (this.searchFieldService.searchParams.policy.length > 0) filters++;
-          if (this.searchFieldService.searchParams.moreinfo.length > 0) filters++;
+          filters+=this.searchFieldService.searchParams.category.length;
+          filters+=this.searchFieldService.searchParams.protocol.length
+          filters+=this.searchFieldService.searchParams.source.length;
+          filters+=this.searchFieldService.searchParams.target.length;
+          filters+=this.searchFieldService.searchParams.action.length;
+          filters+=this.searchFieldService.searchParams.policy.length;
+          filters+=this.searchFieldService.searchParams.moreinfo.length;
 
           if (filters == 0)
             return true;
