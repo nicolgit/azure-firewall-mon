@@ -19,16 +19,19 @@ export class SearchFieldService {
   public searchParams: ISearchParams = {} as ISearchParams;
 
   constructor(private loggingService: LoggingService, private model: ModelService) {
+    this.searchParams.startdate = ""; 
+    this.searchParams.enddate = ""; 
+    this.searchParams.lastminutes = 0;
     this.resetParams();
    }
 
   public resetParams(): void {  
     this.promptAnswer = "";
 
-    this.searchParams = {} as ISearchParams;
+    //this.searchParams.startdate = ""; // formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
+    //this.searchParams.enddate = ""; //formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
+    //this.searchParams.lastminutes = 0;
     this.searchParams.fulltext = [];
-    this.searchParams.startdate = ""; // formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
-    this.searchParams.enddate = ""; //formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
     this.searchParams.category = [];
     this.searchParams.protocol = [];
     this.searchParams.source = [];
@@ -66,17 +69,51 @@ export class SearchFieldService {
   }
 
   public setDatesInterval(startdate: string, enddate: string): void {
+    this.searchParams.lastminutes = 0;
     this.searchParams.startdate = startdate;
     this.searchParams.enddate = enddate;
   }
 
-  public setDatesIntervalFromMinutes(minutes: number): void {
-    var enddate = new Date();
-    var startdate = new Date(enddate.getTime() - minutes * 60000);
-
-    this.searchParams.enddate = formatDate(enddate.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
-    this.searchParams.startdate = formatDate(startdate.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
+  public setLastMinutes(minutes: number): void {
+    this.searchParams.lastminutes = minutes;
+    this.searchParams.enddate = "";
+    this.searchParams.startdate = "";
   }
+
+  private cacheIntervalStartDate: string = "";
+  private cacheIntervalEndDate: string = "";
+  private cacheIntervalUsedcounter: number = 0;
+  public isTimestampWithinFilter(timestamp: string): boolean {
+
+    if (this.searchParams.lastminutes > 0) {
+      // formatDate performance is not good, so we cache the interval
+      // it_IT is a locale that uses 24h format	
+      if (this.cacheIntervalUsedcounter === 0) {
+        this.cacheIntervalEndDate = formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'it_IT');
+        this.cacheIntervalStartDate = formatDate(new Date(new Date().getTime() - this.searchParams.lastminutes * 60000), 'yyyy-MM-ddTHH:mm', 'it_IT');
+        this.cacheIntervalUsedcounter = 50000;
+      }
+      else {
+        this.cacheIntervalUsedcounter--;
+      }
+
+      var currentString =  timestamp;
+      if (currentString < this.cacheIntervalStartDate || currentString > this.cacheIntervalEndDate)
+        return false;
+    } else {
+      var startdate = this.searchParams.startdate;
+      var enddate = this.searchParams.enddate;
+
+      if (startdate != "" && enddate != "") {
+        var currentString =  timestamp; //formatDate(timestamp, 'yyyy-MM-ddTHH:mm', 'it_IT');
+        if (currentString < startdate || currentString > enddate)
+          return false;
+      }
+    }
+
+    return true;
+  }
+
 
   private parsePromptClassic() {
     this.resetParams();
@@ -109,10 +146,14 @@ export class SearchFieldService {
 You are an AI assistant that 
 converts user requests to a JSON (not JSON5) message to use as filters for a web console that filters flow logs coming from an Azure Firewall. 
 
-Allowed fields are: timestamp, category, protocol, source, target, action, policy, moreinfo 
+Allowed fields are: timestamp, lastminutes, category, protocol, source, target, action, policy, moreinfo 
 All values must be converted to lowercase.
 
 timestamp is a string in the format "HH:mm" or "HH:mm:ss"
+
+lastminutes is a number of minutes in the past to show starting from the current time.
+lastminutes and timestamp are mutually exclusive, if both are present, lastminutes is used.
+lastminutes = 0 means no lastminutes filter.
 
 the request can be generic, search the text on all fields, or specific to one or more fields.
 
@@ -121,17 +162,21 @@ by default, the request adds parameters to the current json message, but it is a
 if you want to show how to use this agent, just show sample requests and not the JSON output, and begins the sentence with 'here some examples query you can use:'
 
 some examples:
+user: show me events from last 12 minutes
+answer:{"fulltext":[],"startdate":"","enddate":"", "lastminutes": 12, "category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+
+
 user: search pippo pluto paperino
-answer:{"fulltext":["pippo","pluto","paperino"],"startdate":"","enddate":"","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+answer:{"fulltext":["pippo","pluto","paperino"],"startdate":"","enddate":"","lastminutes": O,"category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
 
 user: filter rows with category containing "NetworkRule"
-answer: {"fulltext":[],"startdate":"","enddate":"","category":["NetworkRule"],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+answer: {"fulltext":[],"startdate":"","enddate":"","lastminutes": O,"category":["NetworkRule"],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
 
 user: filter event between 10:30 and 10:45
-answer: {"fulltext":[],"startdate":"10:30","enddate":"10:45","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+answer: {"fulltext":[],"startdate":"10:30","enddate":"10:45","lastminutes": O,"category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
 
 user: clear all filters
-answer: {"fulltext":[],"startdate":"","enddate":"","category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
+answer: {"fulltext":[],"startdate":"","enddate":"","lastminutes": O,"category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
 
 current json message is: ${JSON.stringify(this.searchParams)}
 `},
@@ -184,6 +229,7 @@ export interface ISearchParams {
 
   startdate: string; 
   enddate: string;
+  lastminutes: number;
 
   category: string[];
   protocol: string[];

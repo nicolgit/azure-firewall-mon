@@ -79,14 +79,32 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.dataSource = new TableVirtualScrollDataSource(data); 
     this.dataSource.filterPredicate = (data: FirewallDataRow, filter_in: string) => {
         try {
-          var startdate = this.searchFieldService.searchParams.startdate;
-          var enddate = this.searchFieldService.searchParams.enddate;
 
-          if (startdate != "" && enddate != "") {
+          if (this.searchFieldService.isTimestampWithinFilter(data.time) == false)
+            return false;
+
+          /*
+          if (this.searchFieldService.searchParams.lastminutes > 0) {
+            var ed = new Date();
+            var sd = new Date(ed.getTime() - this.searchFieldService.searchParams.lastminutes * 60000);
+        
+            var edString = formatDate(ed, 'yyyy-MM-ddTHH:mm', 'en_US');
+            var sdString = formatDate(sd, 'yyyy-MM-ddTHH:mm', 'en_US');
+
             var currentString =  formatDate(data.time, 'yyyy-MM-ddTHH:mm', 'en_US');
-            if (currentString < startdate || currentString > enddate)
-              return false;
+              if (currentString < sdString || currentString > edString)
+                return false;
+          } else {
+            var startdate = this.searchFieldService.searchParams.startdate;
+            var enddate = this.searchFieldService.searchParams.enddate;
+
+            if (startdate != "" && enddate != "") {
+              var currentString =  formatDate(data.time, 'yyyy-MM-ddTHH:mm', 'en_US');
+              if (currentString < startdate || currentString > enddate)
+                return false;
+            }
           }
+          */
 
           var filters = 0;
           filters += this.searchFieldService.searchParams.fulltext.length;
@@ -250,6 +268,10 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       this.searchFieldService.parsePrompt();
 
       this.filterText = "";
+
+      this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
+      this.dataSource.filteredData.length;
+      this.visibleRows = this.dataSource.filteredData.length;
     }
   }
 
@@ -273,16 +295,18 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   setTimestampFilterMinutes(newValue: number) {
     if (newValue > 0) {
       this.timestampFilterMinutes = newValue;
-      this.searchFieldService.setDatesIntervalFromMinutes(newValue);
+      this.searchFieldService.setLastMinutes(newValue);
     }
     else if (newValue == -1) {
       this.timestampFilterMinutes = -1;
 
+      this.searchFieldService.setLastMinutes(0);
       var now = new Date();
       this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = formatDate(now.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
     }
     else {
       this.timestampFilterMinutes = 0;
+      this.searchFieldService.setLastMinutes(newValue);
       this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = "";
     }
   }
@@ -376,10 +400,12 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     if (rowid == this.selectedRow?.rowid)
       return "#faf5c8";
 
+    if (this.searchFieldService.searchParams.lastminutes != 0)
+      return "SeaShell";
+
     if (this.searchFieldService.searchParams.startdate != "" &&
       this.searchFieldService.searchParams.enddate != "")
       return "SeaShell";
-    
 
     return "";
   }
@@ -596,7 +622,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     else
       returnString = date.toLocaleString() + " (Local)";
 
-    if (this.timestampFilterMinutes != 0) {
+    if (this.searchFieldService.searchParams.lastminutes != 0 ||
+      (this.searchFieldService.searchParams.startdate != "" && this.searchFieldService.searchParams.enddate != "")
+    ) {
       returnString = "<b>" + returnString + "</b>";
     }
     return returnString;
