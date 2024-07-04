@@ -25,12 +25,15 @@ export class SearchFieldService {
     this.resetParams();
    }
 
-  public resetParams(): void {  
+  public resetParams(options?: { includeTimeFilter?: boolean}): void {  
     this.promptAnswer = "";
 
-    //this.searchParams.startdate = ""; // formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
-    //this.searchParams.enddate = ""; //formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');;
-    //this.searchParams.lastminutes = 0;
+    if (options != null && options.includeTimeFilter != null && options.includeTimeFilter == true) {
+      this.searchParams.startdate = "";
+      this.searchParams.enddate = "";
+      this.searchParams.lastminutes = 0;
+    }
+
     this.searchParams.fulltext = [];
     this.searchParams.category = [];
     this.searchParams.protocol = [];
@@ -80,35 +83,29 @@ export class SearchFieldService {
     this.searchParams.startdate = "";
   }
 
-  private cacheIntervalStartDate: string = "";
-  private cacheIntervalEndDate: string = "";
-  private cacheIntervalUsedcounter: number = 0;
   public isTimestampWithinFilter(timestamp: string): boolean {
 
     if (this.searchParams.lastminutes > 0) {
-      // formatDate performance is not good, so we cache the interval
-      // it_IT is a locale that uses 24h format	
-      if (this.cacheIntervalUsedcounter === 0) {
-        this.cacheIntervalEndDate = formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'it_IT');
-        this.cacheIntervalStartDate = formatDate(new Date(new Date().getTime() - this.searchParams.lastminutes * 60000), 'yyyy-MM-ddTHH:mm', 'it_IT');
-        this.cacheIntervalUsedcounter = 50000;
-      }
-      else {
-        this.cacheIntervalUsedcounter--;
-      }
+      if (timestamp == null || timestamp.length == 0)
+        return false;
 
-      var currentString =  timestamp;
-      if (currentString < this.cacheIntervalStartDate || currentString > this.cacheIntervalEndDate)
+      var now = new Date();
+      var date = new Date(timestamp);
+
+      var diff = now.getTime() - date.getTime();
+      var minutes = diff / 60000;
+      if (minutes > this.searchParams.lastminutes)
         return false;
     } else {
       var startdate = this.searchParams.startdate;
       var enddate = this.searchParams.enddate;
 
-      if (startdate != "" && enddate != "") {
-        var currentString =  timestamp; //formatDate(timestamp, 'yyyy-MM-ddTHH:mm', 'it_IT');
-        if (currentString < startdate || currentString > enddate)
-          return false;
-      }
+      var currentString =  formatDate(timestamp, 'yyyy-MM-ddTHH:mm', 'en_US');
+      if (startdate.length > 0 && currentString < startdate)
+        return false;
+
+      if (enddate.length > 0 && currentString > enddate)
+        return false;
     }
 
     return true;
@@ -149,7 +146,7 @@ converts user requests to a JSON (not JSON5) message to use as filters for a web
 Allowed fields are: timestamp, lastminutes, category, protocol, source, target, action, policy, moreinfo 
 All values must be converted to lowercase.
 
-timestamp is a string in the format "HH:mm" or "HH:mm:ss"
+timestamp is a string in the format "HH:mm" or "HH:mm:ss", representing the local time of the day, no gmt. 
 
 lastminutes is a number of minutes in the past to show starting from the current time.
 lastminutes and timestamp are mutually exclusive, if both are present, lastminutes is used.
@@ -190,6 +187,14 @@ current json message is: ${JSON.stringify(this.searchParams)}
       if (this.isJsonString(events.choices[0].message.content)) {
         this.searchParams = JSON.parse(events.choices[0].message.content);
 
+        if (this.searchParams.startdate.length > 0 ) {
+          this.searchParams.startdate =this.parseHourMinuteSecondsStart(this.searchParams.startdate).toISOString();
+        }
+
+        if (this.searchParams.enddate.length > 0) {
+          this.searchParams.enddate = this.parseHourMinuteSecondsEnd(this.searchParams.enddate).toISOString();
+        }
+
         messages[1] = { role: "user", content: `convert following JSON message in a human readable text. omit empty fields. start the answer with 'I am currently showing ...': ${JSON.stringify(this.searchParams)}`};
         const events2 = await client.getChatCompletions(aoaiDeploymentId, messages);
         this.promptAnswer = events2.choices[0].message.content;
@@ -204,6 +209,26 @@ current json message is: ${JSON.stringify(this.searchParams)}
       this.promptAnswer += error;
   }
     this.isThinking = false;
+  }
+
+  private parseHourMinuteSecondsStart(time: string): Date {
+    const [hour, minute, second] = time.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hour);
+    date.setMinutes(minute);
+    date.setSeconds(second || 0);
+    date.setMilliseconds(0);
+    return date;
+  }
+
+  private parseHourMinuteSecondsEnd(time: string): Date {
+    const [hour, minute, second] = time.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hour);
+    date.setMinutes(minute);
+    date.setSeconds(second || 59);
+    date.setMilliseconds(999);
+    return date;
   }
 
   private isJsonString(myString: string): boolean {

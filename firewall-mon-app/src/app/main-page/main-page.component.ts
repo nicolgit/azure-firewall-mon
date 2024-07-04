@@ -83,29 +83,6 @@ export class MainPageComponent implements AfterViewInit, OnInit {
           if (this.searchFieldService.isTimestampWithinFilter(data.time) == false)
             return false;
 
-          /*
-          if (this.searchFieldService.searchParams.lastminutes > 0) {
-            var ed = new Date();
-            var sd = new Date(ed.getTime() - this.searchFieldService.searchParams.lastminutes * 60000);
-        
-            var edString = formatDate(ed, 'yyyy-MM-ddTHH:mm', 'en_US');
-            var sdString = formatDate(sd, 'yyyy-MM-ddTHH:mm', 'en_US');
-
-            var currentString =  formatDate(data.time, 'yyyy-MM-ddTHH:mm', 'en_US');
-              if (currentString < sdString || currentString > edString)
-                return false;
-          } else {
-            var startdate = this.searchFieldService.searchParams.startdate;
-            var enddate = this.searchFieldService.searchParams.enddate;
-
-            if (startdate != "" && enddate != "") {
-              var currentString =  formatDate(data.time, 'yyyy-MM-ddTHH:mm', 'en_US');
-              if (currentString < startdate || currentString > enddate)
-                return false;
-            }
-          }
-          */
-
           var filters = 0;
           filters+=this.searchFieldService.searchParams.fulltext.length;
           
@@ -503,15 +480,15 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   public setPromptTypeClassic() {
     this.filterText = "";
     this.timestampFilterMinutes = 0;
-    this.searchFieldService.resetParams();
+    this.searchFieldService.resetParams({ includeTimeFilter: true });
     this.searchFieldService.promptType = PromptType.Classic;
     this.searchInput.nativeElement.focus();  
   }
-
+  
   public setPromptTypeChat() {
     this.filterText = "";
     this.timestampFilterMinutes = 0;
-    this.searchFieldService.resetParams(); 
+    this.searchFieldService.resetParams({ includeTimeFilter: true }); 
     this.searchFieldService.promptType = PromptType.Chatgpt;
     this.searchInput.nativeElement.focus();  
   }
