@@ -6,7 +6,7 @@
 <h1 align="center">az-firewall-mon🧑‍🚒</h1>
 
 <div align="center">
-  an <i>alternative and opinionable</i>😊 way to access and inspect Azure Firewall logs
+  an <i>alternative and opinionable</i> way to access and inspect Azure Firewall logs
 </div>
 
 <br/>
@@ -25,9 +25,32 @@
 
 We all know that Microsoft's recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check the results. 
 
-Azure-Firewall-mon focuses more on providing a tool that can answer the simple question "_what is happening right now?_" in an alternative and hopefully practical way: the idea is to provide an approach much more like [Sysinternals Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) or [Check Point's SmartView/SmartLog](https://sc1.checkpoint.com/documents/R80.40/WebAdminGuides/EN/CP_R80.40_LoggingAndMonitoring_AdminGuide/Topics-LMG/Using-log-view.htm?tocpath=Logging%7C_____2), where there is no queries or dashboards that you need to implement first to get working. Still, all events are available as a _log-stream_. In addition, a full-text search at the top of the page lets you quickly filter the content displayed on the screen, helping you understand what is happening right now (or almost). 
+Azure-Firewall-mon focuses more on providing a tool that can answer the simple question "_what is happening right now?_" in an alternative and hopefully practical way: the idea is to provide an approach much more like [Sysinternals Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) or [Check Point's SmartView/SmartLog](https://sc1.checkpoint.com/documents/R80.40/WebAdminGuides/EN/CP_R80.40_LoggingAndMonitoring_AdminGuide/Topics-LMG/Using-log-view.htm?tocpath=Logging%7C_____2), where there is no KUSTO queries or dashboards that you need to implement first to get working. Still, all events are available as a _log-stream_.
 
-> Are you curious? See Azure-Firewall-mon in action in this video: <https://www.youtube.com/watch?v=NNmRxgljtKE> 
+The real strength of the tool is the search field available in the top toolbar. To search for an event, simply start typing and the log flow will be automatically filtered according to those parameters.
+
+![text filter](images/01-text-filtering.png)
+
+The timestamp field displays the event date in UTC or local format. You can filter the view for the last few minutes or for a specific time range.
+
+![text filter](images/02-time-filtering.png)
+
+Within this tool, only events from the last 24 hours will appear because this is the duration set on the Event Hub Namespace. A longer duration would slow down the tool and not help answer the question "_what is happening right now_" that az-firewall-mon aims to address.
+
+As an alternative to full-text search, you can use the **chatGPT mode**: in the top search field, you can enter a request in natural language, and the system will filter the content accordingly.
+
+Some examples of queries are as follows:
+
+* "_Show me events from the last 15 minutes_" 
+* "_Search project alpha_" 
+* "_Filter rows with category containing "NetworkRule"_" 
+* "_Filter events between 12:00 and 13:00_" 
+* "_Filter for target containing 192.168.1.1_" 
+* "_Include only logs with protocol TCP_" 
+* "_Show me only the deny actions_" 
+* "_More information on source 192.168.1.1_"
+
+![chatgpt](images/03-chatgpt.gif)
 
 # Setup a connection with your Azure Firewall
 
@@ -46,17 +69,23 @@ To use this app with **YOUR data**, you must perform the following steps on your
     - Select _all_ _logs_ and "Stream to Event Hub"
     - Select the Event Hub Namespace and Hub created above
     - click `SAVE`
+6. Create an Azure OpenAI Service
+7. Go to OpenAI Studio > Deployments > Create a new deployment using as model `gpt-4-32k v0613`
+
+
+Lazy engineers can performs steps 1, 2, 3, 4, 5, 6, and 7 by clicking the following button:
+
+ [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json)
 
 Now, open <https://az-firewall-mon.duckiesfarm.com/> and do the following:
 
 1. copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above
-2. copy in the `Azure Map Account Shared Key` field the primary or secondary Shared Key of the Azure Map Account created above
-3. click on `Let's begin`.
-
-Lazy engineers can performs steps 1, 2, 3 and 4 by clicking the following button:
-
- [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json)
-
+2. copy the corresponding `Event Hub Consumer Group` Name
+3. copy in the `Azure Map Account Shared Key` field the primary or secondary Shared Key of the Azure Map Account created above
+4. copy in the `Azure OpenAi Endpoint` field the enpoint URI for the OpenAI resouce created above
+5. copy in the `Azure OpenAI deployment` field tne name of the deployment created above
+6. copy in the `Azure OpenAI access key` field the primary or secondary Shared Key of the Azure OpenAI account created above
+7. click on `Let's begin`.
 
 # Install Azure-firewall-mon in your environment
 
