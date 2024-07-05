@@ -115,18 +115,7 @@ export class FlagsService {
     this.cache.set(ip, new FlagData("", "", ""));
     
     var apiKey="";
-    if (this.model.azureMapsSharedKey == "") {
-      if (environment.AzureMapsSASKey == "") {
-      this.logginService.logTrace("FlagsService.getFlagFromIPAsync - geolocation API not set" );
-      return;
-      }
-      else {
-        apiKey = environment.AzureMapsSASKey;
-      }
-    }
-    else {
-      apiKey = this.model.azureMapsSharedKey;
-    }
+    apiKey = this.model.azureMapsSharedKey;
 
     const callRequest = `https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip=${ip}&subscription-key=${apiKey}`;
     const response = await axios.get(callRequest);

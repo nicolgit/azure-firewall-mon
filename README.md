@@ -64,15 +64,15 @@ To use this app with **YOUR data**, you must perform the following steps on your
 2. Create an Azure Event Hub inside the namespace, with a `1-day retention` and `1 partition`
 3. Create a Shared Access Policy, with  _Listen_ claim
 4. Create an Azure Map Account
-5. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
+5. Create an Azure OpenAI Service
+6. Go to OpenAI Studio > Deployments > Create a new deployment using as model `gpt-4-32k v0613`
+7. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
 
     - Select _all_ _logs_ and "Stream to Event Hub"
     - Select the Event Hub Namespace and Hub created above
     - click `SAVE`
-6. Create an Azure OpenAI Service
-7. Go to OpenAI Studio > Deployments > Create a new deployment using as model `gpt-4-32k v0613`
 
-Lazy engineers can performs steps 1, 2, 3, 4, 5, 6, and 7 by clicking the following button [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json) :-)
+Lazy engineers can performs steps from 1 to 6 by clicking the following button [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json) :-)
 
 Now, open <https://az-firewall-mon.duckiesfarm.com/> and do the following:
 
@@ -110,7 +110,7 @@ Latency refers to the time that data is created on the monitored system and the 
 
 The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) Query Language is a  tool to explore your data in a Log Analytics Workspace. The query uses schema entities that are organized in a hierarchy similar to SQL's: databases, tables, and columns.
 
-# The UIs and tools that inspired Az-Firewall-mon
+# UIs and tools that inspired Az-Firewall-mon
 
 ## [Check Point's SmartView](https://community.checkpoint.com/t5/Management/SmartView-Accessing-Check-Point-Logs-from-Web/td-p/3710) web log access
 
@@ -125,5 +125,3 @@ The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) 
 * [lf20_giodppcr.json](https://lottiefiles.com/95739-no-connection-to-internet) lottie animation by hdev coder
 * Logo built with the [new Bing](https://www.bing.com/new)
 
-# Feedback
-Do you like the idea? Do you want to collaborate? Do you have questions? [Open an Issue](https://github.com/nicolgit/azure-firewall-mon/issues)!
