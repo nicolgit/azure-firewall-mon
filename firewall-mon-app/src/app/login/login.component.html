@@ -8,28 +8,47 @@
         class="container-lottie-row">
     </lottie-player>
     
-    <h1><img alt="logo" src="assets/logo.png" width="72" height="72" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;"/>&nbsp;az-firewall-mon</h1>
-    <p>Welcome to Az-firewall-mon: a tool that allows to view, search, filter and inspect the log stream of your Azure Firewall.
-    Connect your Azure Firewall to this tool and start monitoring your network traffic 
-    (<a rel="noopener" target="_blank" href="https://github.com/nicolgit/azure-firewall-mon#setup-a-connection-with-your-azure-firewall">how?</a>)
-    </p>
-    <mat-checkbox color="primary" [checked]="isDemoMode" (change)="setDemo($event.checked)">demo mode</mat-checkbox>
-    <mat-form-field appearance="outline">
-        <mat-label>Event Hub connection string</mat-label>
-        <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="eventHubConnectionString" (input)="setStart()">
-    </mat-form-field>
+    <div style="width: 70%; margin:auto">
+    
+        <h1><img alt="logo" src="assets/logo.png" width="72" height="72" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;"/>&nbsp;az-firewall-mon</h1>
+        <p>Welcome to Az-firewall-mon: a tool that allows to view, search, filter and inspect the log stream of your Azure Firewall.
+        Connect your Azure Firewall to this tool and start monitoring your network traffic 
+        (<a rel="noopener" target="_blank" href="https://github.com/nicolgit/azure-firewall-mon#setup-a-connection-with-your-azure-firewall">how?</a>)
+        </p>
+        <mat-checkbox color="primary" [checked]="isDemoMode" (change)="setDemo($event.checked)">demo mode</mat-checkbox>
+        <br/>
+        <mat-form-field appearance="outline" class="login-field">
+            <mat-label>Event Hub connection string</mat-label>
+            <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="eventHubConnectionString" (input)="setStart()">
+        </mat-form-field>
+        <br/>
+        <mat-form-field appearance="outline" class="login-field">
+            <mat-label>Event Hub Consumer Group</mat-label>
+            <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="eventHubConsumerGroup" (input)="setStart()">
+        </mat-form-field>
+        <br/>
+        <mat-form-field appearance="outline" class="login-field">
+            <mat-label>Azure Maps Account Shared Key (optional)</mat-label>
+            <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="azureMapsSharedKey" type="password">
+        </mat-form-field>
+        
+        <p>The following optional parameters are needed if you want to use natural language to filter the log stream.</p>
 
-    <mat-form-field appearance="outline" >
-        <mat-label>Event Hub Consumer Group</mat-label>
-        <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="eventHubConsumerGroup" (input)="setStart()">
-    </mat-form-field>
+        <mat-form-field appearance="outline" class="login-field">
+            <mat-label>Azure OpenAI endpoint</mat-label>
+            <input title="not used" matInput [(ngModel)]="aoaiEndpoint" >
+        </mat-form-field><br/>
+        <mat-form-field appearance="outline" class="login-field">
+            <mat-label>Azure OpenAI deployment for a gpt-4-32k v613 model</mat-label>
+            <input title="not used" matInput [(ngModel)]="aoaiDeploymentId">
+        </mat-form-field><br/>
+        <mat-form-field appearance="outline" class="login-field">
+            <mat-label>Azure OpenAI access key</mat-label>
+            <input title="not used" matInput [(ngModel)]="aoaiAccessKey" type="password">
+        </mat-form-field><br/>
 
-    <mat-form-field appearance="outline" >
-        <mat-label>Azure Maps Account Shared Key (optional)</mat-label>
-        <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="azureMapsSharedKey" type="password">
-    </mat-form-field>
-
-    <a mat-stroked-button color="primary" [disabled]="isStartDisabled" (click)="navigateNext()">Let's begin</a>
+        <a mat-flat-button color="primary" [disabled]="isStartDisabled" (click)="navigateNext()"  class="login-field">Let's begin</a>
+    </div>
     <br/>
     <br/>
     <br/>

@@ -109,6 +109,9 @@ table {
   background-color: white;
 }
 
+.error-text {
+  color: red;
+}
 
 .mat-mdc-table {
   width: 100%;
@@ -204,3 +207,13 @@ pre {
 :host ::ng-deep .jsontext > span.boolean { font-style: italic; }
 :host ::ng-deep .jsontext > span.null { color: red; }
 :host ::ng-deep .jsontext > span.key { font-style: italic; }
+
+
+.centered-container-lottie > * {
+  width: 64px;
+  float: left;
+}
+
+.container-lottie {
+  margin: 0 auto !important;
+}

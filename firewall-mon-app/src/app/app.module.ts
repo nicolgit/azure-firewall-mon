@@ -10,6 +10,7 @@ import { MainPageComponent } from './main-page/main-page.component';
 import { DatePipe } from '@angular/common';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatExpansionModule} from '@angular/material/expansion';
@@ -23,6 +24,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatBadgeModule} from '@angular/material/badge';
+
 
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { ResizeColumnDirective } from './directives/resize-column.directive';
@@ -45,6 +47,7 @@ import { ApplicationinsightsAngularpluginErrorService } from '@microsoft/applica
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatBadgeModule,
     MatCardModule,
     MatCheckboxModule,
