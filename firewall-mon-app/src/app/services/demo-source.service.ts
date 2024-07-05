@@ -167,7 +167,7 @@ export class DemoSourceService implements IFirewallSource {
 
   private async randomQuote() {
     this.outputMessage(this.randomQuotes[Math.floor(Math.random() * this.randomQuotes.length)]);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
   private lastRowID: number = 0;

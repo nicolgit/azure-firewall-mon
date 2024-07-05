@@ -14,6 +14,8 @@ import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
 import { LoggingService } from '../services/logging.service';
 import { time } from 'console';
 import { formatDate } from '@angular/common';
+import { PromptType, SearchFieldService } from '../services/search-field.service';
+import { elementAt, filter } from 'rxjs';
 
 
 enum TimestampFormat { GMT, local};
@@ -21,7 +23,7 @@ enum TimestampFormat { GMT, local};
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss']
+  styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent implements AfterViewInit, OnInit {
   @ViewChild('searchInput') searchInput!: ElementRef;
@@ -39,6 +41,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     private router: Router,
     private logging: LoggingService,
     private snackBar: MatSnackBar,
+    public searchFieldService: SearchFieldService,
     public dialog: MatDialog,
     ) {
       this.firewallSource = this.model.demoMode ? this.demoSource : this.eventHubService;
@@ -49,20 +52,8 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       this.toggleExpandJsonSpace();
   }
 
-  @HostListener('document:keypress', ['$event'])
-
-  handleKeyboardEvent(event: KeyboardEvent) { 
-    if (event.key === 'Enter') {
-      this.advSearchVisibility = false;
-       this.searchInput.nativeElement.blur();
-    }
-
-    // avoid handling keypress events when typing in input fields
-    if (event.target instanceof HTMLInputElement || 
-      event.target instanceof HTMLTextAreaElement || 
-      event.target instanceof HTMLSelectElement) {
-    return;
-  }
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    console.log(event);
 
     this.advSearchVisibility = !this.advSearchVisibility;
 
@@ -70,41 +61,45 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       this.searchInput.nativeElement.focus();  
     }
   }
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    // avoid handling keypress events when typing in input fields
+    if (event.target instanceof HTMLInputElement || 
+      event.target instanceof HTMLTextAreaElement || 
+      event.target instanceof HTMLSelectElement) {
+      return;
+    }
+
+    this.advSearchVisibility = true;
+    this.searchInput.nativeElement.focus();  
+    
+  }
 
   private onDataSourceChanged(data: Array<FirewallDataRow>) {
     this.dataSource = new TableVirtualScrollDataSource(data); 
-    this.dataSource.filterPredicate = (data: FirewallDataRow, filter: string) => {
-      
+    this.dataSource.filterPredicate = (data: FirewallDataRow, filter_in: string) => {
         try {
-          if (this.timestampFilterMinutes > 0) {
-            if (data.time == null || data.time.length == 0)
-              return false;
 
-            var now = new Date();
-            var date = new Date(data.time);
+          if (this.searchFieldService.isTimestampWithinFilter(data.time) == false)
+            return false;
 
-            var diff = now.getTime() - date.getTime();
-            var minutes = diff / 60000;
-            if (minutes > this.timestampFilterMinutes)
-              return false;
-          }
+          var filters = 0;
+          filters+=this.searchFieldService.searchParams.fulltext.length;
+          
+          filters+=this.searchFieldService.searchParams.category.length;
+          filters+=this.searchFieldService.searchParams.protocol.length
+          filters+=this.searchFieldService.searchParams.source.length;
+          filters+=this.searchFieldService.searchParams.target.length;
+          filters+=this.searchFieldService.searchParams.action.length;
+          filters+=this.searchFieldService.searchParams.policy.length;
+          filters+=this.searchFieldService.searchParams.moreinfo.length;
 
-          if (this.timestampFilterMinutes == -1) {
-            var currentString =  formatDate(data.time, 'yyyy-MM-ddTHH:mm', 'en_US');
-            if (currentString < this.timestampStartDateString || currentString > this.timestampEndDateString)
-              return false;
-          }
-
-          if (filter == null || filter.length == 0)
+          if (filters == 0)
             return true;
 
-          var words = filter.toLowerCase().split(" ");
-          var foundWords:number = 0;
-      
-          for (var i = 0; i < words.length; i++) {
-            var word = words[i];
+          var filterHits = 0;
+          for (let word of this.searchFieldService.searchParams.fulltext) {
             if (word.length > 0 && 
-              //data.time?.toLowerCase().includes(word) || 
               data.category?.toLowerCase().includes(word) || 
               data.protocol?.toLowerCase().includes(word) || 
               data.sourceip?.toLowerCase().includes(word) || 
@@ -113,15 +108,64 @@ export class MainPageComponent implements AfterViewInit, OnInit {
               data.targetport?.toLowerCase().includes(word) || 
               data.policy?.toLowerCase().includes(word) ||
               data.moreInfo?.toLowerCase().includes(word) ||
-              data.action?.toLowerCase().includes(word))
+              data.action?.toLowerCase().includes(word)  
+            )
             {
-              foundWords++;
+              filterHits++;
             }
-            else
-              return false;
-        }
-    
-        return true;
+          }
+          if (filters == filterHits) return true;
+
+          for (let word of this.searchFieldService.searchParams.category) {
+            if (word.length > 0 && data.category?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.protocol) {
+            if (word.length > 0 && data.protocol?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.source) {
+            if (word.length > 0 && data.sourceip?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.target) {
+            if (word.length > 0 && data.targetip?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.action) {
+            if (word.length > 0 && data.action?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+          
+          for (let word of this.searchFieldService.searchParams.policy) {
+            if (word.length > 0 && data.policy?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+
+          for (let word of this.searchFieldService.searchParams.moreinfo) {
+            if (word.length > 0 && data.moreInfo?.toLowerCase().includes(word))
+            {
+              filterHits++;
+            }
+          }
+          
+          return filters == filterHits;
         } catch (error) {
           //console.log ("Error [" + error + "] in filterPredicate working on: " + data);
           return true;
@@ -185,15 +229,32 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 }
 
   filterTextChanged(): void {
-    this.dataSource.filter = " " + this.filterText; // not empty filter string forces filterPredicate to be called
+    if (this.searchFieldService.promptType == PromptType.Classic)
+      {
+        this.searchFieldService.setPrompt(this.filterText);
+      }
+    
+    this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
     this.dataSource.filteredData.length;
     this.visibleRows = this.dataSource.filteredData.length;
+  }
+
+  filterTextEnter(): void {
+    if (this.searchFieldService.promptType == PromptType.Chatgpt) {
+      this.searchFieldService.setPrompt(this.filterText);
+      this.searchFieldService.parsePrompt();
+
+      this.filterText = "";
+
+      this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
+      this.dataSource.filteredData.length;
+      this.visibleRows = this.dataSource.filteredData.length;
+    }
   }
 
   public displayedColumns = ['time', 'category', 'protocol','source','target', 'action', 'policy', 'targetUrl'];
   public dataSource: TableVirtualScrollDataSource<FirewallDataRow> = new TableVirtualScrollDataSource(new Array<FirewallDataRow>());
   public skippedRows: number = 0;
-  public filterText: string = "";
   public totalRows: number = 0;
   public visibleRows: number = 0;
   public advSearchVisibility = false;
@@ -205,10 +266,27 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 
   public panelOpenState = false;
   public timestampFormat: TimestampFormat = TimestampFormat.GMT;
+  public filterText: string = "";
   public timestampFilterMinutes: number = 0;
-  public timestampStartDateString: String = formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');
-  public timestampEndDateString: String = formatDate(new Date(), 'yyyy-MM-ddTHH:mm', 'en_US');
   
+  setTimestampFilterMinutes(newValue: number) {
+    if (newValue > 0) {
+      this.timestampFilterMinutes = newValue;
+      this.searchFieldService.setLastMinutes(newValue);
+    }
+    else if (newValue == -1) {
+      this.timestampFilterMinutes = -1;
+
+      this.searchFieldService.setLastMinutes(0);
+      var now = new Date();
+      this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = formatDate(now.getTime(), 'yyyy-MM-ddTHH:mm', 'en_US');
+    }
+    else {
+      this.timestampFilterMinutes = 0;
+      this.searchFieldService.setLastMinutes(newValue);
+      this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = "";
+    }
+  }
 
   public setActionBackground(action: string): string {
     
@@ -222,39 +300,99 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       return '';
   }
 
-  public highlightSelection(text:string): string {
-    if (text == null || text.length == 0) {
-      return "";
-    }
-
-    if (this.filterText != null && this.filterText.length > 0 && text.length > 0) {
-      const words = this.filterText.split(" ");
-    
-      words.forEach(word => {
-        const position = text.toLowerCase().indexOf(word.toLowerCase());
-        if (position >= 0 && word.length > 0) {
-          text = text.substring(0, position) + "<b>" + text.substring(position, position + word.length) + "</b>" + text.substring(position + word.length);
-        }      
-      });
-    }
-
-    return text;
-  }
-
-  public hasHighlightColor_old(text: string): string {
-    if (text == null || text.length == 0)
+  public highlightSelection(columnName:string, textContent:string) {
+    if (textContent == null || textContent.length == 0)
       return "";
 
-    var result = text.length != this.highlightSelection(text).length;
-    return result ? "SeaShell" : "";
+    this.searchFieldService.searchParams.fulltext.forEach(word => {
+      const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+      if (position >= 0 && word.length > 0) {
+        textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+      }      
+    });
+
+    switch (columnName) {
+      case "category":
+        this.searchFieldService.searchParams.category.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "protocol":
+        this.searchFieldService.searchParams.protocol.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "source":
+        this.searchFieldService.searchParams.source.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "target":
+        this.searchFieldService.searchParams.target.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "action":
+        this.searchFieldService.searchParams.action.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "policy":
+        this.searchFieldService.searchParams.policy.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      case "moreinfo":
+        this.searchFieldService.searchParams.moreinfo.forEach(word => {
+          const position = textContent.toLowerCase().indexOf(word.toLowerCase());
+          if (position >= 0 && word.length > 0) {
+            textContent = textContent.substring(0, position) + "<b>" + textContent.substring(position, position + word.length) + "</b>" + textContent.substring(position + word.length);
+          }      
+        });
+        break;
+      }
+
+    return textContent;
+  }  
+
+  public hasHighlightColorTimestamp(rowid: string): string {
+    if (rowid == this.selectedRow?.rowid)
+      return "#faf5c8";
+
+    if (this.searchFieldService.searchParams.lastminutes != 0)
+      return "SeaShell";
+
+    if (this.searchFieldService.searchParams.startdate != "" &&
+      this.searchFieldService.searchParams.enddate != "")
+      return "SeaShell";
+
+    return "";
   }
 
-  public hasHighlightColor(text: string, rowid: string): string {
+  public hasHighlightColor(columnName:string, text: string, rowid: string): string {
     var result = false;
 
     if (text != null && text.length > 0)
     {
-      result = text.length != this.highlightSelection(text).length;
+      result = text.length != this.highlightSelection(columnName, text).length;
     }
 
     if (rowid != null && rowid.length> 0)
@@ -329,6 +467,45 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   
   public setTimeStampGMT() {
     this.timestampFormat = TimestampFormat.GMT;
+  }
+
+  public isPromptTypeClassic() {
+    return this.searchFieldService.promptType == PromptType.Classic;
+  }
+
+  public isPromptTypeChat() {
+    return this.searchFieldService.promptType == PromptType.Chatgpt;
+  } 
+
+  public setPromptTypeClassic() {
+    this.filterText = "";
+    this.timestampFilterMinutes = 0;
+    this.searchFieldService.resetParams({ includeTimeFilter: true });
+    this.searchFieldService.promptType = PromptType.Classic;
+    this.searchInput.nativeElement.focus();  
+  }
+  
+  public setPromptTypeChat() {
+    this.filterText = "";
+    this.timestampFilterMinutes = 0;
+    this.searchFieldService.resetParams({ includeTimeFilter: true }); 
+    this.searchFieldService.promptType = PromptType.Chatgpt;
+    this.searchInput.nativeElement.focus();  
+  }
+
+  PromptAnswer() {
+    if (this.searchFieldService.getPromptAnswer() == null || this.searchFieldService.getPromptAnswer().length == 0)
+      return "";
+
+    return "az-firewallnmon > <b>" +  this.searchFieldService.getPromptAnswer() + "</b>";
+    }
+
+  isThinking(): boolean {
+      return this.searchFieldService.isThinking;
+    }
+  public JSONfySearchParams() {
+    return this.syntaxHighlight( JSON.stringify(this.searchFieldService.searchParams));
+    //return JSON.stringify(this.searchFieldService.searchParams);
   }
 
   public getFlagFromIP(ip: string): FlagData | undefined{
@@ -421,8 +598,10 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       returnString = timestamp;
     else
       returnString = date.toLocaleString() + " (Local)";
-  
-    if (this.timestampFilterMinutes != 0) {
+
+    if (this.searchFieldService.searchParams.lastminutes != 0 ||
+      (this.searchFieldService.searchParams.startdate != "" && this.searchFieldService.searchParams.enddate != "")
+    ) {
       returnString = "<b>" + returnString + "</b>";
     }
     return returnString;
