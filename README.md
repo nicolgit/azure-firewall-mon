@@ -72,10 +72,7 @@ To use this app with **YOUR data**, you must perform the following steps on your
 6. Create an Azure OpenAI Service
 7. Go to OpenAI Studio > Deployments > Create a new deployment using as model `gpt-4-32k v0613`
 
-
-Lazy engineers can performs steps 1, 2, 3, 4, 5, 6, and 7 by clicking the following button:
-
- [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json)
+Lazy engineers can performs steps 1, 2, 3, 4, 5, 6, and 7 by clicking the following button [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json) :-)
 
 Now, open <https://az-firewall-mon.duckiesfarm.com/> and do the following:
 
