@@ -22,11 +22,11 @@ body { margin: 0; }
   'opsz' 24
 }
 
-$my-custom-typography-config: mat.define-typography-config(
+$my-custom-typography-config: mat.m2-define-typography-config(
   $font-family: 'Sofia Sans',
 );
 
-$my-theme: mat.define-light-theme((
+$my-theme: mat.m2-define-light-theme((
  density: -2,
  typography: $my-custom-typography-config,
 ));
