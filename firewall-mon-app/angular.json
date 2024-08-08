@@ -103,7 +103,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "firewall-mon-app:build"
+            "buildTarget": "firewall-mon-app:build"
           }
         },
         "test": {
