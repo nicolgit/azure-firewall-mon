@@ -1,8 +1,5 @@
 {
     "navigationFallback": {
       "rewrite": "/"
-    },
-    "platform": {
-      "apiRuntime": "node:18"
     }
   }
