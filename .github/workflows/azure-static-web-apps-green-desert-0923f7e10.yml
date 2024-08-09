@@ -19,19 +19,21 @@ jobs:
         with:
           submodules: true
           lfs: false
-
-      - name: prepare build date in GITHUB_ENV
-        id: step_build_date_and_time
-        run: |
-          echo "build_timestamp=$(date)" >> $GITHUB_ENV
         
-      - name: Use the build date from GITHUB_ENV
+      - name: replace build date and number
         id: step_replace
         # encode connection string with https://dwaves.de/tools/escape/ !!
         run: |
           echo "build timestamp: ${{ env.build_timestamp }}"
           echo "run number: ${{ github.run_number }}"
-          sed -i 's/__BUILDDATE__/${{ env.build_timestamp }} (build ${{ github.run_number }})/g' firewall-mon-app/src/environments/environment.prod.ts 
+
+          builddate=$(date +%Y.%m.%d).github
+          # adding builds executed outside this workflow
+          my_build_number=$((100+${{ github.run_number }}))
+          echo "environment build date: $builddate"
+          echo "my build number: $my_build_number"
+          
+          sed -i 's/__BUILDDATE__/$builddate (build $my_build_number)/g' firewall-mon-app/src/environments/environment.prod.ts 
           sed -i 's/__APPLICATION_INSIGHTS_CONNECTION_STRING__/${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}/g' firewall-mon-app/src/environments/environment.prod.ts 
           cat firewall-mon-app/src/environments/environment.prod.ts
       
