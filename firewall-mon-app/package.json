@@ -10,7 +10,7 @@
   },
   "private": true,
   "engines": {
-    "node": ">=18.0.0"	
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@angular/animations": "~18.1.4",
@@ -38,6 +38,7 @@
     "rxjs": "^7.8.1",
     "secure-web-storage": "^1.0.2",
     "tslib": "^2.3.0",
+    "util": "^0.12.5",
     "zone.js": "~0.14.10"
   },
   "devDependencies": {
