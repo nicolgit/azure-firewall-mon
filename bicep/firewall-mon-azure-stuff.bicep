@@ -46,7 +46,7 @@ resource mapsAccount 'Microsoft.Maps/accounts@2023-06-01' = {
   kind: 'Gen2'
 }
 
-resource openAiService 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
+resource openAiService 'Microsoft.CognitiveServices/accounts@2022-03-01' = {
   name: openAiAccountName
   location: locationaoai
   sku: {
@@ -55,9 +55,7 @@ resource openAiService 'Microsoft.CognitiveServices/accounts@2024-04-01-preview'
   kind: 'OpenAI'
   properties: {
     customSubDomainName: openAiAccountName
-    restore: true
     networkAcls: {
-      bypass: 'AzureServices'
       defaultAction: 'Allow'
       virtualNetworkRules: []
       ipRules: []

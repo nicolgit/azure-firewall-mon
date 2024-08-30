@@ -92,10 +92,10 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "firewall-mon-app:build:production"
+              "buildTarget": "firewall-mon-app:build:production"
             },
             "development": {
-              "browserTarget": "firewall-mon-app:build:development"
+              "buildTarget": "firewall-mon-app:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -59,85 +59,77 @@ export class EventHubSourceService implements Model.IFirewallSource {
             for (const event of events) {
               var eventBody: Model.EventHubBody = event.body;
 
-              // *********************** fix for malformed json - TO BE REMOVED WHEN FIXED IN AZURE
+              // track event for malformed json
               if (eventBody.records == null) {
-                console.log(`${eventBody.toString()}`);
-
-                var asString: string = event.body.toString();
-               
-                if (asString.endsWith('",}}]}')) {
-                  asString = asString.slice(0,-6) + '"}}]}' ;
-                  
-                  eventBody = JSON.parse(asString);
-                }
+                this.logginService.logEvent(`UNABLE TO PARSE eventBODY (malformed json): ${eventBody.toString()}`); 
               }
-              // *********************** end fix for malformed json
+              else {
+                for (const record of eventBody.records) {
+                  const resourceId:string = record.resourceId;
 
-              for (const record of eventBody.records) {
-                const resourceId:string = record.resourceId;
+                  if (resourceId && resourceId.includes("/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/") == true) {
+                    var row: Model.FirewallDataRow | undefined = undefined;
 
-                if (resourceId && resourceId.includes("/PROVIDERS/MICROSOFT.NETWORK/AZUREFIREWALLS/") == true) {
-                  var row: Model.FirewallDataRow | undefined = undefined;
+                    switch (record.category) {
+                      case "AzureFirewallNetworkRule":
+                      case "AzureFirewallApplicationRule":
+                      case "AzureFirewallDnsProxy":    {
+                        row = this.parseAzureFirewallRuleLegacy(record);
+                        break;
+                      }
+                      // new format (structured logs)
+                      case "AZFWDnsQuery":
+                      case "AZFWApplicationRule":
+                      case "AZFWNetworkRule":
+                      case "AZFWNatRule":
+                      case "AZFWIdpsSignature":
+                      case "AZFWThreatIntel": 
+                        row = this.parseAzureFirewallRule(record);
+                        break;
+                      default: {
+                        row = {
+                          rowid: this.getRowID(),
+                          time: record.time.toString(),
+                          category: "SKIPPED Category - " + record.category,
+                          protocol: "-",
+                          sourceip: "-",
+                          srcport: "-",
+                          targetip: "-",
+                          targetport: "-",
+                          action: "-",
+                          dataRow: record
+                        } as Model.FirewallDataRow;
 
-                  switch (record.category) {
-                    case "AzureFirewallNetworkRule":
-                    case "AzureFirewallApplicationRule":
-                    case "AzureFirewallDnsProxy":    {
-                      row = this.parseAzureFirewallRuleLegacy(record);
-                      break;
-                    }
-                    // new format (structured logs)
-                    case "AZFWDnsQuery":
-                    case "AZFWApplicationRule":
-                    case "AZFWNetworkRule":
-                    case "AZFWNatRule":
-                    case "AZFWIdpsSignature":
-                    case "AZFWThreatIntel": 
-                      row = this.parseAzureFirewallRule(record);
-                      break;
-                    default: {
-                      row = {
-                        rowid: this.getRowID(),
-                        time: record.time.toString(),
-                        category: "SKIPPED Category - " + record.category,
-                        protocol: "-",
-                        sourceip: "-",
-                        srcport: "-",
-                        targetip: "-",
-                        targetport: "-",
-                        action: "-",
-                        dataRow: record
-                      } as Model.FirewallDataRow;
-
-                      this.skippedRows++;
-                      this.onRowSkipped?.(this.skippedRows);
-                      break;
+                        this.skippedRows++;
+                        this.onRowSkipped?.(this.skippedRows);
+                        break;
+                      }
                     }
                   }
-                }
-                else {
-                  row = {
-                    rowid: this.getRowID(),
-                    time: record.time.toString(),
-                    category: "SKIPPED Res Type - " + resourceId,
-                  } as Model.FirewallDataRow;
+                  else {
+                    row = {
+                      rowid: this.getRowID(),
+                      time: record.time.toString(),
+                      category: "SKIPPED Res Type - " + resourceId,
+                    } as Model.FirewallDataRow;
 
-                  this.skippedRows++;
-                  this.onRowSkipped?.(this.skippedRows); 
-                }
-                moreRows++;
-                this.DATA.unshift(row);
+                    this.skippedRows++;
+                    this.onRowSkipped?.(this.skippedRows); 
+                  }
+                  moreRows++;
+                  this.DATA.unshift(row);
 
-                while (this.DATA.length > environment.EventsQueueLength) {
-                  this.DATA.pop();
+                  while (this.DATA.length > environment.EventsQueueLength) {
+                    this.DATA.pop();
+                  }
                 }
-          
+
+                this.onDataArrived?.(this.DATA); 
               }
+              const messageArrived = moreRows + " more events received as of " + new Date().toLocaleString();
+              this.outputMessage(messageArrived);
 
-              this.onDataArrived?.(this.DATA); 
             }
-            const messageArrived = moreRows + " more events received as of " + new Date().toLocaleString();
-            this.outputMessage(messageArrived);
 
             // save last event for later resume
             this.lastEvent = events.pop();
@@ -195,7 +187,6 @@ export class EventHubSourceService implements Model.IFirewallSource {
 
   private outputMessage (text:string): void {
     this.onMessageArrived?.(text);
-    this.logginService.logTrace(text);
   }
 
   private parseAzureFirewallRuleLegacy(record: Model.AzureFirewallRecord): Model.FirewallDataRow {

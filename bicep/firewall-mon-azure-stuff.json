@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.28.1.47646",
-      "templateHash": "3635020887881759430"
+      "version": "0.29.47.4906",
+      "templateHash": "4270152477965844669"
     }
   },
   "parameters": {
@@ -91,7 +91,7 @@
     },
     {
       "type": "Microsoft.CognitiveServices/accounts",
-      "apiVersion": "2024-04-01-preview",
+      "apiVersion": "2022-03-01",
       "name": "[parameters('openAiAccountName')]",
       "location": "[parameters('locationaoai')]",
       "sku": {
@@ -100,9 +100,7 @@
       "kind": "OpenAI",
       "properties": {
         "customSubDomainName": "[parameters('openAiAccountName')]",
-        "restore": true,
         "networkAcls": {
-          "bypass": "AzureServices",
           "defaultAction": "Allow",
           "virtualNetworkRules": [],
           "ipRules": []
