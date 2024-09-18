@@ -15,7 +15,7 @@ import { LoggingService } from '../services/logging.service';
 import { time } from 'console';
 import { formatDate } from '@angular/common';
 import { PromptType, SearchFieldService } from '../services/search-field.service';
-import { elementAt, filter } from 'rxjs';
+import { debounceTime, elementAt, filter, Subject } from 'rxjs';
 
 
 enum TimestampFormat { GMT, local};
@@ -228,27 +228,29 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     });
 }
 
-  filterTextChanged(): void {
+  private searchFieldSubject = new Subject<string>();
+  private readonly debounceTimeMs = 2000;
+  filterTextChanged(): void { 
+    this.searchFieldSubject.next(this.filterText);
+  }
+
+  private filterTextChangedDebounced(): void { 
+    this.searchFieldSubject.next(this.filterText);
     if (this.searchFieldService.promptType == PromptType.Classic)
       {
         this.searchFieldService.setPrompt(this.filterText);
+        this.refreshList();
       }
-    
-    this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
-    this.dataSource.filteredData.length;
-    this.visibleRows = this.dataSource.filteredData.length;
   }
 
-  filterTextEnter(): void {
+  async filterTextEnter() {
     if (this.searchFieldService.promptType == PromptType.Chatgpt) {
       this.searchFieldService.setPrompt(this.filterText);
-      this.searchFieldService.parsePrompt();
+      await this.searchFieldService.parsePrompt();
 
       this.filterText = "";
 
-      this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
-      this.dataSource.filteredData.length;
-      this.visibleRows = this.dataSource.filteredData.length;
+      this.refreshList();
     }
   }
 
@@ -286,6 +288,8 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       this.searchFieldService.setLastMinutes(newValue);
       this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = "";
     }
+
+    this.refreshList();
   }
 
   public setActionBackground(action: string): string {
@@ -482,7 +486,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.timestampFilterMinutes = 0;
     this.searchFieldService.resetParams({ includeTimeFilter: true });
     this.searchFieldService.promptType = PromptType.Classic;
-    this.searchInput.nativeElement.focus();  
+    this.searchInput.nativeElement.focus();
+
+    this.refreshList();
   }
   
   public setPromptTypeChat() {
@@ -490,7 +496,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.timestampFilterMinutes = 0;
     this.searchFieldService.resetParams({ includeTimeFilter: true }); 
     this.searchFieldService.promptType = PromptType.Chatgpt;
-    this.searchInput.nativeElement.focus();  
+    this.searchInput.nativeElement.focus();
+
+    this.refreshList();
   }
 
   PromptAnswer() {
@@ -519,7 +527,11 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.firewallSource.start();    
+    this.firewallSource.start();
+
+    this.searchFieldSubject.pipe(debounceTime(this.debounceTimeMs)).subscribe((searchValue) => {
+      this.filterTextChangedDebounced();
+    });
   }
 
   /// check if a string is equal to another string, ignoring case
@@ -605,5 +617,11 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       returnString = "<b>" + returnString + "</b>";
     }
     return returnString;
+  }
+
+  private refreshList() {
+    this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
+    this.dataSource.filteredData.length;
+    this.visibleRows = this.dataSource.filteredData.length;
   }
 } 
