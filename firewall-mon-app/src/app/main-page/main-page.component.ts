@@ -232,11 +232,8 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     if (this.searchFieldService.promptType == PromptType.Classic)
       {
         this.searchFieldService.setPrompt(this.filterText);
+        this.refreshList();
       }
-    
-    this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
-    this.dataSource.filteredData.length;
-    this.visibleRows = this.dataSource.filteredData.length;
   }
 
   filterTextEnter(): void {
@@ -246,9 +243,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
 
       this.filterText = "";
 
-      this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
-      this.dataSource.filteredData.length;
-      this.visibleRows = this.dataSource.filteredData.length;
+      this.refreshList();
     }
   }
 
@@ -605,5 +600,11 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       returnString = "<b>" + returnString + "</b>";
     }
     return returnString;
+  }
+
+  private refreshList() {
+    this.dataSource.filter = " "; // not empty filter string forces filterPredicate to be called
+    this.dataSource.filteredData.length;
+    this.visibleRows = this.dataSource.filteredData.length;
   }
 } 
