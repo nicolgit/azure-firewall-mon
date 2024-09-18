@@ -62,12 +62,12 @@ export class SearchFieldService {
     }
   } 
 
-  public parsePrompt(): void {
+  public async parsePrompt() {
     if (this.promptType === PromptType.Classic) {
       this.parsePromptClassic();
     }
     else {
-      this.parsePromptChatGpt();
+      await this.parsePromptChatGpt();
     }
   }
 

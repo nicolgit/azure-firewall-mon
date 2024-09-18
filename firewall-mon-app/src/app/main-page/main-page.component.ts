@@ -236,10 +236,10 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       }
   }
 
-  filterTextEnter(): void {
+  async filterTextEnter() {
     if (this.searchFieldService.promptType == PromptType.Chatgpt) {
       this.searchFieldService.setPrompt(this.filterText);
-      this.searchFieldService.parsePrompt();
+      await this.searchFieldService.parsePrompt();
 
       this.filterText = "";
 
@@ -281,6 +281,8 @@ export class MainPageComponent implements AfterViewInit, OnInit {
       this.searchFieldService.setLastMinutes(newValue);
       this.searchFieldService.searchParams.startdate = this.searchFieldService.searchParams.enddate = "";
     }
+
+    this.refreshList();
   }
 
   public setActionBackground(action: string): string {
@@ -477,7 +479,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.timestampFilterMinutes = 0;
     this.searchFieldService.resetParams({ includeTimeFilter: true });
     this.searchFieldService.promptType = PromptType.Classic;
-    this.searchInput.nativeElement.focus();  
+    this.searchInput.nativeElement.focus();
+
+    this.refreshList();
   }
   
   public setPromptTypeChat() {
@@ -485,7 +489,9 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.timestampFilterMinutes = 0;
     this.searchFieldService.resetParams({ includeTimeFilter: true }); 
     this.searchFieldService.promptType = PromptType.Chatgpt;
-    this.searchInput.nativeElement.focus();  
+    this.searchInput.nativeElement.focus();
+
+    this.refreshList();
   }
 
   PromptAnswer() {
