@@ -15,7 +15,7 @@ import { LoggingService } from '../services/logging.service';
 import { time } from 'console';
 import { formatDate } from '@angular/common';
 import { PromptType, SearchFieldService } from '../services/search-field.service';
-import { elementAt, filter } from 'rxjs';
+import { debounceTime, elementAt, filter, Subject } from 'rxjs';
 
 
 enum TimestampFormat { GMT, local};
@@ -228,7 +228,14 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     });
 }
 
-  filterTextChanged(): void {
+  private searchFieldSubject = new Subject<string>();
+  private readonly debounceTimeMs = 2000;
+  filterTextChanged(): void { 
+    this.searchFieldSubject.next(this.filterText);
+  }
+
+  private filterTextChangedDebounced(): void { 
+    this.searchFieldSubject.next(this.filterText);
     if (this.searchFieldService.promptType == PromptType.Classic)
       {
         this.searchFieldService.setPrompt(this.filterText);
@@ -520,7 +527,11 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.firewallSource.start();    
+    this.firewallSource.start();
+
+    this.searchFieldSubject.pipe(debounceTime(this.debounceTimeMs)).subscribe((searchValue) => {
+      this.filterTextChangedDebounced();
+    });
   }
 
   /// check if a string is equal to another string, ignoring case
