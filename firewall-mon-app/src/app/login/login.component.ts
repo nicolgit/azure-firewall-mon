@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { ModelService } from '../services/model.service';
 
 @Component({
+  standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['../shared.scss', './login.component.scss']
@@ -14,9 +15,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private model: ModelService,
     private router: Router
-    ) {
-      this.setStart();
-   }
+  ) {
+    this.setStart();
+  }
 
   ngOnInit(): void {
   }
@@ -32,40 +33,37 @@ export class LoginComponent implements OnInit {
   isStartDisabled: boolean = false;
 
   setDemo(completed: boolean) {
-      this.isDemoMode = completed;
-      
-      this.setStart();
-    }
-  
+    this.isDemoMode = completed;
+
+    this.setStart();
+  }
+
   setStart(): void {
     this.isStartDisabled = true;
 
-    if (this.isDemoMode)
-    {
+    if (this.isDemoMode) {
       this.isStartDisabled = false;
     }
 
-    if (this.eventHubConnectionString != null && this.eventHubConnectionString.length>0 && this.eventHubConsumerGroup != null && this.eventHubConsumerGroup.length>0)
-    {
+    if (this.eventHubConnectionString != null && this.eventHubConnectionString.length > 0 && this.eventHubConsumerGroup != null && this.eventHubConsumerGroup.length > 0) {
       this.isStartDisabled = false;
     }
 
-    }
-  
-    navigateNext(): void {
-      if (!this.isStartDisabled)
-      {
-        this.model.eventHubConnection = this.eventHubConnectionString;
-        this.model.eventHubConsumerGroup = this.eventHubConsumerGroup;
-        this.model.azureMapsSharedKey = this.azureMapsSharedKey;
-        this.model.aoaiEndpoint = this.aoaiEndpoint;
-        this.model.aoaiDeploymentId = this.aoaiDeploymentId;
-        this.model.aoaiAccessKey = this.aoaiAccessKey;
-        this.model.demoMode = this.isDemoMode;
-        this.model.save();
+  }
 
-        this.router.navigateByUrl('/live')
-      }
-      
+  navigateNext(): void {
+    if (!this.isStartDisabled) {
+      this.model.eventHubConnection = this.eventHubConnectionString;
+      this.model.eventHubConsumerGroup = this.eventHubConsumerGroup;
+      this.model.azureMapsSharedKey = this.azureMapsSharedKey;
+      this.model.aoaiEndpoint = this.aoaiEndpoint;
+      this.model.aoaiDeploymentId = this.aoaiDeploymentId;
+      this.model.aoaiAccessKey = this.aoaiAccessKey;
+      this.model.demoMode = this.isDemoMode;
+      this.model.save();
+
+      this.router.navigateByUrl('/live')
     }
+
+  }
 }

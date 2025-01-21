@@ -5,7 +5,8 @@
 import { Directive, OnInit, Renderer2, Input, ElementRef } from "@angular/core";
 
 @Directive({
-  selector: "[resizeColumn]"
+  selector: "[resizeColumn]",
+  standalone: false
 })
 export class ResizeColumnDirective implements OnInit {
   @Input("resizeColumn") resizable!: boolean;
