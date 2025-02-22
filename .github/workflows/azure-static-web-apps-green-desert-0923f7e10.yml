@@ -2,7 +2,7 @@ name: deploy to green-desert
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
     branches:
       - deploy
 
