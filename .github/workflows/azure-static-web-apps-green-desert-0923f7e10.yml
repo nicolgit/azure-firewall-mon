@@ -1,9 +1,6 @@
 name: deploy to green-desert
 
 on:
-  push:
-    branches:
-      - deploy
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
