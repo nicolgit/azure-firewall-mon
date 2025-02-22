@@ -17,6 +17,7 @@
         </p>
         <mat-checkbox color="primary" [checked]="isDemoMode" (change)="setDemo($event.checked)">demo mode</mat-checkbox>
         <br />
+
         <mat-form-field appearance="outline" class="login-field">
             <mat-label>Event Hub connection string</mat-label>
             <input title="not used" matInput [disabled]="isDemoMode" [(ngModel)]="eventHubConnectionString"
