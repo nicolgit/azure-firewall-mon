@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.29.47.4906",
-      "templateHash": "4270152477965844669"
+      "version": "0.33.93.31351",
+      "templateHash": "8760060908616098772"
     }
   },
   "parameters": {
@@ -119,8 +119,8 @@
       "properties": {
         "model": {
           "format": "OpenAI",
-          "name": "gpt-4-32k",
-          "version": "0613"
+          "name": "gpt-4o",
+          "version": "2024-05-13"
         },
         "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
         "currentCapacity": 2,
