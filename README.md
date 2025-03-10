@@ -65,7 +65,7 @@ To use this app with **YOUR data**, you must perform the following steps on your
 3. Create a Shared Access Policy, with  _Listen_ claim
 4. Create an Azure Map Account
 5. Create an Azure OpenAI Service
-6. Go to OpenAI Studio > Deployments > Create a new deployment using as model `gpt-4-32k v0613`
+6. Go to OpenAI Studio > Deployments > Create a new deployment using as model `gpt-4o version 2024-05-13`
 7. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
 
     - Select _all_ _logs_ and "Stream to Event Hub"

@@ -74,8 +74,8 @@ resource cognitiveServicesDeployment 'Microsoft.CognitiveServices/accounts/deplo
   properties: {
     model: {
       format: 'OpenAI'
-      name: 'gpt-4-32k'
-      version: '0613'
+      name: 'gpt-4o'
+      version: '2024-05-13'
     }
     versionUpgradeOption: 'OnceNewDefaultVersionAvailable'
     currentCapacity: 2
