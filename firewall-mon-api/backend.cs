@@ -67,20 +67,14 @@ public class Backend
     {
         if (ImplementThrottling(req))
         {
-            return new ContentResult
+            return new ContentResult 
             {
                 StatusCode = StatusCodes.Status429TooManyRequests,
                 Content = "Too many requests. Please try again later."
             };
         }   
 
-        string? author = "";
-
-        author = Environment.GetEnvironmentVariable("author");
-        if (string.IsNullOrEmpty(author))
-        {
-            author = "unknown";
-        }        
+        string author = Environment.GetEnvironmentVariable("author") ?? "unknown";      
 
         return new OkObjectResult($"Hello from the other side... of the endpoint.\r\nbackend owned by {author}.\r\n");
     }
