@@ -3,6 +3,8 @@
   "Values": {
     "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "author" : "john john"
+    "author" : "john john",
+    "aiao_throttling_window" : "10",
+    "aiao_throttling_calls" : "3"
   }
 }
