@@ -19,8 +19,8 @@ public class Backend
 
     private readonly ILogger<Backend> _logger;
 
-    private int ThrottlingInterval = int.TryParse(Environment.GetEnvironmentVariable("aiao_throttling_window"), out var interval) ? interval : 0; // minutes
-    private int ThrottlingRequests = int.TryParse(Environment.GetEnvironmentVariable("aiao_throttling_calls"), out var requests) ? requests : 0; // max requests in the interval
+    private int ThrottlingInterval = int.TryParse(Environment.GetEnvironmentVariable("aoai_throttling_window"), out var interval) ? interval : 0; // minutes
+    private int ThrottlingRequests = int.TryParse(Environment.GetEnvironmentVariable("aoai_throttling_calls"), out var requests) ? requests : 0; // max requests in the interval
     private bool IsThrottlingEnabled => ThrottlingInterval > 0 && ThrottlingRequests > 0;
 
     private bool ImplementThrottling(HttpRequest req)
