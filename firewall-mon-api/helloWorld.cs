@@ -17,7 +17,15 @@ public class helloWorld
     [Function("helloWorld")]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
     {
+        string? author = "";
+
+        author = Environment.GetEnvironmentVariable("author");
+        if (string.IsNullOrEmpty(author))
+        {
+            author = "unknown";
+        }        
+
         _logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult("Hello from the other side... of the endpoint.");
+        return new OkObjectResult($"Hello from the other side... of the endpoint. Azure function owned by {author}.");
     }
 }
