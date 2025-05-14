@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
+using firewallmon.response;
+using System.Net.Http.Json;
 namespace firewallmon.function;
 
 class RequestLog
@@ -22,6 +24,7 @@ public class Backend
     private int ThrottlingInterval = int.TryParse(Environment.GetEnvironmentVariable("aoai_throttling_window"), out var interval) ? interval : 0; // minutes
     private int ThrottlingRequests = int.TryParse(Environment.GetEnvironmentVariable("aoai_throttling_calls"), out var requests) ? requests : 0; // max requests in the interval
     private bool IsThrottlingEnabled => ThrottlingInterval > 0 && ThrottlingRequests > 0;
+    private string IpApiKey = Environment.GetEnvironmentVariable("ip_api_key") ?? "unknown";
 
     private bool ImplementThrottling(HttpRequest req)
     {
@@ -67,21 +70,33 @@ public class Backend
     {
         if (ImplementThrottling(req))
         {
-            return new ContentResult
+            return new ContentResult 
             {
                 StatusCode = StatusCodes.Status429TooManyRequests,
                 Content = "Too many requests. Please try again later."
             };
         }   
 
-        string? author = "";
-
-        author = Environment.GetEnvironmentVariable("author");
-        if (string.IsNullOrEmpty(author))
-        {
-            author = "unknown";
-        }        
-
+        string author = Environment.GetEnvironmentVariable("author") ?? "unknown";      
         return new OkObjectResult($"Hello from the other side... of the endpoint.\r\nbackend owned by {author}.\r\n");
     }
+
+    [Function("ip")]
+    public async Task<IActionResult> RunIpAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ip/{ipAddress}")] HttpRequest req, string ipAddress)
+    {
+        var callRequest = $"https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip={ipAddress}&subscription-key={IpApiKey}";
+
+        using (var httpClient = new HttpClient())
+        {
+            httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", IpApiKey);
+            var response = await httpClient.GetAsync(callRequest);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var apiResponse = System.Text.Json.JsonSerializer.Deserialize<AzureAPIResponse>(json);
+
+        return new OkObjectResult(apiResponse!.countryRegion.isoCode.ToLower());
+        }
+    }
 }
+
