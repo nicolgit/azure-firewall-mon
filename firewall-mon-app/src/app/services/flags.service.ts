@@ -58,12 +58,12 @@ export class FlagsService {
 
     error = undefined;
 
-    if (this.model.demoMode) {
-      result = this.getFlagFromIPCacheRandom(ip);
-    }
-    else {
+    //if (this.model.demoMode) {
+    //  result = this.getFlagFromIPCacheRandom(ip);
+    //}
+    //else {
       result = this.getFlagFromIPCache(ip);;
-    }
+    //}
   
   return result;    
   }
@@ -114,7 +114,7 @@ export class FlagsService {
     this.logginService.logTrace("FlagsService.getFlagFromIPAsync(" + ip + ")" );
     this.cache.set(ip, new FlagData("", "", ""));
 
-    const callRequest = `/api/ip/{ipAddress}${ip}`;
+    const callRequest = `/api/ip/${ip}`;
     const response = await fetch(callRequest);``
 
     // read the response as text

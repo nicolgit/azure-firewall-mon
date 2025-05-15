@@ -88,14 +88,23 @@ public class Backend
 
         using (var httpClient = new HttpClient())
         {
-            httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", IpApiKey);
-            var response = await httpClient.GetAsync(callRequest);
-            response.EnsureSuccessStatusCode();
+            var country = "zz";
 
-            var json = await response.Content.ReadAsStringAsync();
-            var apiResponse = System.Text.Json.JsonSerializer.Deserialize<AzureAPIResponse>(json);
+            try {
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", IpApiKey);
+                var response = await httpClient.GetAsync(callRequest);
+                response.EnsureSuccessStatusCode();
 
-        return new OkObjectResult(apiResponse!.countryRegion.isoCode.ToLower());
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<AzureAPIResponse>(json);
+                country = apiResponse!.countryRegion.isoCode.ToLower();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error getting IP address: {ex.Message}");
+            }
+
+        return new OkObjectResult(country);
         }
     }
 }
