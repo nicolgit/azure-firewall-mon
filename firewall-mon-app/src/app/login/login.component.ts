@@ -19,7 +19,10 @@ export class LoginComponent implements OnInit {
     this.setStart();
   }
 
+  username: string = '';
+
   ngOnInit(): void {
+    this.getUserName();
   }
 
   buildDate: string = environment.BuildDate;
@@ -65,5 +68,28 @@ export class LoginComponent implements OnInit {
       this.router.navigateByUrl('/live')
     }
 
+  }
+
+  async getUserName(): Promise<void> {
+    try {
+      // Set default username in case of errors
+      this.username = 'User';
+
+      // Try to get username from Azure built-in auth endpoint
+      //const response = await fetch('/.auth/me');
+      const response = await fetch('/api/HelloWorld');
+
+      if (!response.ok) {
+        console.log('Authentication endpoint not available or returned error');
+        return;
+      }
+
+      // parse resoinse body as JSO 
+      var responseObject = await response.json();
+      this.username = responseObject.clientPrincipal.userDetails;
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      // Keep default username
+    }
   }
 }
