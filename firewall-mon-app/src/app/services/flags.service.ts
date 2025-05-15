@@ -113,14 +113,12 @@ export class FlagsService {
   private async getFlagFromIPAsync(ip:string) {
     this.logginService.logTrace("FlagsService.getFlagFromIPAsync(" + ip + ")" );
     this.cache.set(ip, new FlagData("", "", ""));
-    
-    var apiKey="";
-    apiKey = this.model.azureMapsSharedKey;
 
-    const callRequest = `https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip=${ip}&subscription-key=${apiKey}`;
-    const response = await axios.get(callRequest);
-    const apiResponse : AzureAPIResponse = response.data;
-    const isoCode = apiResponse.countryRegion.isoCode.toLowerCase();
+    const callRequest = `/api/ip/{ipAddress}${ip}`;
+    const response = await fetch(callRequest);``
+
+    // read the response as text
+    const isoCode = await response.text();
     const countryName: string= allCountries.find(x => x.code == isoCode)?.name ?? "";
 
     this.cache.set(ip, new FlagData("fi fi-" + isoCode + "", countryName, isoCode));  

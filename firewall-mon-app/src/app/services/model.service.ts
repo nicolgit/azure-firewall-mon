@@ -12,7 +12,6 @@ export class ModelService {
     this.demoMode = false;
     this.eventHubConnection = "";
     this.eventHubConsumerGroup = "$Default";
-    this.azureMapsSharedKey = "";
 
     this.aoaiEndpoint="";
     this.aoaiDeploymentId="";
@@ -24,7 +23,6 @@ export class ModelService {
   public demoMode: boolean;
   public eventHubConnection: string;
   public eventHubConsumerGroup: string;
-  public azureMapsSharedKey: string;
   public aoaiEndpoint: string;
   public aoaiDeploymentId: string;
   public aoaiAccessKey: string;
@@ -43,11 +41,6 @@ export class ModelService {
     var _eventHubConsumerGroup = localStorage.getItem("eventHubConsumerGroup");
     if (_eventHubConsumerGroup != null) {
       this.eventHubConsumerGroup = _eventHubConsumerGroup;
-    }
-
-    var _azureMapsSharedKey = localStorage.getItem("azureMapsSharedKey");
-    if (_azureMapsSharedKey != null) {
-      this.azureMapsSharedKey = _azureMapsSharedKey;
     }
 
     var _aoaiEndpoint = localStorage.getItem("aoaiEndpoint");
@@ -70,7 +63,6 @@ export class ModelService {
     localStorage.setItem("demoMode", this.demoMode.toString());
     localStorage.setItem("eventHubConnection", this.encryptionSvc.encrypt(this.eventHubConnection));
     localStorage.setItem("eventHubConsumerGroup", this.eventHubConsumerGroup);
-    localStorage.setItem("azureMapsSharedKey", this.azureMapsSharedKey);
     localStorage.setItem("aoaiEndpoint", this.aoaiEndpoint);
     localStorage.setItem("aoaiDeploymentId", this.aoaiDeploymentId);
     localStorage.setItem("aoaiAccessKey", this.encryptionSvc.encrypt(this.aoaiAccessKey));

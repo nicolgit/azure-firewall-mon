@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit {
   buildDate: string = environment.BuildDate;
   eventHubConnectionString: string = this.model.eventHubConnection;
   eventHubConsumerGroup: string = this.model.eventHubConsumerGroup;
-  azureMapsSharedKey: string = this.model.azureMapsSharedKey;
   aoaiEndpoint: string = this.model.aoaiEndpoint;
   aoaiDeploymentId: string = this.model.aoaiDeploymentId;
   aoaiAccessKey: string = this.model.aoaiAccessKey;
@@ -58,7 +57,6 @@ export class LoginComponent implements OnInit {
     if (!this.isStartDisabled) {
       this.model.eventHubConnection = this.eventHubConnectionString;
       this.model.eventHubConsumerGroup = this.eventHubConsumerGroup;
-      this.model.azureMapsSharedKey = this.azureMapsSharedKey;
       this.model.aoaiEndpoint = this.aoaiEndpoint;
       this.model.aoaiDeploymentId = this.aoaiDeploymentId;
       this.model.aoaiAccessKey = this.aoaiAccessKey;
