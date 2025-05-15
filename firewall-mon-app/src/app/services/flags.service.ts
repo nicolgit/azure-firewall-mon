@@ -58,12 +58,12 @@ export class FlagsService {
 
     error = undefined;
 
-    //if (this.model.demoMode) {
-    //  result = this.getFlagFromIPCacheRandom(ip);
-    //}
-    //else {
+    if (this.model.demoMode) {
+      result = this.getFlagFromIPCacheRandom(ip);
+    }
+    else {
       result = this.getFlagFromIPCache(ip);;
-    //}
+    }
   
   return result;    
   }
