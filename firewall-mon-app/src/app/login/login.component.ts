@@ -74,9 +74,8 @@ export class LoginComponent implements OnInit {
       this.username = 'User';
 
       // Try to get username from Azure built-in auth endpoint
-      //const response = await fetch('/.auth/me');
-      const response = await fetch('/api/HelloWorld');
-
+      const response = await fetch('/.auth/me');
+      
       if (!response.ok) {
         console.log('Authentication endpoint not available or returned error');
         return;

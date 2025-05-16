@@ -75,10 +75,19 @@ export class FlagsService {
       return this.cache.get(ip);
     }
  
-    this.getFlagFromIPAsync(ip);
-
+    const now = new Date();
+    const diff = now.getTime() - this.lastCall.getTime();
+    if (diff > this.flagLookupInterval) {
+      this.lastCall = now;
+      this.getFlagFromIPAsync(ip);
+    }
+    
     return undefined;
   }
+
+  // datetime of last call (default now)
+  private lastCall: Date = new Date();
+  private flagLookupInterval = 100; // milliseconds
 
   private getFlagFromIPCacheRandom(ip:string):FlagData | undefined {
     const hasKey = this.demoCache.has(ip);
@@ -87,7 +96,12 @@ export class FlagsService {
       return this.demoCache.get(ip);
     }
 
-    this.getFlagFromIPRandomAsync(ip);
+    const now = new Date();
+    const diff = now.getTime() - this.lastCall.getTime();
+    if (diff > this.flagLookupInterval) {
+      this.lastCall = now;
+      this.getFlagFromIPRandomAsync(ip);
+    }
 
     return undefined;
   }
