@@ -59,10 +59,11 @@ export class FlagsService {
     error = undefined;
 
     if (this.model.demoMode) {
-      result = this.getFlagFromIPCacheRandom(ip);
+      //result = this.getFlagFromIPCacheRandom(ip);
+      result = this.getFlagFromIPCache(ip);
     }
     else {
-      result = this.getFlagFromIPCache(ip);;
+      result = this.getFlagFromIPCache(ip);
     }
   
   return result;    
@@ -75,19 +76,9 @@ export class FlagsService {
       return this.cache.get(ip);
     }
  
-    const now = new Date();
-    const diff = now.getTime() - this.lastCall.getTime();
-    if (diff > this.flagLookupInterval) {
-      this.lastCall = now;
-      this.getFlagFromIPAsync(ip);
-    }
-    
+    this.getFlagFromIPAsync(ip);
     return undefined;
   }
-
-  // datetime of last call (default now)
-  private lastCall: Date = new Date();
-  private flagLookupInterval = 100; // milliseconds
 
   private getFlagFromIPCacheRandom(ip:string):FlagData | undefined {
     const hasKey = this.demoCache.has(ip);
@@ -96,13 +87,7 @@ export class FlagsService {
       return this.demoCache.get(ip);
     }
 
-    const now = new Date();
-    const diff = now.getTime() - this.lastCall.getTime();
-    if (diff > this.flagLookupInterval) {
-      this.lastCall = now;
-      this.getFlagFromIPRandomAsync(ip);
-    }
-
+    this.getFlagFromIPRandomAsync(ip);
     return undefined;
   }
 
@@ -130,6 +115,10 @@ export class FlagsService {
 
     const callRequest = `/api/ip/${ip}`;
     const response = await fetch(callRequest);``
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch flag data for IP ${ip}: ${response.status} ${response.statusText}`);
+    }
 
     // read the response as text
     const isoCode = await response.text();
