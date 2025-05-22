@@ -9,10 +9,6 @@ using firewallmon.response;
 using System.Net.Http.Json;
 namespace firewallmon.function;
 
-class RequestLog
-    {
-        public List<DateTime> Requests { get; } = new();
-    }
 
 
 public class Backend
@@ -21,44 +17,17 @@ public class Backend
 
     private readonly ILogger<Backend> _logger;
 
-    private int ThrottlingInterval = int.TryParse(Environment.GetEnvironmentVariable("aoai_throttling_window"), out var interval) ? interval : 0; // minutes
-    private int ThrottlingRequests = int.TryParse(Environment.GetEnvironmentVariable("aoai_throttling_calls"), out var requests) ? requests : 0; // max requests in the interval
-    private bool IsThrottlingEnabled => ThrottlingInterval > 0 && ThrottlingRequests > 0;
+    private static ThrottlingManager _llmThrottlingManager = new ThrottlingManager(
+        int.TryParse(Environment.GetEnvironmentVariable("llm_throttling_window_milliseconds"), out var interval) ? interval : 0,
+        int.TryParse(Environment.GetEnvironmentVariable("llm_throttling_calls"), out var requests) ? requests : 0
+    );
+
+    private static ThrottlingManager _ipThrottlingManager = new ThrottlingManager(
+        int.TryParse(Environment.GetEnvironmentVariable("ip_throttling_window_milliseconds"), out var interval) ? interval : 0,
+        int.TryParse(Environment.GetEnvironmentVariable("ip_throttling_calls"), out var requests) ? requests : 0
+    );
+
     private string IpApiKey = Environment.GetEnvironmentVariable("ip_api_key") ?? "unknown";
-
-    private bool ImplementThrottling(HttpRequest req)
-    {
-        if (!IsThrottlingEnabled)
-        {
-            return false;
-        }
-
-        string ip = req.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-
-        var now = DateTime.UtcNow;
-        var logEntry = IpLogs.GetOrAdd(ip, _ => new RequestLog());
-
-        lock (logEntry)
-        {
-            logEntry.Requests.RemoveAll(t => (now - t).TotalMinutes > ThrottlingInterval);
-
-            int count = logEntry.Requests.Count;
-            if (count >= ThrottlingRequests)
-            {
-                // Log the throttling event
-                _logger.LogError($"Throttling request from IP: {ip}");
-                return true;
-            }
-            else
-            {
-                _logger.LogInformation($"Request {count} from IP {ip}.");
-            }
-
-            logEntry.Requests.Add(now);
-        }
-
-        return false;
-    }
 
     public Backend(ILogger<Backend> logger)
     {
@@ -68,7 +37,7 @@ public class Backend
     [Function("helloWorld")]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
     {
-        if (ImplementThrottling(req))
+        if (_llmThrottlingManager.ImplementThrottling(req))
         {
             return new ContentResult 
             {
@@ -84,6 +53,15 @@ public class Backend
     [Function("ip")]
     public async Task<IActionResult> RunIpAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ip/{ipAddress}")] HttpRequest req, string ipAddress)
     {
+        if (_ipThrottlingManager.ImplementThrottling(req))
+        {
+            return new ContentResult 
+            {
+                StatusCode = StatusCodes.Status429TooManyRequests,
+                Content = "Too many requests. Please try again later."
+            };
+        }   
+
         var callRequest = $"https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip={ipAddress}&subscription-key={IpApiKey}";
 
         using (var httpClient = new HttpClient())
