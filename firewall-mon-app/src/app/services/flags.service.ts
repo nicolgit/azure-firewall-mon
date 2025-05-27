@@ -6,6 +6,7 @@ import { LoggingService } from './logging.service';
 import { environment } from './../../environments/environment';
 
 import allCountries from './flags-all-countries.json'; // json from https://raw.githubusercontent.com/lipis/flag-icons/main/country.json
+import { exec } from 'child_process';
 
 export interface CountryRegion {
   isoCode: string;
@@ -76,8 +77,8 @@ export class FlagsService {
       return this.cache.get(ip);
     }
  
-    this.getFlagFromIPAsync(ip);
-    return undefined;
+    this.getFlagFromIPAsync(ip);  
+      return undefined;
   }
 
   private getFlagFromIPCacheRandom(ip:string):FlagData | undefined {
@@ -109,15 +110,23 @@ export class FlagsService {
     }
   }
 
+  private static lastGetFlagFromIPAsyncExecutionDate : number | null = null;
+  private static cooldownPeriod: number = 1000; // milliseconds cooldown period
+
   private async getFlagFromIPAsync(ip:string) {
-    this.logginService.logTrace("FlagsService.getFlagFromIPAsync(" + ip + ")" );
-    this.cache.set(ip, new FlagData("", "", ""));
+    if (FlagsService.lastGetFlagFromIPAsyncExecutionDate !== null &&
+        (Date.now() - FlagsService.lastGetFlagFromIPAsyncExecutionDate) < FlagsService.cooldownPeriod) {
+      return;
+    }
+    FlagsService.lastGetFlagFromIPAsyncExecutionDate = Date.now();
 
     const callRequest = `/api/ip/${ip}`;
-    const response = await fetch(callRequest);``
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch flag data for IP ${ip}: ${response.status} ${response.statusText}`);
+    const response = await fetch(callRequest);
+    
+    if (response.status !== 200) {
+      FlagsService.lastGetFlagFromIPAsyncExecutionDate = Date.now();
+      this.logginService.logTrace("FlagsService.getFlagFromIPAsync - begins cooldown");
+      return;
     }
 
     // read the response as text

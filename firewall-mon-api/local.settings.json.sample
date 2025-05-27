@@ -7,7 +7,7 @@
     "llm_throttling_window_milliseconds" : "60000",
     "llm_throttling_calls" : "3",
     "ip_throttling_window_milliseconds" : "1000",
-    "ip_throttling_calls" : "5",
+    "ip_throttling_calls" : "1",
     "ip_api_key":""
   }
 }
