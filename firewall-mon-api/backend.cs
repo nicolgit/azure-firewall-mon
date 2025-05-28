@@ -222,7 +222,10 @@ answer:{{""fulltext"":[],""startdate"":""10:30"",""enddate"":""10:45"",""lastmin
 user: clear all filters
 answer:{{""fulltext"":[],""startdate"":"""",""enddate"":"""",""lastminutes"": O,""category"":[],""protocol"":[],""source"":[],""target"":[],""action"":[],""policy"":[],""moreinfo"":[]}}
 
-current json message is: {context}"
+current json message is: {context}
+
+your answer must be a valid JSON message, with all fields in lowercase, and no comments or explanations.
+"
               ),
                 new UserChatMessage(message),
             };

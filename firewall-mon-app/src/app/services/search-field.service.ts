@@ -126,92 +126,41 @@ export class SearchFieldService {
 
   private async parsePromptChatGpt() {
     try {
-      var aoaiEndpoint = this.model.aoaiEndpoint
-      var aoaiDeploymentId = this.model.aoaiDeploymentId;
-      var aoaiAccessKey = this.model.aoaiAccessKey;
-
       this.isThinking = true;
 
       this.loggingService.logTrace("parsePromptChatGpt: " + this.prompt);
 
 
+      const callRequest = `/api/chat?message=${this.prompt}&context=${JSON.stringify(this.searchParams)}`;
+      const response = await fetch(callRequest);
+      const responseText = await response.text();
+      this.loggingService.logTrace("answer: " + responseText);
 
-      const deployment = aoaiDeploymentId;
-      const apiVersion = "2024-08-01-preview";
-      const apiKey = aoaiAccessKey;
-      const baseURL = aoaiEndpoint;
+      if (response.status !== 200) {
+        this.loggingService.logTrace(response.status + " parsePromptChatGpt - error: " + responseText);
+        this.promptAnswer += responseText;
+        this.isThinking = false;
+        return;
+      } 
 
-      const client = new AzureOpenAI({ baseURL, deployment, apiVersion, apiKey, dangerouslyAllowBrowser: true });
+      if (this.isJsonString(responseText)) {
+        const jsonResponse = JSON.parse(responseText);
 
-      const chatParams: ChatCompletionCreateParamsNonStreaming = {
-        messages: [
-          {
-            role: "system", content: `
-              You are an AI assistant that 
-              converts user requests to a JSON (not JSON5) message to use as filters for a web console that filters flow logs coming from an Azure Firewall. 
-              
-              Allowed fields are: timestamp, lastminutes, category, protocol, source, target, action, policy, moreinfo 
-              All values must be converted to lowercase.
-              
-              timestamp is a string in the format "HH:mm" or "HH:mm:ss", representing the local time of the day, no gmt. 
-              
-              lastminutes is a number of minutes in the past to show starting from the current time.
-              lastminutes and timestamp are mutually exclusive, if both are present, lastminutes is used.
-              lastminutes = 0 means no lastminutes filter.
-              
-              the request can be generic, search the text on all fields, or specific to one or more fields.
-              
-              by default, the request adds parameters to the current json message, but it is also possible to replace the JSON message with a new one.
-              
-              if you want to show how to use this agent, just show sample requests and not the JSON output, and begins the sentence with 'here some examples query you can use:'
-              
-              some examples:
-              user: show me events from last 12 minutes
-              answer:{"fulltext":[],"startdate":"","enddate":"", "lastminutes": 12, "category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
-              
-              user: search pippo pluto paperino
-              answer:{"fulltext":["pippo","pluto","paperino"],"startdate":"","enddate":"","lastminutes": O,"category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
-              
-              user: filter rows with category containing "NetworkRule"
-              answer: {"fulltext":[],"startdate":"","enddate":"","lastminutes": O,"category":["NetworkRule"],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
-              
-              user: filter event between 10:30 and 10:45
-              answer: {"fulltext":[],"startdate":"10:30","enddate":"10:45","lastminutes": O,"category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
-              
-              user: clear all filters
-              answer: {"fulltext":[],"startdate":"","enddate":"","lastminutes": O,"category":[],"protocol":[],"source":[],"target":[],"action":[],"policy":[],"moreinfo":[]}
-              
-              current json message is: ${JSON.stringify(this.searchParams)}
-              `},
-          { role: "user", content: this.prompt },
-        ]
-        ,
-        model: "",
-        max_tokens: 100
-      };
+        if (this.isJsonString(jsonResponse.json)) {
+          this.searchParams = JSON.parse(jsonResponse.json);
 
-      //const events = await client.getChatCompletions(aoaiDeploymentId, messages);
-      const events = await client.chat.completions.create(chatParams);
+          if (this.searchParams.startdate.length > 0) {
+            this.searchParams.startdate = this.parseHourMinuteSecondsStart(this.searchParams.startdate).toISOString();
+          }
 
-      this.loggingService.logTrace("Event: " + JSON.stringify(events));
+          if (this.searchParams.enddate.length > 0) {
+            this.searchParams.enddate = this.parseHourMinuteSecondsEnd(this.searchParams.enddate).toISOString();
+          }
 
-      if (this.isJsonString(events.choices[0].message.content!)) {
-        this.searchParams = JSON.parse(events.choices[0].message.content!);
-
-        if (this.searchParams.startdate.length > 0) {
-          this.searchParams.startdate = this.parseHourMinuteSecondsStart(this.searchParams.startdate).toISOString();
+          this.promptAnswer = jsonResponse.message;
         }
 
-        if (this.searchParams.enddate.length > 0) {
-          this.searchParams.enddate = this.parseHourMinuteSecondsEnd(this.searchParams.enddate).toISOString();
-        }
-
-        chatParams.messages[1] = { role: "user", content: `convert following JSON message in a human readable text. omit empty fields. start the answer with 'I am currently showing ...': ${JSON.stringify(this.searchParams)}` };
-        const events2 = await client.chat.completions.create(chatParams);
-        this.promptAnswer = events2.choices[0].message.content!;
-      }
-      else {
-        this.promptAnswer = events.choices[0].message.content!;
+        this.promptAnswer = jsonResponse.message;
       }
 
     } catch (error) {
