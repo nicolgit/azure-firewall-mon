@@ -8,6 +8,10 @@
     "llm_throttling_calls" : "3",
     "ip_throttling_window_milliseconds" : "1000",
     "ip_throttling_calls" : "1",
-    "ip_api_key":""
+    "ip_api_key":"",
+    
+    "aoai_endpoint": "https://<lorem-aoai-endpoint>.openai.azure.com/openai/",
+    "aoai_deployment": "",
+    "aoai_api_key": ""
   }
 }

@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace firewallmon.function;
+namespace firewallmon.utilities;
 
 class RequestLog
      {

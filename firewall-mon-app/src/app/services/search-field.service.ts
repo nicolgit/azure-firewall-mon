@@ -206,8 +206,6 @@ export class SearchFieldService {
           this.searchParams.enddate = this.parseHourMinuteSecondsEnd(this.searchParams.enddate).toISOString();
         }
 
-        //messages[1] = { role: "user", content: `convert following JSON message in a human readable text. omit empty fields. start the answer with 'I am currently showing ...': ${JSON.stringify(this.searchParams)}` };
-        //const events2 = await client.getChatCompletions(aoaiDeploymentId, messages);
         chatParams.messages[1] = { role: "user", content: `convert following JSON message in a human readable text. omit empty fields. start the answer with 'I am currently showing ...': ${JSON.stringify(this.searchParams)}` };
         const events2 = await client.chat.completions.create(chatParams);
         this.promptAnswer = events2.choices[0].message.content!;
