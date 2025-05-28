@@ -31,22 +31,6 @@
         </mat-form-field>
         <br />
 
-        <p>The following optional parameters are needed if you want to use natural language to filter the log stream.
-        </p>
-
-        <mat-form-field appearance="outline" class="login-field">
-            <mat-label>Azure OpenAI endpoint (i.e. https://#####.openai.azure.com/openai/)</mat-label>
-            <input title="not used" matInput [(ngModel)]="aoaiEndpoint">
-        </mat-form-field><br />
-        <mat-form-field appearance="outline" class="login-field">
-            <mat-label>Azure OpenAI deployment for a gpt-4o version 2024-05-15 model</mat-label>
-            <input title="not used" matInput [(ngModel)]="aoaiDeploymentId">
-        </mat-form-field><br />
-        <mat-form-field appearance="outline" class="login-field">
-            <mat-label>Azure OpenAI access key</mat-label>
-            <input title="not used" matInput [(ngModel)]="aoaiAccessKey" type="password">
-        </mat-form-field><br />
-
         <a mat-flat-button color="primary" [disabled]="isStartDisabled" (click)="navigateNext()"
             class="login-field">Let's begin</a>
     <br />
