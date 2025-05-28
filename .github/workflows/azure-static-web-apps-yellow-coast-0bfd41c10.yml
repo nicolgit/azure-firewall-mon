@@ -40,8 +40,8 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/firewall-mon-app" # App source code path
-          api_location: "/firewall-mon-api" # Api source code path - optional
+          app_location: "./firewall-mon-app" # App source code path
+          api_location: "./firewall-mon-api" # Api source code path - optional
           output_location: "dist/firewall-mon-app" # Built app content directory - optional
           github_id_token: ${{ steps.idtoken.outputs.result }}
           ###### End of Repository/Build Configurations ######
