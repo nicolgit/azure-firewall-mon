@@ -1,5 +1,3 @@
-
-
 <div align="center">
 <img alt="logo" src="images\logo.png" width="72" height="72" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;">
 </div>
