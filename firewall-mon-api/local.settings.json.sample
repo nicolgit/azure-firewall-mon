@@ -3,6 +3,7 @@
   "Values": {
     "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "<your-connection-string>",
     "author" : "john john",
     "llm_throttling_window_milliseconds" : "60000",
     "llm_throttling_calls" : "3",
