@@ -51,10 +51,11 @@ Some examples of queries are as follows:
 ![chatgpt](images/03-chatgpt.gif)
 
 # Setup a connection with your Azure Firewall
+Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application), written in [Angular](https://angular.io/) with an [Azure function](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview) backend written in C# DotNet. 
 
-![architecture](images/architecture.png)
+Here the current architecture:
 
-Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application), written in [Angular](https://angular.io/). 
+![architecture](./images/architecture.png)
 
 To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
 
