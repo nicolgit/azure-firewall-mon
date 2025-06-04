@@ -96,7 +96,7 @@ Now, open <https://az-firewall-mon.duckiesfarm.com/> and do the following:
 
 # Install az-firewall-mon in your environment
 
-to install az-firewall-mon in your environment, follow this guide. Once the instance is ready and working, you can go back and follow instructions in the [Use az-firewall-mon sample deployment](#use-az-firewall-mon-sample-deployment) section. Just change the URL with the one of your deployment.
+To install az-firewall-mon in your environment, follow [this guide](INSTALL.md). Once the instance is ready and working, you can go back and follow instructions in the [Use az-firewall-mon sample deployment](#use-az-firewall-mon-sample-deployment) section. Just change the URL with the one of your deployment.
 
 # More Information
 
