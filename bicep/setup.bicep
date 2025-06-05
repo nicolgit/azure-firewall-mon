@@ -47,8 +47,7 @@ resource staticWebAppSettings 'Microsoft.Web/staticSites/config@2023-01-01' = {
   name: 'appsettings'
   properties: {
     // Application Insights settings
-    APPLICATION_INSIGHTS_CONNECTION_STRING: appInsights.properties.ConnectionString
-    APPLICATIONINSIGHTS_CONNECTION_STRING: appInsights.properties.ConnectionString
+    APPLICATIONINSIGHTS_CONNECTION_STRING: appInsights.properties.ConnectionString 
     
     // Azure Maps settings
     ip_api_key: mapsAccount.listKeys().primaryKey
@@ -60,6 +59,9 @@ resource staticWebAppSettings 'Microsoft.Web/staticSites/config@2023-01-01' = {
     aoai_endpoint: openAiAccount.properties.endpoint
     aoai_deployment: gpt4oDeploymentName
     
+    llm_throttling_calls: '5'
+    llm_throttling_window_milliseconds: '1000'
+
     // Build date timestamp
     BUILD_DATE: baseTime
   }
@@ -100,7 +102,7 @@ resource mapsAccount 'Microsoft.Maps/accounts@2023-06-01' = {
   name: mapsAccountName
   location: 'global'
   sku: {
-    name: 'G2'  // Using G2 SKU which is suitable for most applications
+    name: 'G2'  
   }
   properties: {
     // Default properties
