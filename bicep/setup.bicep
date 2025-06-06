@@ -1,14 +1,24 @@
 @description('Name of the Static Web App')
 param staticWebAppName string = 'my-firewall-mon-web'
 
+@description('GitHub repository URL for the Static Web App')
+param repositoryUrl string
+
+@description('GitHub repository token for the Static Web App deployment')
+@secure()
+param repositoryToken string
+
+@description('GitHub repository branch for the Static Web App deployment')
+param branch string = 'main'
+
 @description('Name of the Application Insights instance')
 param appInsightsName string = 'firewall-mon-insights'
 
 @description('Name of the Azure Maps Account')
-param mapsAccountName string = 'firewall-mon-maps'
+param mapsAccountName string = 'firewall-mon-maps-${uniqueString(resourceGroup().id)}'
 
 @description('Name of the Azure OpenAI Account')
-param openAiAccountName string = 'firewall-mon-openai'
+param openAiAccountName string = 'firewall-mon-openai-${uniqueString(resourceGroup().id)}'
 
 @description('Name of the GPT-4o model deployment')
 param gpt4oDeploymentName string = 'gpt4o'
@@ -29,6 +39,7 @@ param retentionInDays int = 90
 @allowed(['PerGB2018', 'Free', 'PerNode', 'Standard', 'Standalone', 'Premium'])
 param logAnalyticsSku string = 'PerGB2018'
 
+
 resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = {
   name: staticWebAppName
   location: resourceGroup().location
@@ -37,8 +48,15 @@ resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = {
     tier: 'Standard'
   }
   properties: {
-
+    repositoryUrl: repositoryUrl
+    repositoryToken: repositoryToken
+    branch: branch
+    buildProperties: {
+      appLocation: '/firewall-mon-app'
+      apiLocation: '/firewall-mon-api'
+      outputLocation: 'dist/firewall-mon-app'
     }
+  }
 }
 
 // Create Static Web App App Settings with Application Insights connection string
@@ -60,7 +78,7 @@ resource staticWebAppSettings 'Microsoft.Web/staticSites/config@2023-01-01' = {
     aoai_deployment: gpt4oDeploymentName
     
     llm_throttling_calls: '5'
-    llm_throttling_window_milliseconds: '1000'
+    llm_throttling_window_milliseconds: '60000'
 
     // Build date timestamp
     BUILD_DATE: baseTime
@@ -123,13 +141,12 @@ resource openAiAccount 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   }
 }
 
-// Create GPT-4o model deployment
 resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   parent: openAiAccount
   name: gpt4oDeploymentName
   sku: {
     name: 'Standard'
-    capacity: 1  // Represents the amount of provisioned throughput
+    capacity: 10
   }
   properties: {
     model: {
@@ -137,13 +154,7 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
       name: 'gpt-4o'
       version: '2024-11-20'  // Using the latest version available
     }
+    raiPolicyName: 'Microsoft.Default'
+    versionUpgradeOption: 'OnceNewDefaultVersionAvailable'
   }
 }
-
-// Output the Maps Account id for reference 
-output mapsAccountId string = mapsAccount.id
-
-// Output Azure OpenAI account endpoint and deployment ID
-output openAiEndpoint string = openAiAccount.properties.endpoint
-output openAiDeploymentId string = gpt4oDeployment.id
-

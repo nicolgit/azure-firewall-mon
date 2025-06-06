@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.36.1.42791",
-      "templateHash": "8888054241536279544"
+      "templateHash": "14750720778315896797"
     }
   },
   "parameters": {
@@ -14,6 +14,25 @@
       "defaultValue": "my-firewall-mon-web",
       "metadata": {
         "description": "Name of the Static Web App"
+      }
+    },
+    "repositoryUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "GitHub repository URL for the Static Web App"
+      }
+    },
+    "repositoryToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "GitHub repository token for the Static Web App deployment"
+      }
+    },
+    "branch": {
+      "type": "string",
+      "defaultValue": "main",
+      "metadata": {
+        "description": "GitHub repository branch for the Static Web App deployment"
       }
     },
     "appInsightsName": {
@@ -25,14 +44,14 @@
     },
     "mapsAccountName": {
       "type": "string",
-      "defaultValue": "firewall-mon-maps",
+      "defaultValue": "[format('firewall-mon-maps-{0}', uniqueString(resourceGroup().id))]",
       "metadata": {
         "description": "Name of the Azure Maps Account"
       }
     },
     "openAiAccountName": {
       "type": "string",
-      "defaultValue": "firewall-mon-openai",
+      "defaultValue": "[format('firewall-mon-openai-{0}', uniqueString(resourceGroup().id))]",
       "metadata": {
         "description": "Name of the Azure OpenAI Account"
       }
@@ -98,7 +117,16 @@
         "name": "Standard",
         "tier": "Standard"
       },
-      "properties": {}
+      "properties": {
+        "repositoryUrl": "[parameters('repositoryUrl')]",
+        "repositoryToken": "[parameters('repositoryToken')]",
+        "branch": "[parameters('branch')]",
+        "buildProperties": {
+          "appLocation": "/firewall-mon-app",
+          "apiLocation": "/firewall-mon-api",
+          "outputLocation": "dist/firewall-mon-app"
+        }
+      }
     },
     {
       "type": "Microsoft.Web/staticSites/config",
@@ -113,7 +141,7 @@
         "aoai_endpoint": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName')), '2024-10-01').endpoint]",
         "aoai_deployment": "[parameters('gpt4oDeploymentName')]",
         "llm_throttling_calls": "5",
-        "llm_throttling_window_milliseconds": "1000",
+        "llm_throttling_window_milliseconds": "60000",
         "BUILD_DATE": "[parameters('baseTime')]"
       },
       "dependsOn": [
@@ -186,32 +214,20 @@
       "name": "[format('{0}/{1}', parameters('openAiAccountName'), parameters('gpt4oDeploymentName'))]",
       "sku": {
         "name": "Standard",
-        "capacity": 1
+        "capacity": 10
       },
       "properties": {
         "model": {
           "format": "OpenAI",
           "name": "gpt-4o",
           "version": "2024-11-20"
-        }
+        },
+        "raiPolicyName": "Microsoft.Default",
+        "versionUpgradeOption": "OnceNewDefaultVersionAvailable"
       },
       "dependsOn": [
         "[resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName'))]"
       ]
     }
-  ],
-  "outputs": {
-    "mapsAccountId": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Maps/accounts', parameters('mapsAccountName'))]"
-    },
-    "openAiEndpoint": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName')), '2024-10-01').endpoint]"
-    },
-    "openAiDeploymentId": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.CognitiveServices/accounts/deployments', parameters('openAiAccountName'), parameters('gpt4oDeploymentName'))]"
-    }
-  }
+  ]
 }
