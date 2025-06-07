@@ -1,26 +1,27 @@
 # Install az-firewall-mon in your environment
 
-az-firewall-mon once installed in your environment will result in the following architecture:
+When installed in your environment, `az-firewall-mon` will deploy the following resources:
 
-![architecture](./images/architecture.png)
+![architecture](./images/deployment.png)
 
-The steps to follow to install a private copy of az-firewall-mon in your environment are:
+Follow these steps to install a private copy of `az-firewall-mon` in your environment:
 
 * Fork the GitHub repository
 * Create a GitHub Personal Access Token (PAT)
 * Create all Azure resources
 * Configure the GitHub Action to deploy both the SPA and the backend API
-* Environment variables
-
+* Review Environment variables
+* Limit access
+  
 # Fork the GitHub repository
 
-The first thing to do is clone the az-firewall-mon repository. This will also allow you to pull down and build the latest changes and updates from the original repo while having the stability of maintaining your own personal copy.
+The first step is to fork the `az-firewall-mon` repository. This allows you to pull down and build the latest changes and updates from the original repository while maintaining your own personal copy.
 
-* Navigate to: <https://github.com/nicolgit/azure-firewall-mon>.
-* Click Fork > create a new fork (top right of the repository)
-* Click [Create fork]
+* Navigate to: <https://github.com/nicolgit/azure-firewall-mon>
+* Click **Fork** > **Create a new fork** (top right of the repository)
+* Click **Create fork**
 
-> You have now a fork of the 'az-firewall-mon' repository; when a new update comes out - you can also select 'Sync fork' - to keep your fork up-to-date and trigger a new build.
+> You now have a fork of the `az-firewall-mon` repository. When a new update is available, you can select **Sync fork** to keep your fork up-to-date and trigger a new build.
 
 # Create a GitHub Personal Access Token (PAT)
 
@@ -36,44 +37,52 @@ The first thing to do is clone the az-firewall-mon repository. This will also al
 8. **Copy your token** (you won't be able to see it again)
 
 # Create all Azure resources
-An instance of `az-firewall-mon` is composed of:
+An instance of `az-firewall-mon` consists of:
 * 1 Azure Static Web App (standard plan)
 * 1 Azure Maps account
 * 1 Azure OpenAI account
 * 1 Application Insights instance
 
-All these resources can be deployed to your subscription by clicking the button below:
+You can deploy all these resources to your subscription by clicking the button below:
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Fsetup.json)
 
-Remember to fill in the following parameters:
+When deploying, fill in the following parameters:
    - `staticWebAppName`: Name for your static web app
    - `repositoryUrl`: Your GitHub repository URL (e.g., `https://github.com/username/azure-firewall-mon`)
-   - `repositoryToken`: Your GitHub PAT created in the above paragraph
-   - `branch`: Your main branch ('main')
+   - `repositoryToken`: Your GitHub PAT created in the previous step
+   - `branch`: Your main branch (typically 'main')
 
-This will create an action in your repository that will build and deploy the solution to Azure.
+This will create also an action in your repository that builds and deploys the solution to Azure.
 
-Go to <https://github.com/YOURGITHUBACCOUNT/azure-firewall-mon/actions> to see the deployment status. When deployment is complete, go to Azure Portal > Static Web Apps > View app in browser
+Go to `https://github.com/YOUR-GITHUB-ACCOUNT/azure-firewall-mon/actions` to see the deployment status. When deployment is complete, navigate to Azure Portal > Static Web Apps > View app in browser
 
-# Environment variables 
+# Review environment variables 
 
-az-firewall-mon requires a few environment variables to work. These variables are configured automatically by the deployment. Here's the reference in case you want to change any:
+`az-firewall-mon` requires several environment variables to function properly. These variables are configured automatically during deployment. Here's a reference in case you need to change any:
 
- APPLICATIONINSIGHTS_CONNECTION_STRING: Application Insights connection string 
+* **APPLICATIONINSIGHTS_CONNECTION_STRING**: Application Insights connection string 
     
-Azure Maps settings
+Azure Maps settings:
 * **ip_api_key**: Azure Maps API key
 * **ip_throttling_calls**: '1'
 * **ip_throttling_window_milliseconds**: '1000'
 
-IP API will return a 429 status code if you make more than 1 call to IP API per second (1000 milliseconds)
+With these settings IP API will return a `429` status code if you make more than 1 call to IP API per second (1000 milliseconds)
 
-Azure OpenAI settings
+Azure OpenAI settings:
 * **aoai_api_key**: Azure OpenAI key
 * **aoai_endpoint**: Azure OpenAI endpoint
 * **aoai_deployment**: Azure OpenAI deployment name
-
 * **llm_throttling_calls**: '5'
 * **llm_throttling_window_milliseconds**: '60000'
-Chat API will return a 429 status code if you make more than 5 calls per minute (60000 milliseconds)
+
+With these settings Chat API will return a `429` status code if you make more than 5 calls per minute (60000 milliseconds)
+
+# Limit access
+After setup is complete, anyone with a valid Microsoft account can access your copy of `az-firewall-mon`. If you want to restrict access, you have several options:
+
+* [Static Web App Private Endpoint](https://learn.microsoft.com/en-us/azure/static-web-apps/private-endpoint): Expose `az-firewall-mon` on a private IP in your virtual network connected via site-to-site VPN or ExpressRoute to your intranet. This makes the tool available only to your company's employees.
+
+* [Static Web App Authorization](https://learn.microsoft.com/en-us/azure/static-web-apps/authentication-authorization): Since `az-firewall-mon` is a Microsoft account-authenticated app, you can configure a list of emails authorized to access it. The file to update, `staticwebapp.config.json`, is located in [./firewall-mon-app/src/assets](./firewall-mon-app/src/assets/staticwebapp.config.json).
+
