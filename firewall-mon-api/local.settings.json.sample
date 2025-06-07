@@ -4,7 +4,6 @@
     "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "APPLICATIONINSIGHTS_CONNECTION_STRING": "<your-connection-string>",
-    "author" : "john john",
     "llm_throttling_window_milliseconds" : "60000",
     "llm_throttling_calls" : "3",
     "ip_throttling_window_milliseconds" : "1000",
@@ -13,6 +12,10 @@
     
     "aoai_endpoint": "https://<lorem-aoai-endpoint>.openai.azure.com/openai/",
     "aoai_deployment": "",
-    "aoai_api_key": ""
+    "aoai_api_key": "",
+
+    "spa_applicationinsights_connection_string":  "<your-connection-string>",
+    "spa_builddate": "19720229",
+    "spa_local_queuelength": "100000"
   }
 }

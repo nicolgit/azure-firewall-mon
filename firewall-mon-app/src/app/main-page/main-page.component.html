@@ -86,7 +86,7 @@
             class="container-lottie"/>
         </div>
 
-        <br/><label  class="jsontext" [innerHTML]="this.JSONfySearchParams()"></label>
+        <br/><label *ngIf="isDevelopmentMode" class="jsontext" [innerHTML]="this.JSONfySearchParams()"></label>
       </mat-card-content>
     </mat-card>
   </div>

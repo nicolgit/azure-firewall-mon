@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.36.1.42791",
-      "templateHash": "14750720778315896797"
+      "templateHash": "1576006689434796107"
     }
   },
   "parameters": {
@@ -142,7 +142,9 @@
         "aoai_deployment": "[parameters('gpt4oDeploymentName')]",
         "llm_throttling_calls": "5",
         "llm_throttling_window_milliseconds": "60000",
-        "BUILD_DATE": "[parameters('baseTime')]"
+        "spa_applicationinsights_connection_string": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]",
+        "spa_builddate": "[parameters('baseTime')]",
+        "spa_local_queuelength": "100000"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]",

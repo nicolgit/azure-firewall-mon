@@ -80,8 +80,9 @@ resource staticWebAppSettings 'Microsoft.Web/staticSites/config@2023-01-01' = {
     llm_throttling_calls: '5'
     llm_throttling_window_milliseconds: '60000'
 
-    // Build date timestamp
-    BUILD_DATE: baseTime
+    spa_applicationinsights_connection_string:  appInsights.properties.ConnectionString 
+    spa_builddate: baseTime
+    spa_local_queuelength: '100000'
   }
 }
 

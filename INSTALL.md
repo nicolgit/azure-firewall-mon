@@ -79,6 +79,13 @@ Azure OpenAI settings:
 
 With these settings Chat API will return a `429` status code if you make more than 5 calls per minute (60000 milliseconds)
 
+Angulare application settings:
+* **spa_applicationinsights_connection_string**: Application Insights connection string 
+* **spa_builddate**: build timestamp
+* **spa_local_queuelength**: 100000
+
+> **spa_local_queuelength** is the number of log items that are kept client-side in the browser. When the number of log items in the event-hub is greater than this number, only the latest ones are kept and all others are deleted. 
+
 # Limit access
 After setup is complete, anyone with a valid Microsoft account can access your copy of `az-firewall-mon`. If you want to restrict access, you have several options:
 

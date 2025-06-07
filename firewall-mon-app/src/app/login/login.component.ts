@@ -20,12 +20,12 @@ export class LoginComponent implements OnInit {
   }
 
   username: string = '';
-
   ngOnInit(): void {
     this.getUserName();
+    this.getBuildDate();
   }
 
-  buildDate: string = environment.BuildDate;
+  buildDate: string = '';
   eventHubConnectionString: string = this.model.eventHubConnection;
   eventHubConsumerGroup: string = this.model.eventHubConsumerGroup;
   isDemoMode: boolean = this.model.demoMode;
@@ -61,7 +61,6 @@ export class LoginComponent implements OnInit {
     }
 
   }
-
   async getUserName(): Promise<void> {
     try {
       // Set default username in case of errors
@@ -81,6 +80,24 @@ export class LoginComponent implements OnInit {
     } catch (error) {
       console.error('Error fetching user info:', error);
       // Keep default username
+    }
+  }
+
+  async getBuildDate(): Promise<void> {
+    try {
+      const response = await fetch('/api/settings/builddate');
+      
+      if (!response.ok) {
+        console.error('Build date API endpoint returned error:', response.status);
+        this.buildDate = 'Unknown';
+        return;
+      }
+
+      // Parse the response as text since we expect a simple string
+      this.buildDate = await response.text();
+    } catch (error) {
+      console.error('Error fetching build date:', error);
+      this.buildDate = 'Unknown';
     }
   }
 }

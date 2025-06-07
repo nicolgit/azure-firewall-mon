@@ -52,9 +52,19 @@ public class Backend
             };
         }
 
-        string author = Environment.GetEnvironmentVariable("author") ?? "unknown";
-        return new OkObjectResult($"Hello from the other side... of the endpoint.\r\nbackend owned by {author}.\r\n");
+        return new OkObjectResult($"Hello from the other side... of the endpoint.");
     }
+
+    [Function("settings")]
+    public IActionResult RunSettings([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "settings/{attribute}")] HttpRequest req, string attribute)
+    {
+        string attributeName = $"spa_{attribute}";
+
+        string? attributeValue = Environment.GetEnvironmentVariable(attributeName);
+        //return new OkObjectResult($"did you say {attribute}? it contains: {attributeValue ?? "not set"}");
+        return new OkObjectResult(attributeValue ?? "not set");
+    }
+
 
     [Function("ip")]
     public async Task<IActionResult> RunIpAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ip/{ipAddress}")] HttpRequest req, string ipAddress)

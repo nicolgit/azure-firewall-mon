@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ElementRef, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, isDevMode, OnInit, HostListener, ElementRef, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
@@ -468,6 +468,10 @@ export class MainPageComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public isPromptTypeChat() {
     return this.searchFieldService.promptType == PromptType.Chatgpt;
+  }
+
+  public isDevelopmentMode(): boolean {
+    return isDevMode();
   }
 
   public setPromptTypeClassic() {
