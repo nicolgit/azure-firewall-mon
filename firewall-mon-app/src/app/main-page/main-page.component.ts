@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, isDevMode, OnInit, HostListener, ElementRef, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 
 import { IFirewallSource, FirewallDataRow, ModelService } from '../services/model.service';
 import { DemoSourceService } from '../services/demo-source.service';
@@ -12,10 +12,9 @@ import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 import { Router } from '@angular/router';
 import { YesnoDialogComponent } from '../yesno-dialog/yesno-dialog.component';
 import { LoggingService } from '../services/logging.service';
-import { time } from 'console';
 import { formatDate } from '@angular/common';
 import { PromptType, SearchFieldService } from '../services/search-field.service';
-import { debounceTime, elementAt, filter, Subject } from 'rxjs';
+import { debounceTime, Subject, interval, Subscription } from 'rxjs';
 
 
 enum TimestampFormat { GMT, local };
@@ -26,9 +25,10 @@ enum TimestampFormat { GMT, local };
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent implements AfterViewInit, OnInit {
+export class MainPageComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('searchInput') searchInput!: ElementRef;
   private firewallSource: IFirewallSource;
+  private intervalSubscription: Subscription | null = null;
 
   ngAfterViewInit() {
     this.searchInput.nativeElement.focus();
@@ -470,6 +470,10 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     return this.searchFieldService.promptType == PromptType.Chatgpt;
   }
 
+  public isDevelopmentMode(): boolean {
+    return isDevMode();
+  }
+
   public setPromptTypeClassic() {
     this.filterText = "";
     this.timestampFilterMinutes = 0;
@@ -521,6 +525,13 @@ export class MainPageComponent implements AfterViewInit, OnInit {
     this.searchFieldSubject.pipe(debounceTime(this.debounceTimeMs)).subscribe((searchValue) => {
       this.filterTextChangedDebounced();
     });
+  }
+
+  ngOnDestroy(): void {
+    // Make sure to also stop the firewall source if needed
+    if (this.firewallSource) {
+      this.firewallSource.stop();
+    }
   }
 
   /// check if a string is equal to another string, ignoring case

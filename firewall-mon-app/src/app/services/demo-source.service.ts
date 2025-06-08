@@ -47,6 +47,7 @@ export class DemoSourceService implements IFirewallSource {
     }
   }
 
+  private queueLength: number = 0;
   private intervalId: any=null;
   private protocolsArray: Array<string> = ["TCP", "UDP"];
   private actionsArray: Array<string> = ["Allow", "Deny", "Request", "Alert", "Drop"];
@@ -65,6 +66,8 @@ export class DemoSourceService implements IFirewallSource {
     await this.randomQuote();
     await this.randomQuote();
     
+    this.queueLength = await this.getQueueLenght();
+
     this.outputMessage("");
 
     this.onDataArrived?.(this.DATA);
@@ -109,7 +112,7 @@ export class DemoSourceService implements IFirewallSource {
         }
       this.DATA.unshift(row);
 
-      while (this.DATA.length > environment.EventsQueueLength) {
+      while (this.DATA.length > this.queueLength) {
         this.DATA.pop();
       }
 
@@ -120,6 +123,24 @@ export class DemoSourceService implements IFirewallSource {
       
       this.logginService.logEvent ("DEMO Source heartbit");
     }, this.intervalBetweenMoreRows);
+  }
+
+  private async getQueueLenght(): Promise<number> {
+    try {
+      const response = await fetch('/api/settings/local_queuelength');
+      
+      if (!response.ok) {
+        console.error('queue lenght API endpoint returned error:', response.status);
+        return 10;
+      }      
+      
+      // Parse the response as text and convert to number
+      const text = await response.text();
+      return Number(text);
+    } catch (error) {
+      console.error('Error fetching queue lenght endpoint:', error);
+      return 10;
+    }
   }
 
   public async pause() {
