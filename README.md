@@ -4,7 +4,7 @@
 <h1 align="center">az-firewall-mon🧑‍🚒</h1>
 
 <div align="center">
-  an <i>alternative and opinionable</i> way to access and inspect Azure Firewall logs
+  an <i>alternative and opinionated</i> way to access and inspect Azure Firewall logs
 </div>
 
 <br/>
@@ -21,9 +21,9 @@
 
 ![azure-firewall-mon-app](images/firewall-mon-app.png)
 
-We all know that Microsoft's recommended approach for analysing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto (KQL) queries to check the results. 
+We all know that Microsoft's recommended approach for analyzing Azure Firewall logs is to set up a Log Analytics Workspace to collect all the data and use Kusto Query Language (KQL) queries to check the results. 
 
-Azure-Firewall-mon focuses more on providing a tool that can answer the simple question "_what is happening right now?_" in an alternative and hopefully practical way: the idea is to provide an approach much more like [Sysinternals Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) or [Check Point's SmartView/SmartLog](https://sc1.checkpoint.com/documents/R80.40/WebAdminGuides/EN/CP_R80.40_LoggingAndMonitoring_AdminGuide/Topics-LMG/Using-log-view.htm?tocpath=Logging%7C_____2), where there is no KUSTO queries or dashboards that you need to implement first to get working. Still, all events are available as a _log-stream_.
+Azure-Firewall-mon focuses more on providing a tool that can answer the simple question "_what is happening right now?_" in an alternative and practical way. The idea is to provide an approach similar to [Sysinternals Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) or [Check Point's SmartView/SmartLog](https://sc1.checkpoint.com/documents/R80.40/WebAdminGuides/EN/CP_R80.40_LoggingAndMonitoring_AdminGuide/Topics-LMG/Using-log-view.htm?tocpath=Logging%7C_____2), where you don't need to implement KQL queries or dashboards first to get it working. All events are available as a _log-stream_.
 
 The real strength of the tool is the search field available in the top toolbar. To search for an event, simply start typing and the log flow will be automatically filtered according to those parameters.
 
@@ -33,7 +33,7 @@ The timestamp field displays the event date in UTC or local format. You can filt
 
 ![text filter](images/02-time-filtering.png)
 
-Within this tool, only events from the last 24 hours will appear because this is the duration set on the Event Hub Namespace. A longer duration would slow down the tool and not help answer the question "_what is happening right now_" that az-firewall-mon aims to address.
+Within this tool, only events from the last 24 hours will appear because this is the duration set on the Event Hub Namespace. A longer duration would slow down the tool and not help answer the question "_what is happening right now?_" that az-firewall-mon aims to address.
 
 As an alternative to full-text search, you can use the **chatGPT mode**: in the top search field, you can enter a request in natural language, and the system will filter the content accordingly.
 
@@ -50,63 +50,73 @@ Some examples of queries are as follows:
 
 ![chatgpt](images/03-chatgpt.gif)
 
-# Setup a connection with your Azure Firewall
+# Set up a connection with your Azure Firewall
+Azure-Firewall-mon is an open-source [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application) written in [Angular](https://angular.io/) with an [Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview) backend written in C# .NET. 
 
-![architecture](images/architecture.png)
+Here's the current architecture:
 
-Azure-Firewall-mon is an open source, [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application), written in [Angular](https://angular.io/). 
+![architecture](./images/architecture.png)
 
-To use this app with **YOUR data**, you must perform the following steps on your Azure Subscription:
+To use this app with **YOUR FIREWALL data**, you have 2 options:
+
+1. Use the Azure Firewall mon sample deployment available at <https://az-firewall-mon.duckiesfarm.com> 
+2. Deploy Azure Firewall mon in your environment
+
+The recommended option is number 2, as this way you can be 100% sure your logs are not going outside your environment. I suggest using the public deployment only for testing purposes.
+
+> <https://az-firewall-mon.duckiesfarm.com> uses resources from my subscription (Azure Maps API, Azure OpenAI, Azure Static Web App Standard). These resources have a cost, so I am limiting their usage as much as possible. As a result, the tool may be quite slow. In your own deployment, you can dedicate more resources and achieve better performance.
+
+# Use az-firewall-mon sample deployment
+To use this version with your data, you must perform the following steps on your Azure Subscription:
 
 1. Create an Azure Event Hub Namespace
 2. Create an Azure Event Hub inside the namespace, with a `1-day retention` and `1 partition`
-3. Create a Shared Access Policy, with  _Listen_ claim
-4. Create an Azure Map Account
-5. Create an Azure OpenAI Service
-6. Go to OpenAI Studio > Deployments > Create a new deployment using as model `gpt-4o version 2024-05-13`
-7. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
+3. Create a Shared Access Policy, with _Listen_ claim
+4. Open the Azure Firewall instance you want to monitor, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings: 
 
     - Select _all_ _logs_ and "Stream to Event Hub"
     - Select the Event Hub Namespace and Hub created above
     - click `SAVE`
 
-Lazy engineers can performs steps from 1 to 6 by clicking the following button [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json) :-)
+If you are a lazy engineer, like me, you can perform all these steps by clicking the following button 😊
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnicolgit%2Fazure-firewall-mon%2Fmain%2Fbicep%2Ffirewall-mon-azure-stuff.json)
+
+Open the Azure Firewall instance you want to monitor from the Azure portal, go to Monitoring > Diagnostic Settings > Add Diagnostic Settings:
+
+* Select all logs and "Stream to Event Hub"
+* Select the Event Hub Namespace and Hub created above
+* Click SAVE
 
 Now, open <https://az-firewall-mon.duckiesfarm.com/> and do the following:
 
-1. copy in the `Event Hub Connection String` field the connection string of the Shared Access Policy created above
-2. copy the corresponding `Event Hub Consumer Group` Name
-3. copy in the `Azure Map Account Shared Key` field the primary or secondary Shared Key of the Azure Map Account created above
-4. copy in the `Azure OpenAi Endpoint` field the enpoint URI for the OpenAI resouce created above
-5. copy in the `Azure OpenAI deployment` field tne name of the deployment created above
-6. copy in the `Azure OpenAI access key` field the primary or secondary Shared Key of the Azure OpenAI account created above
-7. click on `Let's begin`.
+1. Copy the connection string of the Shared Access Policy created above into the `Event Hub Connection String` field
+2. Copy the corresponding `Event Hub Consumer Group` name
+3. Click on `Let's begin`.
 
-# Install Azure-firewall-mon in your environment
+# Install az-firewall-mon in your environment
 
-[@lukemurraynz](https://github.com/lukemurraynz) has written a very detailed blog post on how deploy Azure-Firewall-mon in an Azure Static Web App. If you prefer this approach, have a look at his blog post <https://luke.geek.nz/azure/deploy-azure-firewall-mon-to-a-static-web-app/>
-
-> NOTE: `environment.prod.ts` must be updated with your environment information. az-firewall-mon requires an [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) instance to work properly.
+To install az-firewall-mon in your environment, follow [this guide](INSTALL.md). Once the instance is ready and working, you can go back and follow the instructions in the [Use az-firewall-mon sample deployment](#use-az-firewall-mon-sample-deployment) section. Just replace the URL with the one from your deployment.
 
 # More Information
 
-[Azure Firewall](https://learn.microsoft.com/en-us/azure/firewall/overview) (AF) is a cloud-native and intelligent network firewall security service that provides the best of breed threat protection for your cloud workloads running in Azure. It's a fully stateful, firewall as a service with built-in high availability and unrestricted cloud scalability. It provides both east-west and north-south traffic inspection.
+[Azure Firewall](https://learn.microsoft.com/en-us/azure/firewall/overview) (AF) is a cloud-native and intelligent network firewall security service that provides best-of-breed threat protection for your cloud workloads running in Azure. It's a fully stateful, firewall-as-a-service with built-in high availability and unrestricted cloud scalability. It provides both east-west and north-south traffic inspection.
 
 [Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/overview) helps you maximize the availability and performance of your applications and services. It delivers a comprehensive solution for collecting, analyzing, and acting on telemetry from your cloud and on-premises environments. 
 
-AF (Azure-Firewall-Mon) is integrated with Azure Monitor. This means you can forward AF metrics and logs to:
+Azure Firewall is integrated with Azure Monitor. This means you can forward Azure Firewall metrics and logs to:
 
 * Log Analytics Workspace
 * Azure Storage
-* Event hub
+* Event Hub
 
 A [Log Analytics workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview) is a unique environment for log data from Azure Monitor and other Azure services. Each workspace has its own data repository and configuration but might combine data from multiple services.
 
-Be mindful, that the ingest of logs into a Log Analytics workspace has some Latency, so you may see a delay with the logs displaying.
+Be mindful that the ingestion of logs into a Log Analytics workspace has some latency, so you may see a delay before logs are displayed.
 
-Latency refers to the time that data is created on the monitored system and the time that it comes available for analysis in Azure Monitor. 
+Latency refers to the time between when data is created on the monitored system and when it becomes available for analysis in Azure Monitor.
 
-The [Kusto](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) Query Language is a  tool to explore your data in a Log Analytics Workspace. The query uses schema entities that are organized in a hierarchy similar to SQL's: databases, tables, and columns.
+The [Kusto Query Language](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/) (KQL) is a tool to explore your data in a Log Analytics Workspace. The query uses schema entities that are organized in a hierarchy similar to SQL's: databases, tables, and columns.
 
 # UIs and tools that inspired Az-Firewall-mon
 

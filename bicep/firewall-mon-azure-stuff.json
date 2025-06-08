@@ -4,14 +4,17 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.33.93.31351",
-      "templateHash": "8760060908616098772"
+      "version": "0.36.1.42791",
+      "templateHash": "14141912891136746926"
     }
   },
   "parameters": {
     "namespace": {
       "type": "string",
-      "defaultValue": "fwmonns354526"
+      "defaultValue": "[format('fwmonns{0}', uniqueString(resourceGroup().id, deployment().name))]",
+      "metadata": {
+        "description": "Namespace for the Event Hub"
+      }
     },
     "hubname": {
       "type": "string",
@@ -21,25 +24,9 @@
       "type": "string",
       "defaultValue": "fwmonkey"
     },
-    "mapAccountName": {
-      "type": "string",
-      "defaultValue": "fwmonflags"
-    },
-    "openAiAccountName": {
-      "type": "string",
-      "defaultValue": "fwmonaoai"
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]"
-    },
-    "locationaoai": {
-      "type": "string",
-      "defaultValue": "swedencentral"
-    },
-    "fwmonappinsights": {
-      "type": "string",
-      "defaultValue": "fwmonappinsights"
     }
   },
   "resources": [
@@ -77,57 +64,6 @@
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespace'), parameters('hubname'))]",
         "[resourceId('Microsoft.EventHub/namespaces', parameters('namespace'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Maps/accounts",
-      "apiVersion": "2023-06-01",
-      "name": "[parameters('mapAccountName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "G2"
-      },
-      "kind": "Gen2"
-    },
-    {
-      "type": "Microsoft.CognitiveServices/accounts",
-      "apiVersion": "2022-03-01",
-      "name": "[parameters('openAiAccountName')]",
-      "location": "[parameters('locationaoai')]",
-      "sku": {
-        "name": "S0"
-      },
-      "kind": "OpenAI",
-      "properties": {
-        "customSubDomainName": "[parameters('openAiAccountName')]",
-        "networkAcls": {
-          "defaultAction": "Allow",
-          "virtualNetworkRules": [],
-          "ipRules": []
-        },
-        "publicNetworkAccess": "Enabled"
-      }
-    },
-    {
-      "type": "Microsoft.CognitiveServices/accounts/deployments",
-      "apiVersion": "2024-04-01-preview",
-      "name": "[format('{0}/{1}', parameters('openAiAccountName'), 'mygpt4')]",
-      "sku": {
-        "name": "Standard",
-        "capacity": 2
-      },
-      "properties": {
-        "model": {
-          "format": "OpenAI",
-          "name": "gpt-4o",
-          "version": "2024-05-13"
-        },
-        "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
-        "currentCapacity": 2,
-        "raiPolicyName": "Microsoft.Default"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName'))]"
       ]
     }
   ]

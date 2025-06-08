@@ -1,11 +1,8 @@
-param namespace string = 'fwmonns354526'
+@description('Namespace for the Event Hub')
+param namespace string = 'fwmonns${uniqueString(resourceGroup().id, deployment().name)}'
 param hubname string = 'fwmonhub'
 param sharedkey string = 'fwmonkey'
-param mapAccountName string = 'fwmonflags'
-param openAiAccountName string = 'fwmonaoai'
 param location string = resourceGroup().location
-param locationaoai string = 'swedencentral'
-param fwmonappinsights string = 'fwmonappinsights'
 
 resource eventHubNamespace 'Microsoft.EventHub/namespaces@2017-04-01' = {
   name: namespace
@@ -37,49 +34,4 @@ resource firewallMonHub 'Microsoft.EventHub/namespaces/eventhubs/authorizationRu
   }
 }
 
-resource mapsAccount 'Microsoft.Maps/accounts@2023-06-01' = {
-  name: mapAccountName
-  location: location
-  sku: {
-    name: 'G2'
-  }
-  kind: 'Gen2'
-}
-
-resource openAiService 'Microsoft.CognitiveServices/accounts@2022-03-01' = {
-  name: openAiAccountName
-  location: locationaoai
-  sku: {
-    name: 'S0'
-  }
-  kind: 'OpenAI'
-  properties: {
-    customSubDomainName: openAiAccountName
-    networkAcls: {
-      defaultAction: 'Allow'
-      virtualNetworkRules: []
-      ipRules: []
-    }
-    publicNetworkAccess: 'Enabled'
-  }
-}
-
-resource cognitiveServicesDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-04-01-preview' = {
-  parent: openAiService
-  name: 'mygpt4'
-  sku: {
-    name: 'Standard'
-    capacity: 2
-  }
-  properties: {
-    model: {
-      format: 'OpenAI'
-      name: 'gpt-4o'
-      version: '2024-05-13'
-    }
-    versionUpgradeOption: 'OnceNewDefaultVersionAvailable'
-    currentCapacity: 2
-    raiPolicyName: 'Microsoft.Default'
-  }
-}
 

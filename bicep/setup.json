@@ -1,0 +1,235 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.36.1.42791",
+      "templateHash": "1576006689434796107"
+    }
+  },
+  "parameters": {
+    "staticWebAppName": {
+      "type": "string",
+      "defaultValue": "my-firewall-mon-web",
+      "metadata": {
+        "description": "Name of the Static Web App"
+      }
+    },
+    "repositoryUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "GitHub repository URL for the Static Web App"
+      }
+    },
+    "repositoryToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "GitHub repository token for the Static Web App deployment"
+      }
+    },
+    "branch": {
+      "type": "string",
+      "defaultValue": "main",
+      "metadata": {
+        "description": "GitHub repository branch for the Static Web App deployment"
+      }
+    },
+    "appInsightsName": {
+      "type": "string",
+      "defaultValue": "firewall-mon-insights",
+      "metadata": {
+        "description": "Name of the Application Insights instance"
+      }
+    },
+    "mapsAccountName": {
+      "type": "string",
+      "defaultValue": "[format('firewall-mon-maps-{0}', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Name of the Azure Maps Account"
+      }
+    },
+    "openAiAccountName": {
+      "type": "string",
+      "defaultValue": "[format('firewall-mon-openai-{0}', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Name of the Azure OpenAI Account"
+      }
+    },
+    "gpt4oDeploymentName": {
+      "type": "string",
+      "defaultValue": "gpt4o",
+      "metadata": {
+        "description": "Name of the GPT-4o model deployment"
+      }
+    },
+    "openAiLocation": {
+      "type": "string",
+      "defaultValue": "eastus",
+      "metadata": {
+        "description": "Location for Azure OpenAI resources"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for Application Insights"
+      }
+    },
+    "baseTime": {
+      "type": "string",
+      "defaultValue": "[utcNow()]",
+      "metadata": {
+        "description": "Base deployment time for use with dateTimeAdd function"
+      }
+    },
+    "retentionInDays": {
+      "type": "int",
+      "defaultValue": 90,
+      "metadata": {
+        "description": "The retention period in days for Application Insights data"
+      }
+    },
+    "logAnalyticsSku": {
+      "type": "string",
+      "defaultValue": "PerGB2018",
+      "allowedValues": [
+        "PerGB2018",
+        "Free",
+        "PerNode",
+        "Standard",
+        "Standalone",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "The Log Analytics workspace SKU"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/staticSites",
+      "apiVersion": "2023-01-01",
+      "name": "[parameters('staticWebAppName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {
+        "repositoryUrl": "[parameters('repositoryUrl')]",
+        "repositoryToken": "[parameters('repositoryToken')]",
+        "branch": "[parameters('branch')]",
+        "buildProperties": {
+          "appLocation": "/firewall-mon-app",
+          "apiLocation": "/firewall-mon-api",
+          "outputLocation": "dist/firewall-mon-app"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Web/staticSites/config",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/{1}', parameters('staticWebAppName'), 'appsettings')]",
+      "properties": {
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]",
+        "ip_api_key": "[listKeys(resourceId('Microsoft.Maps/accounts', parameters('mapsAccountName')), '2023-06-01').primaryKey]",
+        "ip_throttling_calls": "1",
+        "ip_throttling_window_milliseconds": "1000",
+        "aoai_api_key": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName')), '2024-10-01').key1]",
+        "aoai_endpoint": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName')), '2024-10-01').endpoint]",
+        "aoai_deployment": "[parameters('gpt4oDeploymentName')]",
+        "llm_throttling_calls": "5",
+        "llm_throttling_window_milliseconds": "60000",
+        "spa_applicationinsights_connection_string": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]",
+        "spa_builddate": "[parameters('baseTime')]",
+        "spa_local_queuelength": "100000"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]",
+        "[resourceId('Microsoft.Maps/accounts', parameters('mapsAccountName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName'))]",
+        "[resourceId('Microsoft.Web/staticSites', parameters('staticWebAppName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2022-10-01",
+      "name": "[format('{0}-workspace', parameters('appInsightsName'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('logAnalyticsSku')]"
+        },
+        "retentionInDays": "[parameters('retentionInDays')]",
+        "features": {
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[parameters('appInsightsName')]",
+      "location": "[parameters('location')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-workspace', parameters('appInsightsName')))]",
+        "RetentionInDays": "[parameters('retentionInDays')]",
+        "IngestionMode": "LogAnalytics",
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-workspace', parameters('appInsightsName')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Maps/accounts",
+      "apiVersion": "2023-06-01",
+      "name": "[parameters('mapsAccountName')]",
+      "location": "global",
+      "sku": {
+        "name": "G2"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2024-10-01",
+      "name": "[parameters('openAiAccountName')]",
+      "location": "[parameters('openAiLocation')]",
+      "kind": "OpenAI",
+      "sku": {
+        "name": "S0"
+      },
+      "properties": {
+        "customSubDomainName": "[parameters('openAiAccountName')]",
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2024-10-01",
+      "name": "[format('{0}/{1}', parameters('openAiAccountName'), parameters('gpt4oDeploymentName'))]",
+      "sku": {
+        "name": "Standard",
+        "capacity": 10
+      },
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "gpt-4o",
+          "version": "2024-11-20"
+        },
+        "raiPolicyName": "Microsoft.Default",
+        "versionUpgradeOption": "OnceNewDefaultVersionAvailable"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('openAiAccountName'))]"
+      ]
+    }
+  ]
+}

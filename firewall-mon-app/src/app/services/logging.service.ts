@@ -15,7 +15,7 @@ export class LoggingService {
     private datePipe: DatePipe) {
       var angularPlugin = new AngularPlugin();
       this.appInsights = new ApplicationInsights({ config: {
-      connectionString: environment.ApplicationInsightsConnectionString,
+      connectionString: this.getAppInsightConnectionString(),
       enableCorsCorrelation: true,
       enableRequestHeaderTracking: true,
       enableResponseHeaderTracking: true,
@@ -34,6 +34,23 @@ export class LoggingService {
         console.error("TIP: 'environment.prod.ts' must contain a valid Azure Application Insight connection string.");
       }
     }
+
+  async getAppInsightConnectionString(): Promise<string> {
+    try {
+      const response = await fetch('/api/settings/applicationinsights_connection_string');
+      
+      if (!response.ok) {
+        console.error('connection string API endpoint returned error:', response.status);
+        return "";
+      }
+
+      // Parse the response as text since we expect a simple string
+      return await response.text();
+    } catch (error) {
+      console.error('Error fetching connection string:', error);
+      return "";
+    }
+  }
 
   logPageView(name?: string, url?: string) { // option to call manually
     this.appInsights.trackPageView({

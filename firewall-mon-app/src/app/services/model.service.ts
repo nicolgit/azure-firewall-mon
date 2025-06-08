@@ -12,11 +12,6 @@ export class ModelService {
     this.demoMode = false;
     this.eventHubConnection = "";
     this.eventHubConsumerGroup = "$Default";
-    this.azureMapsSharedKey = "";
-
-    this.aoaiEndpoint="";
-    this.aoaiDeploymentId="";
-    this.aoaiAccessKey="";
 
     this.load();
   }
@@ -24,10 +19,6 @@ export class ModelService {
   public demoMode: boolean;
   public eventHubConnection: string;
   public eventHubConsumerGroup: string;
-  public azureMapsSharedKey: string;
-  public aoaiEndpoint: string;
-  public aoaiDeploymentId: string;
-  public aoaiAccessKey: string;
 
   public async load(): Promise<void> {
     var _demoMode = localStorage.getItem("demoMode");
@@ -44,36 +35,12 @@ export class ModelService {
     if (_eventHubConsumerGroup != null) {
       this.eventHubConsumerGroup = _eventHubConsumerGroup;
     }
-
-    var _azureMapsSharedKey = localStorage.getItem("azureMapsSharedKey");
-    if (_azureMapsSharedKey != null) {
-      this.azureMapsSharedKey = _azureMapsSharedKey;
-    }
-
-    var _aoaiEndpoint = localStorage.getItem("aoaiEndpoint");
-    if (_aoaiEndpoint != null) {
-      this.aoaiEndpoint = _aoaiEndpoint;
-    }
-
-    var _aoaiDeploymentId = localStorage.getItem("aoaiDeploymentId");
-    if (_aoaiDeploymentId != null) {
-      this.aoaiDeploymentId = _aoaiDeploymentId;
-    }
-
-    var _aoaiAccessKey = localStorage.getItem("aoaiAccessKey");
-    if (_aoaiAccessKey != null) {
-      this.aoaiAccessKey = this.encryptionSvc.decrypt(_aoaiAccessKey);
-    }
   }
 
   public async save(): Promise<void> {
     localStorage.setItem("demoMode", this.demoMode.toString());
     localStorage.setItem("eventHubConnection", this.encryptionSvc.encrypt(this.eventHubConnection));
     localStorage.setItem("eventHubConsumerGroup", this.eventHubConsumerGroup);
-    localStorage.setItem("azureMapsSharedKey", this.azureMapsSharedKey);
-    localStorage.setItem("aoaiEndpoint", this.aoaiEndpoint);
-    localStorage.setItem("aoaiDeploymentId", this.aoaiDeploymentId);
-    localStorage.setItem("aoaiAccessKey", this.encryptionSvc.encrypt(this.aoaiAccessKey));
   }  
 }
 

@@ -17,6 +17,8 @@ export class EventHubSourceService implements Model.IFirewallSource {
     private model:Model.ModelService
     )  {
   }
+
+  private queueLength: number = 0;
   private defaultSleepTime: number = 1500;
   private consumerClient: EventHubConsumerClient | undefined;
   private subscription: any;
@@ -28,6 +30,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
   public onMessageArrived?: ((message: string) => void);
 
   public async start() {
+    this.queueLength = await this.getQueueLenght();
 
     try {
       this.outputMessage(`connecting to azure event hub`);
@@ -119,7 +122,7 @@ export class EventHubSourceService implements Model.IFirewallSource {
                   moreRows++;
                   this.DATA.unshift(row);
 
-                  while (this.DATA.length > environment.EventsQueueLength) {
+                  while (this.DATA.length > this.queueLength) {
                     this.DATA.pop();
                   }
                 }
@@ -183,6 +186,24 @@ export class EventHubSourceService implements Model.IFirewallSource {
     this.DATA = [];
     this.onDataArrived?.(this.DATA);
     this.outputMessage("Logs successfully deleted!");
+  }
+
+  private async getQueueLenght(): Promise<number> {
+    try {
+      const response = await fetch('/api/settings/local_queuelength');
+      
+      if (!response.ok) {
+        console.error('queue lenght API endpoint returned error:', response.status);
+        return 10;
+      }      
+      
+      // Parse the response as text and convert to number
+      const text = await response.text();
+      return Number(text);
+    } catch (error) {
+      console.error('Error fetching queue lenght endpoint:', error);
+      return 10;
+    }
   }
 
   private outputMessage (text:string): void {

@@ -3,7 +3,4 @@
 
 export const environment = {
     production: false,
-    ApplicationInsightsConnectionString: "",
-    BuildDate: "???",
-    EventsQueueLength: 1000,
   };

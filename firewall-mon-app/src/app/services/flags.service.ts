@@ -6,6 +6,7 @@ import { LoggingService } from './logging.service';
 import { environment } from './../../environments/environment';
 
 import allCountries from './flags-all-countries.json'; // json from https://raw.githubusercontent.com/lipis/flag-icons/main/country.json
+import { exec } from 'child_process';
 
 export interface CountryRegion {
   isoCode: string;
@@ -59,10 +60,11 @@ export class FlagsService {
     error = undefined;
 
     if (this.model.demoMode) {
-      result = this.getFlagFromIPCacheRandom(ip);
+      //result = this.getFlagFromIPCacheRandom(ip);
+      result = this.getFlagFromIPCache(ip);
     }
     else {
-      result = this.getFlagFromIPCache(ip);;
+      result = this.getFlagFromIPCache(ip);
     }
   
   return result;    
@@ -75,9 +77,8 @@ export class FlagsService {
       return this.cache.get(ip);
     }
  
-    this.getFlagFromIPAsync(ip);
-
-    return undefined;
+    this.getFlagFromIPAsync(ip);  
+      return undefined;
   }
 
   private getFlagFromIPCacheRandom(ip:string):FlagData | undefined {
@@ -88,7 +89,6 @@ export class FlagsService {
     }
 
     this.getFlagFromIPRandomAsync(ip);
-
     return undefined;
   }
 
@@ -110,17 +110,27 @@ export class FlagsService {
     }
   }
 
-  private async getFlagFromIPAsync(ip:string) {
-    this.logginService.logTrace("FlagsService.getFlagFromIPAsync(" + ip + ")" );
-    this.cache.set(ip, new FlagData("", "", ""));
-    
-    var apiKey="";
-    apiKey = this.model.azureMapsSharedKey;
+  private static lastGetFlagFromIPAsyncExecutionDate : number | null = null;
+  private static cooldownPeriod: number = 1000; // milliseconds cooldown period
 
-    const callRequest = `https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0&ip=${ip}&subscription-key=${apiKey}`;
-    const response = await axios.get(callRequest);
-    const apiResponse : AzureAPIResponse = response.data;
-    const isoCode = apiResponse.countryRegion.isoCode.toLowerCase();
+  private async getFlagFromIPAsync(ip:string) {
+    if (FlagsService.lastGetFlagFromIPAsyncExecutionDate !== null &&
+        (Date.now() - FlagsService.lastGetFlagFromIPAsyncExecutionDate) < FlagsService.cooldownPeriod) {
+      return;
+    }
+    FlagsService.lastGetFlagFromIPAsyncExecutionDate = Date.now();
+
+    const callRequest = `/api/ip/${ip}`;
+    const response = await fetch(callRequest);
+    
+    if (response.status !== 200) {
+      FlagsService.lastGetFlagFromIPAsyncExecutionDate = Date.now();
+      this.logginService.logTrace("FlagsService.getFlagFromIPAsync - begins cooldown");
+      return;
+    }
+
+    // read the response as text
+    const isoCode = await response.text();
     const countryName: string= allCountries.find(x => x.code == isoCode)?.name ?? "";
 
     this.cache.set(ip, new FlagData("fi fi-" + isoCode + "", countryName, isoCode));  
