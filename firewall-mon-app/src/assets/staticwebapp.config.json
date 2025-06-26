@@ -5,6 +5,10 @@
       "allowedRoles": [
         "authenticated"
       ]
+    },
+    {
+      "route": "/.auth/login/github",
+      "statusCode": 403
     }
   ],
   "responseOverrides": {
