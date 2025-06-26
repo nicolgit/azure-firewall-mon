@@ -1,14 +1,14 @@
 {
   "routes": [
     {
+      "route": "/.auth/login/github",
+      "statusCode": 403
+    },
+    {
       "route": "/*",
       "allowedRoles": [
         "authenticated"
       ]
-    },
-    {
-      "route": "/.auth/login/github",
-      "statusCode": 403
     }
   ],
   "responseOverrides": {
