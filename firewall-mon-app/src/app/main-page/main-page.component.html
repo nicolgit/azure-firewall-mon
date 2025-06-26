@@ -1,191 +1,228 @@
 <div class="parent">
 
   <mat-toolbar color="primary" class="main-toolbar">
-  <mat-toolbar-row>
-    <img alt="logo" src="assets/logo.png" width="48" height="48" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;"/>&nbsp;<span>az-firewall-mon</span>
-    
-    <mat-form-field appearance="fill" class="search-field" *ngIf="totalRows>0" subscriptSizing="dynamic" ng-controller="filterTextC">
-      <span matPrefix class="material-symbols-outlined" style="color: grey;">search</span>
-      <mat-label>filter</mat-label>
-      <input title="not used" 
-        matInput [(ngModel)]="filterText" 
-        (input)="filterTextChanged()" 
-        (keydown.enter)="filterTextEnter()" 
-        #searchInput>
-      <button mat-mini-fab matSuffix matTooltip="advanced search" (click)="advSearchVisibility = !advSearchVisibility">
-        <span class="material-symbols-outlined ">display_settings</span>
-      </button>
-    </mat-form-field>
+    <mat-toolbar-row>
+      <img alt="logo" src="assets/logo.png" width="48" height="48" style="vertical-align:middle; background-color: DimGray;border-radius: 15%;"/>&nbsp;<span>az-firewall-mon</span>
 
-    <section class="main-toolbar-buttons">
-      <button mat-raised-button color="primary" *ngIf="totalRows>0" (click)="clear()"><span class="material-symbols-outlined ">delete</span>Clear</button>&nbsp;
+      @if (totalRows>0) {
+        <mat-form-field appearance="fill" class="search-field" subscriptSizing="dynamic" ng-controller="filterTextC">
+          <span matPrefix class="material-symbols-outlined" style="color: grey;">search</span>
+          <mat-label>filter</mat-label>
+          <input title="not used"
+            matInput [(ngModel)]="filterText"
+            (input)="filterTextChanged()"
+            (keydown.enter)="filterTextEnter()"
+            #searchInput>
+            <button mat-mini-fab matSuffix matTooltip="advanced search" (click)="advSearchVisibility = !advSearchVisibility">
+              <span class="material-symbols-outlined ">display_settings</span>
+            </button>
+          </mat-form-field>
+        }
 
-      <button mat-raised-button color="accent" *ngIf="!isPaused" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
-      <button mat-raised-button color="accent" *ngIf="isPaused" (click)="resume()"><span class="material-symbols-outlined">start</span>Resume</button>&nbsp;
-      
-      <button mat-raised-button color="warn" (click)="logout()"><span class="material-symbols-outlined">logout</span>Exit</button>&nbsp;
-    </section>
-  </mat-toolbar-row>
-  </mat-toolbar>
+        <section class="main-toolbar-buttons">
+          @if (totalRows>0) {
+            <button mat-raised-button color="primary" (click)="clear()"><span class="material-symbols-outlined ">delete</span>Clear</button>
+            }&nbsp;
 
-  <div class="main" *ngIf="totalRows==0">
-    <lottie-player src="assets/lottie/lf20_giodppcr.json"  
-        background="transparent"  
-        speed="1" 
-        loop  
-        autoplay
-        class="lottie-player"> 
-    </lottie-player>
-    <div class="lottie-text">{{message}}</div>
-  </div>
+            @if (!isPaused) {
+              <button mat-raised-button color="accent" (click)="pause()"><span class="material-symbols-outlined">pause_presentation</span>Pause</button>
+            }
+            @if (isPaused) {
+              <button mat-raised-button color="accent" (click)="resume()"><span class="material-symbols-outlined">start</span>Resume</button>
+              }&nbsp;
 
-  <div class="main-accordionbar" *ngIf="totalRows>0 && advSearchVisibility == true">
-    <mat-card>
-      <mat-card-content>
-        query mode
-        <mat-chip-listbox >
-          <mat-chip-option selectable="false" [selected]="isPromptTypeClassic()" (click)="setPromptTypeClassic()">text filter</mat-chip-option>
-          <mat-chip-option selectable="false" [selected]="isPromptTypeChat()" (click)="setPromptTypeChat()">chatGPT</mat-chip-option>
-        </mat-chip-listbox>
-        <label >timestamp</label>
-        <mat-chip-listbox >
-          <mat-chip-option selectable="false" [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">GMT</mat-chip-option>
-          <mat-chip-option selectable="false" [selected]="isTimestampLocal()" (click)="setTimestampLocal()">local time</mat-chip-option>
-        </mat-chip-listbox>
+              <button mat-raised-button color="warn" (click)="logout()"><span class="material-symbols-outlined">logout</span>Exit</button>&nbsp;
+            </section>
+          </mat-toolbar-row>
+        </mat-toolbar>
 
-        <div [style.display]="isPromptTypeClassic() ? 'inline' : 'none'">
-          filter
-          <mat-chip-listbox>
-            <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 0" (click)="setTimestampFilterMinutes(0)">all</mat-chip-option>
-            <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 5" (click)="setTimestampFilterMinutes(5)">last 5 minutes</mat-chip-option>
-            <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 10" (click)="setTimestampFilterMinutes(10)">last 10 minutes</mat-chip-option>
-            <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 20" (click)="setTimestampFilterMinutes(20)">last 20 minutes</mat-chip-option>
-            <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 30" (click)="setTimestampFilterMinutes(30)">last 30 minutes</mat-chip-option>
-            <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 60" (click)="setTimestampFilterMinutes(60)">last hour</mat-chip-option>
-            <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == -1" (click)="setTimestampFilterMinutes(-1)">custom</mat-chip-option>
-          </mat-chip-listbox>
-          <br/>
-          <mat-form-field appearance="outline" *ngIf="this.timestampFilterMinutes == -1">
-            <mat-label>start (local time)</mat-label>
-            <input matInput type="datetime-local" placeholder="start date time"  [(ngModel)]="this.searchFieldService.searchParams.startdate">
-          </mat-form-field> &nbsp;
-          <mat-form-field appearance="outline" *ngIf="this.timestampFilterMinutes == -1">
-            <mat-label>end (local time)</mat-label>
-            <input matInput type="datetime-local" placeholder="end date time" [(ngModel)]="this.searchFieldService.searchParams.enddate">
-          </mat-form-field><br/>
-          <label class="error-text" *ngIf="this.searchFieldService.searchParams.enddate < this.searchFieldService.searchParams.startdate"><b>end time</b> must be > than <b>start time</b> and in <b>24H time format</b></label>
-        </div>
+        @if (totalRows==0) {
+          <div class="main">
+            <lottie-player src="assets/lottie/lf20_giodppcr.json"
+              background="transparent"
+              speed="1"
+              loop
+              autoplay
+              class="lottie-player">
+            </lottie-player>
+            <div class="lottie-text">{{message}}</div>
+          </div>
+        }
 
-        <label  [innerHTML]="this.PromptAnswer()"></label><br/>
-        <div *ngIf="this.isThinking()" class="centered-container-lottie" >
-          <lottie-player src="assets/lottie/rubik.json"  
-            background="transparent"  
-            speed="1" 
-            loop  
-            autoplay
-            class="container-lottie"/>
-        </div>
+        @if (totalRows>0 && advSearchVisibility == true) {
+          <div class="main-accordionbar">
+            <mat-card>
+              <mat-card-content>
+                query mode
+                <mat-chip-listbox >
+                  <mat-chip-option selectable="false" [selected]="isPromptTypeClassic()" (click)="setPromptTypeClassic()">text filter</mat-chip-option>
+                  <mat-chip-option selectable="false" [selected]="isPromptTypeChat()" (click)="setPromptTypeChat()">chatGPT</mat-chip-option>
+                </mat-chip-listbox>
+                <label >timestamp</label>
+                <mat-chip-listbox >
+                  <mat-chip-option selectable="false" [selected]="isTimestampGMT()" (click)="setTimeStampGMT()">GMT</mat-chip-option>
+                  <mat-chip-option selectable="false" [selected]="isTimestampLocal()" (click)="setTimestampLocal()">local time</mat-chip-option>
+                </mat-chip-listbox>
+                <div [style.display]="isPromptTypeClassic() ? 'inline' : 'none'">
+                  filter
+                  <mat-chip-listbox>
+                    <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 0" (click)="setTimestampFilterMinutes(0)">all</mat-chip-option>
+                    <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 5" (click)="setTimestampFilterMinutes(5)">last 5 minutes</mat-chip-option>
+                    <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 10" (click)="setTimestampFilterMinutes(10)">last 10 minutes</mat-chip-option>
+                    <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 20" (click)="setTimestampFilterMinutes(20)">last 20 minutes</mat-chip-option>
+                    <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 30" (click)="setTimestampFilterMinutes(30)">last 30 minutes</mat-chip-option>
+                    <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == 60" (click)="setTimestampFilterMinutes(60)">last hour</mat-chip-option>
+                    <mat-chip-option selectable="false" [selected]="this.timestampFilterMinutes == -1" (click)="setTimestampFilterMinutes(-1)">custom</mat-chip-option>
+                  </mat-chip-listbox>
+                  <br/>
+                  @if (this.timestampFilterMinutes == -1) {
+                    <mat-form-field appearance="outline">
+                      <mat-label>start (local time)</mat-label>
+                      <input matInput type="datetime-local" placeholder="start date time"  [(ngModel)]="this.searchFieldService.searchParams.startdate">
+                    </mat-form-field>
+                    } &nbsp;
+                    @if (this.timestampFilterMinutes == -1) {
+                      <mat-form-field appearance="outline">
+                        <mat-label>end (local time)</mat-label>
+                        <input matInput type="datetime-local" placeholder="end date time" [(ngModel)]="this.searchFieldService.searchParams.enddate">
+                      </mat-form-field>
+                      }<br/>
+                      @if (this.searchFieldService.searchParams.enddate < this.searchFieldService.searchParams.startdate) {
+                        <label class="error-text"><b>end time</b> must be > than <b>start time</b> and in <b>24H time format</b></label>
+                      }
+                    </div>
+                    <label  [innerHTML]="this.PromptAnswer()"></label><br/>
+                    @if (this.isThinking()) {
+                      <div class="centered-container-lottie" >
+                        <lottie-player src="assets/lottie/rubik.json"
+                          background="transparent"
+                          speed="1"
+                          loop
+                          autoplay
+                          class="container-lottie"/>
+                        </div>
+                      }
+                      <br/>@if (isDevelopmentMode()) {
+                      <label class="jsontext" [innerHTML]="this.JSONfySearchParams()"></label>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            }
+            @if (totalRows>0) {
+              <cdk-virtual-scroll-viewport tvsItemSize class="main mat-elevation-z2" >
+                <table mat-table [dataSource]="dataSource">
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+                  <ng-container matColumnDef="time">
+                    <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true" class="column01">Timestamp</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColorTimestamp(element.rowid)">
+                      <span [innerHtml]="showTimestamp(element.time)"></span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true" class="column02">Category</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('category', element.category, element.rowid)">
+                      <span [innerHtml]="highlightSelection('category',element.category)"></span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="protocol">
+                    <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true" class="column03">Protocol</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"[style.background]="hasHighlightColor('protocol', element.protocol, element.rowid)">
+                      <span [innerHtml]="highlightSelection('protocol', element.protocol)"></span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="source">
+                    <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column04">Source</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('source', element.sourceip + ' ' + element.srcport, element.rowid)">
+                      @if (isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) != undefined)) {
+                        <span class="{{getFlagFromIP(element.sourceip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.sourceip)?.country}}"></span>
+                      }
+                      @if (isInternalIP(element.sourceip)) {
+                        <span class="material-symbols-outlined" title="internal ip">lan</span>
+                      }
+                      @if (isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) == undefined)) {
+                        <span class="material-symbols-outlined" title="unknown public ip">public</span>
+                      }
+                      <span [innerHtml]="highlightSelection('source', element.sourceip) + ':' + highlightSelection('source', element.srcport)"></span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="target">
+                    <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column05">Target</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('target', element.targetip + ' ' + element.targetport, element.rowid)">
+                      @if (isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) != undefined)) {
+                        <span class="{{getFlagFromIP(element.targetip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.targetip)?.country}}"></span>
+                      }
+                      @if (isInternalIP(element.targetip)) {
+                        <span class="material-symbols-outlined" title="internal ip">lan</span>
+                      }
+                      @if (isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) == undefined)) {
+                        <span class="material-symbols-outlined" title="unknown public ip">public</span>
+                      }
+                      <span [innerHtml]="highlightSelection('target', element.targetip) + ':' + highlightSelection('target', element.targetport)"></span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column06">Action</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="setActionBackground(element.action)">
+                      @if (safeCheckString(element.action,'allow')) {
+                        <span class="material-symbols-outlined">task_alt</span>
+                      }
+                      @if (safeCheckString(element.action,'deny')) {
+                        <span class="material-symbols-outlined">cancel</span>
+                      }
+                      @if (safeCheckString(element.action,'drop')) {
+                        <span class="material-symbols-outlined">cancel</span>
+                      }
+                      @if (safeCheckString(element.action,'request')) {
+                        <span class="material-symbols-outlined">psychology_alt</span>
+                      }
+                      @if (safeCheckString(element.action,'alert')) {
+                        <span class="material-symbols-outlined">warning_amber</span>
+                      }
+                      &nbsp;
+                      <span [innerHtml]="highlightSelection('action', element.action)"></span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="policy">
+                    <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column07">Policy</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('policy', element.policy, element.rowid)">
+                      <span [innerHtml]="highlightSelection('policy', element.policy)"></span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="targetUrl">
+                    <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column08">More info</th>
+                    <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('moreinfo', element.moreInfo, element.rowid)">
+                      <i><span [innerHtml]="highlightSelection('moreinfo', element.moreInfo)"></span></i>
+                    </td>
+                  </ng-container>
+                </table>
+              </cdk-virtual-scroll-viewport>
+            }
 
-        <br/><label *ngIf="isDevelopmentMode()" class="jsontext" [innerHTML]="this.JSONfySearchParams()"></label>
-      </mat-card-content>
-    </mat-card>
-  </div>
-  <cdk-virtual-scroll-viewport tvsItemSize class="main mat-elevation-z2"  *ngIf="totalRows>0">
-    <table mat-table [dataSource]="dataSource">
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
-
-      <ng-container matColumnDef="time">
-        <th mat-header-cell *matHeaderCellDef class="col-sm" [resizeColumn]="true" class="column01">Timestamp</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColorTimestamp(element.rowid)">
-          <span [innerHtml]="showTimestamp(element.time)"></span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef class="col-sm-2" [resizeColumn]="true" class="column02">Category</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('category', element.category, element.rowid)">
-          <span [innerHtml]="highlightSelection('category',element.category)"></span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="protocol">
-        <th mat-header-cell *matHeaderCellDef class="col-small" [resizeColumn]="true" class="column03">Protocol</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element"[style.background]="hasHighlightColor('protocol', element.protocol, element.rowid)">
-          <span [innerHtml]="highlightSelection('protocol', element.protocol)"></span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="source">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column04">Source</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('source', element.sourceip + ' ' + element.srcport, element.rowid)">
-          <span class="{{getFlagFromIP(element.sourceip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.sourceip)?.country}}" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) != undefined)"></span>
-          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.sourceip)" title="internal ip">lan</span>
-          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.sourceip) && (getFlagFromIP(element.sourceip) == undefined)" title="unknown public ip">public</span>
-          <span [innerHtml]="highlightSelection('source', element.sourceip) + ':' + highlightSelection('source', element.srcport)"></span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="target">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column05">Target</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('target', element.targetip + ' ' + element.targetport, element.rowid)">
-          <span class="{{getFlagFromIP(element.targetip)?.cssclass}} flag-icon" title="{{getFlagFromIP(element.targetip)?.country}}" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) != undefined)"></span>
-          <span class="material-symbols-outlined" *ngIf="isInternalIP(element.targetip)" title="internal ip">lan</span>
-          <span class="material-symbols-outlined" *ngIf="isExternalIP(element.targetip) && (getFlagFromIP(element.targetip) == undefined)" title="unknown public ip">public</span>
-          <span [innerHtml]="highlightSelection('target', element.targetip) + ':' + highlightSelection('target', element.targetport)"></span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" class="column06">Action</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="setActionBackground(element.action)">
-          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'allow')">task_alt</span>
-          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'deny')">cancel</span>
-          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'drop')">cancel</span>
-          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'request')">psychology_alt</span>
-          <span class="material-symbols-outlined" *ngIf="safeCheckString(element.action,'alert')">warning_amber</span>
-          &nbsp;
-          <span [innerHtml]="highlightSelection('action', element.action)"></span>
-        </td>
-      </ng-container>    
-
-      <ng-container matColumnDef="policy">
-        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column07">Policy</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('policy', element.policy, element.rowid)">
-          <span [innerHtml]="highlightSelection('policy', element.policy)"></span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="targetUrl">
-        <th mat-header-cell *matHeaderCellDef  [resizeColumn]="true" class="column08">More info</th>
-        <td mat-cell (click)="onRowClicked(element)" *matCellDef="let element" [style.background]="hasHighlightColor('moreinfo', element.moreInfo, element.rowid)">
-          <i><span [innerHtml]="highlightSelection('moreinfo', element.moreInfo)"></span></i>
-        </td>
-      </ng-container>
-    </table>
-  </cdk-virtual-scroll-viewport>
-
-  <div class="main-accordionbar" *ngIf="totalRows>0">
-    <mat-accordion>
-      <mat-expansion-panel [expanded]="panelOpenState == true" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{message}}</mat-panel-title>
-          <mat-panel-description>
-            rows: {{totalRows}} availables, {{visibleRows}} visibles, {{skippedRows}} skipped
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div>
-          <div class="jsontexttoolbar">
-          <button mat-button matTooltip="copy JSON to clipboard" (click)="copyJson()">
-            <span class="material-symbols-outlined">content_copy</span>
-          </button>
-          <button mat-button matTooltip="expand/minimize">
-            <span class="material-symbols-outlined" (click)="toggleExpandJsonSpace()">settings_overscan</span>
-          </button></div>
-          <div class="jsontext" [innerHtml]="selectedRowJson" [style.height]="jsontextHeight">
-        </div>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-</div>
+            @if (totalRows>0) {
+              <div class="main-accordionbar">
+                <mat-accordion>
+                  <mat-expansion-panel [expanded]="panelOpenState == true" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>{{message}}</mat-panel-title>
+                      <mat-panel-description>
+                        rows: {{totalRows}} availables, {{visibleRows}} visibles, {{skippedRows}} skipped
+                      </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div>
+                      <div class="jsontexttoolbar">
+                        <button mat-button matTooltip="copy JSON to clipboard" (click)="copyJson()">
+                          <span class="material-symbols-outlined">content_copy</span>
+                        </button>
+                        <button mat-button matTooltip="expand/minimize">
+                          <span class="material-symbols-outlined" (click)="toggleExpandJsonSpace()">settings_overscan</span>
+                        </button></div>
+                        <div class="jsontext" [innerHtml]="selectedRowJson" [style.height]="jsontextHeight">
+                        </div>
+                      </div>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+              }
+            </div>

@@ -4,9 +4,6 @@ import { environment } from 'src/environments/environment';
 import { LoggingService } from './logging.service';
 import { ModelService } from './model.service';
 
-import { AzureOpenAI } from "openai";
-import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/index";
-
 @Injectable({
   providedIn: 'root'
 })
